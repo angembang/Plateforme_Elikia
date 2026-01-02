@@ -3,6 +3,8 @@ package fr.elikia.backend.bo;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "achievement")
@@ -17,6 +19,13 @@ public class Achievement {
 
     @Enumerated(EnumType.STRING)
     private Visibility visibility;
+
+    @OneToMany(
+            mappedBy = "achievement",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private final List<Media> mediaList = new ArrayList<>();
 
 
     // ========================================================
@@ -69,5 +78,27 @@ public class Achievement {
     }
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
+    }
+
+    public List<Media> getMediaList() {
+        return mediaList;
+    }
+
+
+    /**
+     * Helper methods to manage the bidirectional relationship between
+     * the parent entity (Achievement)
+     * and its associated Media.
+     * These methods ensure consistency on both sides of the association.
+     */
+
+    public void addMedia(Media media) {
+        mediaList.add(media);
+        media.setAchievement(this);
+    }
+
+    public void removeMedia(Media media) {
+        mediaList.remove(media);
+        media.setAchievement(null);
     }
 }
