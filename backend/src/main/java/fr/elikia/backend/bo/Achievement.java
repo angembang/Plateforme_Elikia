@@ -2,6 +2,8 @@ package fr.elikia.backend.bo;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "achievement")
 public class Achievement {
@@ -11,6 +13,10 @@ public class Achievement {
 
     private String title;
     private String description;
+    private LocalDateTime date;
+
+    @Enumerated(EnumType.STRING)
+    private Visibility visibility;
 
 
     // ========================================================
@@ -20,10 +26,11 @@ public class Achievement {
     public Achievement() {
     }
 
-    public Achievement(Long achievementId, String title, String description) {
+    public Achievement(Long achievementId, String title, String description, LocalDateTime date) {
         this.achievementId = achievementId;
         this.title = title;
         this.description = description;
+        this.date = date;
     }
 
 
@@ -47,5 +54,19 @@ public class Achievement {
     }
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public LocalDateTime getDate() {
+        return date;
+    }
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
+
+    public Visibility getVisibility() {
+        return visibility;
+    }
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
     }
 }

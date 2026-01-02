@@ -3,6 +3,8 @@ package fr.elikia.backend.bo;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table( name = "event" )
@@ -15,9 +17,26 @@ public class Event {
     private String description;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+    private String location;
+    private String address;
+    private int capacity;
 
     @Enumerated(EnumType.STRING)
     private Visibility visibility;
+
+    @OneToMany(
+            mappedBy = "event",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<EventRegistration> registrations = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "event",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private final List<Media> mediaList = new ArrayList<>();
 
 
     // ========================================================
@@ -28,12 +47,15 @@ public class Event {
     }
 
     public Event(String title, String description,
-                 LocalDateTime startDate, LocalDateTime endDate,
+                 LocalDateTime startDate, LocalDateTime endDate, String location, String address, int capacity,
                  Visibility visibility) {
         this.title = title;
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.location = location;
+        this.address = address;
+        this.capacity = capacity;
         this.visibility = visibility;
     }
 
@@ -73,6 +95,27 @@ public class Event {
         this.endDate = endDate;
     }
 
+    public String getLocation() {
+        return location;
+    }
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
     public Visibility getVisibility() {
         return visibility;
     }
@@ -80,4 +123,32 @@ public class Event {
         this.visibility = visibility;
     }
 
+    public List<EventRegistration> getRegistrations() {
+        return registrations;
+    }
+    public void setRegistrations(List<EventRegistration> registrations) {
+        this.registrations = registrations;
+    }
+
+    public List<Media> getMediaList() {
+        return mediaList;
+    }
+
+
+    /**
+     * Helper methods to manage the bidirectional relationship between
+     * the parent entity (Event)
+     * and its associated Media.
+     * These methods ensure consistency on both sides of the association.
+     */
+
+    public void addMedia(Media media) {
+        mediaList.add(media);
+        media.setEvent(this);
+    }
+
+    public void removeMedia(Media media) {
+        mediaList.remove(media);
+        media.setEvent(null);
+    }
 }

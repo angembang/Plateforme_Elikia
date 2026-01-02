@@ -3,6 +3,8 @@ package fr.elikia.backend.bo;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "news")
@@ -17,6 +19,16 @@ public class News {
 
     @Enumerated(EnumType.STRING)
     private Visibility visibility;
+
+    @Enumerated(EnumType.STRING)
+    private ContentStatus contentStatus;
+
+    @OneToMany(
+            mappedBy = "news",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private final List<Media> mediaList = new ArrayList<>();
 
 
     // ========================================================
@@ -69,5 +81,34 @@ public class News {
     }
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
+    }
+
+    public ContentStatus getContentStatus() {
+        return contentStatus;
+    }
+    public void setContentStatus(ContentStatus contentStatus) {
+        this.contentStatus = contentStatus;
+    }
+
+    public List<Media> getMediaList() {
+        return mediaList;
+    }
+
+
+    /**
+     * Helper methods to manage the bidirectional relationship between
+     * the parent entity (News)
+     * and its associated Media.
+     * These methods ensure consistency on both sides of the association.
+     */
+
+    public void addMedia(Media media) {
+        mediaList.add(media);
+        media.setNews(this);
+    }
+
+    public void removeMedia(Media media) {
+        mediaList.remove(media);
+        media.setNews(null);
     }
 }

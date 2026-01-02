@@ -18,6 +18,7 @@ public class Donation {
 
     private String firstName;
     private String lastName;
+    private String email;
     private boolean anonymous;
 
     @ManyToOne
@@ -33,7 +34,7 @@ public class Donation {
     }
 
     public Donation(Double amount, LocalDateTime donationDate, String status,
-                    String paymentReference, String firstName, String lastName,
+                    String paymentReference, String firstName, String lastName, String email,
                     boolean anonymous, Member member) {
         this.amount = amount;
         this.donationDate = donationDate;
@@ -41,6 +42,7 @@ public class Donation {
         this.paymentReference = paymentReference;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.email = email;
         this.anonymous = anonymous;
         this.member = member;
     }
@@ -96,6 +98,13 @@ public class Donation {
     }
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public boolean isAnonymous() {

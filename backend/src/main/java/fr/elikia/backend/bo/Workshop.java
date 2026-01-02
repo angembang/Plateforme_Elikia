@@ -3,6 +3,8 @@ package fr.elikia.backend.bo;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "workshop")
@@ -13,11 +15,28 @@ public class Workshop {
 
     private String title;
     private String description;
-    private LocalDateTime date;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
+    private String location;
+    private String address;
     private int capacity;
 
     @Enumerated(EnumType.STRING)
     private Visibility visibility;
+
+    @OneToMany(
+            mappedBy = "workshop",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<WorkshopRegistration> registrations = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "workshop",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private final List<Media> mediaList = new ArrayList<>();
 
 
     // ========================================================
@@ -28,10 +47,13 @@ public class Workshop {
     }
 
     public Workshop(String title, String description,
-                    LocalDateTime date, int capacity, Visibility visibility) {
+                    LocalDateTime startDate, LocalDateTime endDate, String location, String address, int capacity, Visibility visibility) {
         this.title = title;
         this.description = description;
-        this.date = date;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.location = location;
+        this.address = address;
         this.capacity = capacity;
         this.visibility = visibility;
     }
@@ -59,11 +81,32 @@ public class Workshop {
         this.description = description;
     }
 
-    public LocalDateTime getDate() {
-        return date;
+    public LocalDateTime getStartDate() {
+        return startDate;
     }
-    public void setDate(LocalDateTime date) {
-        this.date = date;
+    public void setStartDate(LocalDateTime startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDateTime getEndDate() {
+        return endDate;
+    }
+    public void setEndDate(LocalDateTime endDate) {
+        this.endDate = endDate;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public int getCapacity() {
@@ -78,5 +121,34 @@ public class Workshop {
     }
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
+    }
+
+    public List<WorkshopRegistration> getRegistrations() {
+        return registrations;
+    }
+    public void setRegistrations(List<WorkshopRegistration> registrations) {
+        this.registrations = registrations;
+    }
+
+    public List<Media> getMediaList() {
+        return mediaList;
+    }
+
+
+    /**
+     * Helper methods to manage the bidirectional relationship between
+     * the parent entity (Workshop)
+     * and its associated Media.
+     * These methods ensure consistency on both sides of the association.
+     */
+
+    public void addMedia(Media media) {
+        mediaList.add(media);
+        media.setWorkshop(this);
+    }
+
+    public void removeMedia(Media media) {
+        mediaList.remove(media);
+        media.setWorkshop(null);
     }
 }

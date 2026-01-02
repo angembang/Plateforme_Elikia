@@ -9,7 +9,8 @@ public class Media {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long mediaId;
 
-    private String imageUrl;
+    private String caption;
+    private String imagePath;
     private String videoUrl;
 
     @ManyToOne
@@ -37,10 +38,11 @@ public class Media {
     public Media() {
     }
 
-    public Media(Long mediaId, String imageUrl, String videoUrl, Event event, Workshop workshop,
+    public Media(Long mediaId, String caption, String imagePath, String videoUrl, Event event, Workshop workshop,
                  News news, Achievement achievement) {
         this.mediaId = mediaId;
-        this.imageUrl = imageUrl;
+        this.caption = caption;
+        this.imagePath = imagePath;
         this.videoUrl = videoUrl;
         this.event = event;
         this.workshop = workshop;
@@ -57,11 +59,18 @@ public class Media {
         return mediaId;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getCaption() {
+        return caption;
     }
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setCaption(String caption) {
+        this.caption = caption;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public String getVideoUrl() {

@@ -2,6 +2,8 @@ package fr.elikia.backend.bo;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "workshop_registration")
 public class WorkshopRegistration {
@@ -12,6 +14,7 @@ public class WorkshopRegistration {
     private String firstName;
     private String lastName;
     private String email;
+    private LocalDateTime registrationDate;
 
     @Enumerated(EnumType.STRING)
     private RegistrationStatus status;
@@ -31,11 +34,12 @@ public class WorkshopRegistration {
     public WorkshopRegistration() {
     }
 
-    public WorkshopRegistration(String firstName, String lastName, String email,
+    public WorkshopRegistration(String firstName, String lastName, String email, LocalDateTime registrationDate,
                                 RegistrationStatus status, Workshop workshop, Member member) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.registrationDate = registrationDate;
         this.status = status;
         this.workshop = workshop;
         this.member = member;
@@ -68,6 +72,13 @@ public class WorkshopRegistration {
     }
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public LocalDateTime getRegistrationDate() {
+        return registrationDate;
+    }
+    public void setRegistrationDate(LocalDateTime registrationDate) {
+        this.registrationDate = registrationDate;
     }
 
     public RegistrationStatus getStatus() {
