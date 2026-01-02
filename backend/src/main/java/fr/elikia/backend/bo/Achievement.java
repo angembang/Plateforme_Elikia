@@ -26,11 +26,12 @@ public class Achievement {
     public Achievement() {
     }
 
-    public Achievement(Long achievementId, String title, String description, LocalDateTime date) {
+    public Achievement(Long achievementId, String title, String description, LocalDateTime date, Visibility visibility) {
         this.achievementId = achievementId;
         this.title = title;
         this.description = description;
         this.date = date;
+        this.visibility = visibility;
     }
 
 
