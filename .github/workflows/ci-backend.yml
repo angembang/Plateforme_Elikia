@@ -2,100 +2,40 @@
 name: CI - Backend
 
 on:
-# Trigger this workflow on pushes and pull requests to main or dev branches
   push:
-    branches: [main, dev]
-  pull_request:
-    branches: [main, dev]
+    branches:
+      - main
+      - dev
+
 
 jobs:
   backend:
-    name: Build, Test, Sonar & Deploy
-    runs-on: ubuntu-latest # Use the latest Ubuntu runner
+    name: Build, test and analyze
+    runs-on: ubuntu-latest
 
     steps:
-      # -----------------------------
-      # Checkout the repository code
-      # -----------------------------
-      - name: Checkout repository
-        uses: actions/checkout@v4 # Grab the repository code to the runner
-
-      # -----------------------------
-      # Set up Java 21 for Gradle build
-      # -----------------------------
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Disabled the Shallow clones for a better relevancy of analysis
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '21' # Specify Java 21
-          distribution: 'temurin' # Use Eclipse Temurin distribution
-
-      # -----------------------------
-      # Ensure Docker Compose is available
-      # -----------------------------
-      # GitHub Ubuntu runners usually have Docker, Compose may be missing
-      - name: Ensure Docker Compose is installed
-        run: |
-          docker-compose --version || sudo apt update && sudo apt install docker-compose -y
-          docker --version
-
-      # -----------------------------
-      # Export secrets into a .env file for Docker Compose
-      # -----------------------------
-      - name: Export secrets for Docker Compose
-        run: |
-          echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" > .env
-          echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> .env
-          echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
-          echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
-          echo "SPRING_PROFILES_ACTIVE=dev" >> .env
-
-      # -----------------------------
-      # Start Docker Compose services (MySQL, backend, optional others)
-      # -----------------------------
-      - name: Start Docker Compose
-        run: docker-compose -f docker-compose.yml up -d --build
-        # -d: run in detached mode
-        # --build: build images if needed
-
-      # -----------------------------
-      # Wait for MySQL to be ready before running tests
-      # -----------------------------
-      - name: Wait for MySQL
-        run: |
-          until docker exec elikia-mysql mysqladmin ping -h "localhost" --silent; do
-            echo "Waiting for MySQL..."
-            sleep 5
-          done
-        # ensures Spring Boot can connect to MySQL when tests start
-
-      # -----------------------------
-      # Cache Gradle dependencies for faster builds
-      # -----------------------------
+          java-version: 21
+          distribution: 'temurin'
+      - name: Cache SonarQube packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
       - name: Cache Gradle packages
         uses: actions/cache@v4
         with:
-          path: ~/.gradle/caches # Gradle cache directory
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*') }} # unique key based on Gradle files
-          restore-keys: |
-            gradle-${{ runner.os }}- # fallback key
-
-      # -----------------------------
-      # Build, run tests, and Sonar analysis
-      # -----------------------------
-      - name: Build, test & Sonar analysis
-        working-directory: backend # Change directory to backend
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+      - name: Build and analyze
         env:
-          SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${{ secrets.MYSQL_DATABASE }} # Use Docker Compose service name
-          SPRING_DATASOURCE_USERNAME: ${{ secrets.MYSQL_USER }}
-          SPRING_DATASOURCE_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-          SPRING_PROFILES_ACTIVE: dev
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: |
-          ./gradlew clean test sonar \
-            -Dsonar.projectKey=elikia \
-            -Dsonar.host.url=$SONAR_HOST_URL \
-            -Dsonar.login=$SONAR_TOKEN
-        # clean: remove previous build
-        # test: run unit and integration tests
-        # sonar: run SonarQube analysis
+        run: ./gradlew build sonar --info
