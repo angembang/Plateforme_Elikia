@@ -2,33 +2,39 @@
 name: CI - Backend
 
 on:
+  # Trigger the workflow on push events
   push:
     branches:
+      # Only for main branch
       - main
       - dev
+  # Trigger the workflow on pull request events
   pull_request:
     branches:
       - main
       - dev
 
 jobs:
+  # Job identifier
   backend:
+    # Display name of the job
     name: Build, Test & Sonar Backend
+    # Run the job on an Ubuntu runner
     runs-on: ubuntu-latest
 
     steps:
-      # Étape 1 : extraction du code
+      # Retrieve the code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Étape 2 : configuration JDK 21
+      # Install Java 21
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
 
-      # Étape 3 : mise en cache des dépendances Gradle
+      # Cache Gradle dependencies
       - name: Cache Gradle packages
         uses: actions/cache@v4
         with:
@@ -37,11 +43,7 @@ jobs:
           restore-keys: |
             gradle-${{ runner.os }}-
 
-      # Étape 4 : rendre gradlew exécutable
-      - name: Make gradlew executable
-        run: chmod +x backend/gradlew
-
-      # Étape 5 : build + test + analyse Sonar
+      # Build + tests + Sonar analysis
       - name: Build, test & Sonar analysis
         working-directory: backend
         env:
@@ -52,3 +54,4 @@ jobs:
             -Dsonar.projectKey=elikia \
             -Dsonar.host.url=$SONAR_HOST_URL \
             -Dsonar.login=$SONAR_TOKEN
+          
