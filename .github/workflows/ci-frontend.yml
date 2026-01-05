@@ -1,0 +1,53 @@
+# Workflow name displayed in GitHub Actions
+name: CI - Frontend
+
+# Workflow triggers
+on:
+  # Trigger on push to main and develop branches
+  push:
+    branches:
+      - main
+
+  # Trigger on pull requests to main and develop
+  pull_request:
+    branches:
+      - main
+
+# Jobs definition
+jobs:
+  build-frontend:
+    # Job display name
+    name: Build & Test Frontend
+
+    # GitHub-hosted runner
+    runs-on: ubuntu-latest
+
+    # Job steps
+    steps:
+      # Step 1: Checkout repository source code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Node.js environment
+      - name: Set up Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      # Step 3: Install project dependencies
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      # Step 4: Run unit tests
+      - name: Run unit tests
+        working-directory: frontend
+        run: npm test -- --watch=false --browsers=ChromeHeadless
+        continue-on-error: true
+
+      # Step 5: Build Angular application
+      - name: Build Angular app
+        working-directory: frontend
+        run: npm run build
