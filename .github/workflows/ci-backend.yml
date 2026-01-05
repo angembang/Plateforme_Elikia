@@ -7,21 +7,23 @@ on:
     branches:
       # Only for main branch
       - main
+      - dev
   # Trigger the workflow on pull request events
   pull_request:
     branches:
       - main
+      - dev
 
 jobs:
   # Job identifier
-  build-backend:
+  backend:
     # Display name of the job
-    name: Build & Test Backend (Gradle - Java 21)
+    name: Build, Test & Sonar Backend
     # Run the job on an Ubuntu runner
     runs-on: ubuntu-latest
 
     steps:
-      # Clone the repository
+      # Retrieve the code
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -33,23 +35,25 @@ jobs:
           distribution: 'temurin'
 
       # Cache Gradle dependencies
-      - name: Cache Gradle dependencies
+      - name: Cache Gradle packages
         uses: actions/cache@v4
         with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          path: ~/.gradle/caches
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             gradle-${{ runner.os }}-
-            
 
-      # Make Gradlew executable
-      - name: Make Gradlew executable
+      # Build + tests + Sonar analysis
+      - name: Build, test & Sonar analysis
         working-directory: backend
-        run: chmod +x gradlew
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          ./gradlew clean test sonar \
+            -Dsonar.projectKey=elikia \
+            -Dsonar.host.url=$SONAR_HOST_URL \
+            -Dsonar.login=$SONAR_TOKEN
 
-      # Build & run tests using Gradle Wrapper
-      - name: Build & run tests
-        working-directory: backend
-        run: ./gradlew clean build --no-daemon
+
+
