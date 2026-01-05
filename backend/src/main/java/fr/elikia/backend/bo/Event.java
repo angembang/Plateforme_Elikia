@@ -13,15 +13,29 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long eventId;
 
+    @Column(nullable = false)
     private String title;
+
+    @Column(nullable = false)
     private String description;
+
+    @Column(nullable = false)
     private LocalDateTime startDate;
+
+    @Column(nullable = false)
     private LocalDateTime endDate;
+
+    @Column(nullable = false)
     private String location;
+
+    @Column(nullable = false)
     private String address;
+
+    @Column(nullable = false)
     private int capacity;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Visibility visibility;
 
     @OneToMany(
@@ -43,7 +57,7 @@ public class Event {
     // Constructors
     // ========================================================
 
-    protected Event() {
+    public Event() {
     }
 
     public Event(String title, String description,

@@ -11,14 +11,25 @@ public class Donation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long donationId;
 
+    @Column(nullable = false)
     private Double amount;
+
+    @Column(nullable = false)
     private LocalDateTime donationDate;
+
+    @Column(nullable = false)
     private String status;
+
+    @Column(nullable = false, unique = true)
     private String paymentReference;
 
     private String firstName;
+
     private String lastName;
+
     private String email;
+
+    @Column(nullable = false)
     private boolean anonymous;
 
     @ManyToOne

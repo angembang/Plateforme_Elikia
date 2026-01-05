@@ -14,9 +14,12 @@ public class WorkshopRegistration {
     private String firstName;
     private String lastName;
     private String email;
+
+    @Column(nullable = false)
     private LocalDateTime registrationDate;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private RegistrationStatus status;
 
     @ManyToOne
@@ -49,6 +52,7 @@ public class WorkshopRegistration {
     // ========================================================
     // Getters & Setters
     // ========================================================
+
     public Long getRegistrationId() {
         return registrationId;
     }

@@ -8,6 +8,8 @@ public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roleId;
+
+    @Column(nullable = false)
     private String name;
 
 
@@ -15,7 +17,7 @@ public class Role {
     // Constructors
     // ========================================================
 
-    protected Role() {
+    public Role() {
     }
 
     public Role(String name) {

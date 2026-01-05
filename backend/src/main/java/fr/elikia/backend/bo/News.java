@@ -13,14 +13,20 @@ public class News {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long newsId;
 
+    @Column(nullable = false)
     private String title;
+
+    @Column(nullable = false)
     private String content;
+
     private LocalDateTime publishedAt;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Visibility visibility;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ContentStatus contentStatus;
 
     @OneToMany(
@@ -35,7 +41,7 @@ public class News {
     // Constructors
     // ========================================================
 
-    protected News() {
+    public News() {
     }
 
     public News(String title, String content,

@@ -14,9 +14,12 @@ public class EventRegistration {
     private String firstName;
     private String lastName;
     private String email;
+
+    @Column(nullable = false)
     private LocalDateTime registrationDate;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private RegistrationStatus status;
 
     @ManyToOne
@@ -32,7 +35,7 @@ public class EventRegistration {
     // Constructors
     // ========================================================
 
-    protected EventRegistration() {
+    public EventRegistration() {
     }
 
     public EventRegistration(String firstName, String lastName, String email, LocalDateTime registrationDate,

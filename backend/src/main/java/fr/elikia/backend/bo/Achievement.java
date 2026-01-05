@@ -13,11 +13,17 @@ public class Achievement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long achievementId;
 
+    @Column(nullable = false)
     private String title;
+
+    @Column(nullable = false)
     private String description;
+
+    @Column(nullable = false)
     private LocalDateTime date;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Visibility visibility;
 
     @OneToMany(

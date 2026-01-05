@@ -1,18 +1,21 @@
 package fr.elikia.backend.bo;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "member")
 public class Member extends User {
+    @Column(nullable = false)
     private String membershipNumber;
+
+    @Column(nullable = false)
     private LocalDate membershipDate;
+
+    @Column(nullable = false)
     private String status;
+
     private String image;
 
     @ManyToOne

@@ -14,19 +14,19 @@ public class Media {
     private String videoUrl;
 
     @ManyToOne
-    @JoinColumn(name = "event_id")
+    @JoinColumn(name = "event_id", nullable = true)
     private Event event;
 
     @ManyToOne
-    @JoinColumn(name = "workshop_id")
+    @JoinColumn(name = "workshop_id", nullable = true)
     private Workshop workshop;
 
     @ManyToOne
-    @JoinColumn(name = "news_id")
+    @JoinColumn(name = "news_id", nullable = true)
     private News news;
 
     @ManyToOne
-    @JoinColumn(name = "achievement_id")
+    @JoinColumn(name = "achievement_id", nullable = true)
     private Achievement achievement;
 
 

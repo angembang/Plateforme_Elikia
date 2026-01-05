@@ -1,9 +1,6 @@
 package fr.elikia.backend.bo;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
@@ -13,10 +10,19 @@ public abstract class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long userId;
 
+    @Column(nullable = false)
     protected String firstName;
+
+    @Column(nullable = false)
     protected String lastName;
+
+    @Column(nullable = false, unique = true)
     protected String email;
+
+    @Column(nullable = false)
     protected String password;
+
+    @Column(nullable = false)
     protected LocalDate createdAt;
 
 
