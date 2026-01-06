@@ -11,14 +11,8 @@ version = '0.0.1-SNAPSHOT'
 description = 'backend'
 
 jacoco {
-    toolVersion = "0.8.11"
-}
-
-sonar {
-    properties {
-        property "sonar.projectKey", "elikia"
-        property "sonar.sourceEncoding", "UTF-8"
-    }
+    toolVersion = "0.8.13"
+    reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
 }
 
 java {
@@ -49,7 +43,8 @@ tasks.named('test') {
 
 jacocoTestReport {
     reports {
-        xml.required = true
-        html.required = true
+        xml.required = false
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
     }
 }
