@@ -39,6 +39,6 @@ jobs:
           SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
           SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
         run: |
-          ./gradlew clean test jacocoTestReport sonarqube \
+          ./gradlew clean test jacocoTestReport sonar \
             -Dsonar.projectKey=$SONAR_PROJECT_KEY \
             -Dsonar.organization=$SONAR_ORGANIZATION
