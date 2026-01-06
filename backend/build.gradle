@@ -2,12 +2,24 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '4.0.1'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'jacoco'
     id "org.sonarqube" version "7.2.0.6526"
 }
 
 group = 'fr.elikia'
 version = '0.0.1-SNAPSHOT'
 description = 'backend'
+
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "elikia"
+        property "sonar.sourceEncoding", "UTF-8"
+    }
+}
 
 java {
     toolchain {
@@ -32,11 +44,12 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
 }
 
-sonar {
-    properties {
-        property "sonar.projectKey", "elikia"
-        property "sonar.sourceEncoding", "UTF-8"
+jacocoTestReport {
+    reports {
+        xml.required = true
+        html.required = true
     }
 }

@@ -36,4 +36,9 @@ jobs:
         env:
           SPRING_PROFILES_ACTIVE: test
         run: |
-          ./gradlew clean test 
+          ./gradlew clean test jacocoTestReport sonar \
+            -Dsonar.projectKey=elikia \
+            -Dsonar.host.url=$SONAR_HOST_URL \
+            -Dsonar.login=$SONAR_TOKEN \
+            -Dsonar.coverage.jacoco.xmlReportPaths=build/reports/jacoco/test/jacocoTestReport.xml
+        
