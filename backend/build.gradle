@@ -3,7 +3,7 @@ plugins {
     id 'org.springframework.boot' version '4.0.1'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'jacoco'
-    id "org.sonarqube" version "7.2.0.6526"
+    id 'org.sonarqube'
 }
 
 group = 'fr.elikia'
@@ -12,7 +12,6 @@ description = 'backend'
 
 jacoco {
     toolVersion = "0.8.13"
-    reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
 }
 
 java {
@@ -43,8 +42,15 @@ tasks.named('test') {
 
 jacocoTestReport {
     reports {
-        xml.required = false
-        csv.required = false
-        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+        xml.required = true
+        html.required = true
+    }
+}
+
+sonarqube {
+    properties {
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.coverage.jacoco.xmlReportPaths",
+                "build/reports/jacoco/test/jacocoTestReport.xml"
     }
 }

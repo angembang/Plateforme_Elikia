@@ -31,14 +31,14 @@ jobs:
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}
           restore-keys: gradle-${{ runner.os }}-
 
-      - name: Build and test
+      - name: Build, test & SonarCloud
         working-directory: backend
         env:
           SPRING_PROFILES_ACTIVE: test
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
+          SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
         run: |
-          ./gradlew clean test jacocoTestReport sonar \
-            -Dsonar.projectKey=elikia \
-            -Dsonar.host.url=$SONAR_HOST_URL \
-            -Dsonar.login=$SONAR_TOKEN \
-            -Dsonar.coverage.jacoco.xmlReportPaths=build/reports/jacoco/test/jacocoTestReport.xml
-        
+          ./gradlew clean test jacocoTestReport sonarqube \
+            -Dsonar.projectKey=$SONAR_PROJECT_KEY \
+            -Dsonar.organization=$SONAR_ORGANIZATION
