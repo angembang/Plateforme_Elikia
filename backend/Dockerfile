@@ -3,6 +3,9 @@
 # ===============================
 FROM eclipse-temurin:21-jdk AS build
 
+# Build environment variable
+ENV DOCKER_BUILD=true
+
 # Définition du répertoire de travail
 WORKDIR /app
 

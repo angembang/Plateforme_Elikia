@@ -1,11 +1,11 @@
 # ===============================
-# Étape 1 : Build Angular
+# Step 1 : Build Angular
 # ===============================
 FROM node:24-alpine AS build
 
 WORKDIR /app
 
-# Copier les fichiers de dépendances
+# Copy dependency files
 COPY package*.json ./
 
 # Installer les dépendances
@@ -18,18 +18,18 @@ COPY . .
 RUN npm run build
 
 # ===============================
-# Étape 2 : Serveur Nginx
+# Step 2 : Nginx server
 # ===============================
 FROM nginx:alpine
 
-# Supprimer la configuration par défaut
+# Remove default nginx config
 RUN rm /etc/nginx/conf.d/default.conf
 
 # Ajouter la configuration Nginx
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copier le build Angular
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/dist/frontend /usr/share/nginx/html
 
 # Exposer le port
 EXPOSE 80
