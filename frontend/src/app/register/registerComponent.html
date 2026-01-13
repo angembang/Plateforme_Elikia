@@ -1,0 +1,38 @@
+<section class="auth-container">
+
+  <h2>Register</h2>
+
+  <form [formGroup]="registerForm" (ngSubmit)="submit()">
+
+    <input placeholder="First name" formControlName="firstName" />
+    <input placeholder="Last name" formControlName="lastName" />
+    <input placeholder="Email" formControlName="email" />
+    <input type="password" placeholder="Password" formControlName="password" />
+    <input type="password" placeholder="Confirm password" formControlName="confirmPassword" />
+
+    @if(errorMessage) {
+      <div class="error">
+        {{ errorMessage }}
+      </div>
+    }
+
+    @if(successMessage) {
+      <div class="success">
+        {{ successMessage }}
+      </div>
+    }
+
+    <button type="submit" [disabled]="registerForm.invalid">
+      Register
+    </button>
+
+  </form>
+
+  <p>
+    Already have an account?
+    <a routerLink="/login">Login</a>
+  </p>
+
+</section>
+
+
