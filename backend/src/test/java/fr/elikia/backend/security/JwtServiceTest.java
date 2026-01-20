@@ -3,6 +3,7 @@ package fr.elikia.backend.security;
 import fr.elikia.backend.bo.LogicResult;
 import fr.elikia.backend.security.jwt.JwtService;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -12,7 +13,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @ActiveProfiles("test")
 class JwtServiceTest {
-    private final JwtService jwtService = new JwtService();
+    @Autowired
+    private JwtService jwtService;
+
 
     @Test
     void itShouldGenerateAndValidateToken() {
