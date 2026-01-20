@@ -1,13 +1,13 @@
 package fr.elikia.backend.security.jwt;
 
-import fr.elikia.backend.bo.Admin;
 import fr.elikia.backend.bo.LogicResult;
-import fr.elikia.backend.bo.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -21,6 +21,27 @@ import java.util.Date;
  */
 @Component
 public class JwtService {
+    @Value("${jwt.secret}")
+    private String jwtSecret;
+
+    @Value("${jwt.expiration}")
+    private Long jwtExpirationMs;
+
+    /**
+     * Validation at Spring context startup
+     * (fail-fast if bad configuration)
+     */
+    @PostConstruct
+    void validate() {
+        if (jwtSecret == null || jwtSecret.length() < 32) {
+            throw new IllegalStateException("JWT secret missing or too short (min 32 chars)");
+        }
+
+        if (jwtExpirationMs == null || jwtExpirationMs <= 0) {
+            throw new IllegalStateException("JWT expiration must be > 0");
+        }
+    }
+
     /**
      * Builds the secret signing key from a Base64-encoded string.
      *
@@ -28,7 +49,7 @@ public class JwtService {
      */
     private Key getSecretKey() {
         // convert a string to base 64
-        byte[] keyBytes = Decoders.BASE64.decode("$69636e783529213d5722613b2b336c793371666524684a3445226e5573");
+        byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
         // convert the base 64 to Key
         return Keys.hmacShaKeyFor(keyBytes);
     }
@@ -37,18 +58,18 @@ public class JwtService {
     /**
      * Generates a signed JWT token for an authenticated user
      *
-     * @param user authenticated user
+     * @param email, role of the authenticated user
      * @return JWT token as String
      */
-    public String generateToken(User user) {
+    public String generateToken(String email, String role) {
         // Token creation date
         Date issuedAt = new Date(System.currentTimeMillis());
-        Date tokenLifeTime = new Date(System.currentTimeMillis() + 1000 * 60 * 60);  // Token lifetime
+        Date tokenLifeTime = new Date(System.currentTimeMillis() + jwtExpirationMs);  // Token lifetime
         return Jwts.builder()
-                .subject(user.getEmail()) //subject data (identity)
+                .subject(email) //subject data (identity)
                 .issuedAt(issuedAt) // Token creation date
                 .expiration(tokenLifeTime) // Token expiration date
-                .claim("role", user instanceof Admin ? "ADMIN" : "MEMBER")
+                .claim("role", role)
                 .signWith((getSecretKey())) // Crypt of the secret key
                 .compact();
 

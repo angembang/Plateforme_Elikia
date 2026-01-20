@@ -45,7 +45,6 @@ jobs:
       - name: Run unit tests
         working-directory: frontend
         run: npm test -- --watch=false --browsers=ChromeHeadless
-        continue-on-error: true
 
       # Step 5: Build Angular application
       - name: Build Angular app

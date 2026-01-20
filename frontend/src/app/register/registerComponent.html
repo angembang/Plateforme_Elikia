@@ -1,37 +1,75 @@
 <section class="auth-container">
 
-  <h2>Register</h2>
+  <h2>Demande d'adhésion</h2>
 
   <form [formGroup]="registerForm" (ngSubmit)="submit()">
+    <p class="info">
+      La demande d'adhésion sera examinée par un administrateur.
+      Vous pourrez vous connecter une fois votre adhésion validée.
+    </p>
 
-    <input placeholder="First name" formControlName="firstName" />
-    <input placeholder="Last name" formControlName="lastName" />
-    <input placeholder="Email" formControlName="email" />
-    <input type="password" placeholder="Password" formControlName="password" />
-    <input type="password" placeholder="Confirm password" formControlName="confirmPassword" />
+    <div class="field">
+      <label for="firstName">Prénom</label>
+      <input
+        type="text"
+        id="firstName"
+        placeholder="Prénom"
+        formControlName="firstName" >
+    </div>
 
-    @if(errorMessage) {
+    <div class="field">
+      <label for="lastName">Nom</label>
+      <input
+        type="text"
+        id="lastName"
+        placeholder="Nom"
+        formControlName="lastName">
+    </div>
+
+    <div class="field">
+      <label for="email">Email</label>
+      <input
+        type="email"
+        id="email"
+        placeholder="Adresse email"
+        formControlName="email" >
+    </div>
+
+    <div class="field">
+      <label for="password">Mot de passe</label>
+      <input
+        type="password"
+        id="password"
+        placeholder="Mot de passe"
+        formControlName="password" >
+    </div>
+
+    <div class="field">
+      <label for="confirmPassword">Confirmation du mot de passe</label>
+      <input
+        type="password"
+        id="confirmPassword"
+        placeholder="Confirmation du mot de passe"
+        formControlName="confirmPassword" >
+    </div>
+
+    @if (errorMessage) {
       <div class="error">
         {{ errorMessage }}
       </div>
     }
 
-    @if(successMessage) {
+    @if (successMessage) {
       <div class="success">
         {{ successMessage }}
       </div>
     }
 
-    <button type="submit" [disabled]="registerForm.invalid">
-      Register
+    <button type="submit">
+      Soumettre la demande d'adhésion
     </button>
 
   </form>
-
-  <p>
-    Already have an account?
-    <a routerLink="/login">Login</a>
-  </p>
 
 </section>
 

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {AuthStorageService} from './auth-storage.service';
 import {LoginRequest} from '../models/LoginRequest';
-import {Observable, tap} from 'rxjs';
+import {catchError, Observable, of, tap} from 'rxjs';
 import {LogicResult} from '../models/LogicResult';
 import {RegisterRequest} from '../models/RegisterRequest';
 import {environment} from '../../environments/environment';
@@ -11,11 +11,11 @@ import {environment} from '../../environments/environment';
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly API_URL = environment.apiUrl;
+  private readonly API_URL = `${environment.apiUrl}/auth`;
 
   constructor(
-    private http: HttpClient,
-    private storage: AuthStorageService
+    private readonly http: HttpClient,
+    private readonly storage: AuthStorageService
   ) {}
 
   /**
@@ -30,6 +30,10 @@ export class AuthService {
           if (result.code === '200' && result.data) {
             this.storage.setToken(result.data);
           }
+        }),
+        catchError(err => {
+          // Transform http error to LogicResult
+          return of(err.error as LogicResult<string>);
         })
       );
   }
@@ -57,4 +61,5 @@ export class AuthService {
   isAuthenticated(): boolean {
     return this.storage.hasToken();
   }
+
 }

@@ -1,35 +1,69 @@
+@use 'styles/variables' as *;
+
 .auth-container {
-  width: 400px;
-  margin: 80px auto;
-  padding: 2rem;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  max-width: 400px;
+  margin: 5rem auto;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: $color-light-bg;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 
   h2 {
     text-align: center;
+    color: $bg-main;
+    margin-bottom: 1rem;
   }
 
-  .form-group {
-    margin-bottom: 1rem;
+  form {
+    background-color: white;
     display: flex;
     flex-direction: column;
+    gap: 1rem;
+
+    label {
+      color: $bg-main;
+      font-weight: 600;
+      width: 30%;
+    }
+
+    .form-group {
+      display: flex;
+      gap: 1rem;
+      padding: 0.5rem;
+      align-items: center;
+    }
 
     input {
       padding: 0.5rem;
+      width: 60%;
+      border-radius: 7px;
+      border: 1px solid $color-border;
     }
 
     small {
       color: red;
     }
+
+    .error {
+      color: red;
+      margin: 0.5rem 0;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      font-weight: bold;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      background-color: $bg-main;
+      color: white;
+      cursor: pointer;
+    }
+
   }
 
-  .error {
-    color: red;
-    margin-bottom: 1rem;
-  }
-
-  button {
-    width: 100%;
-    padding: 0.6rem;
-  }
 }
+
+

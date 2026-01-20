@@ -1,0 +1,137 @@
+@use 'styles/variables' as *;
+
+/* ===== Image mobile ===== */
+form::before {
+  content: '';
+  display: block;
+  height: 30vh;
+  background-image: url('/images/background_home_elikia.png');
+  background-size: cover;
+  background-position: center;
+}
+
+.auth-container {
+  max-width: 400px;
+  margin: 0.5rem auto;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: $color-light-bg;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  h2 {
+    text-align: center;
+    color: $bg-main;
+    margin-bottom: 1rem;
+  }
+
+  /* ===== Form ===== */
+  form {
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    .info {
+      text-align: center;
+      color: $action;
+      padding: 0 0.5rem;
+    }
+
+    label {
+      color: $bg-main;
+      font-weight: 600;
+      width: 30%;
+    }
+
+    .field {
+      display: flex;
+      gap: 1rem;
+      padding: 0 1rem;
+      align-items: center;
+    }
+
+    input {
+      padding: 0.5rem;
+      width: 60%;
+      border-radius: 7px;
+      border: 1px solid $color-border;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      font-weight: bold;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      background-color: $bg-main;
+      color: white;
+      cursor: pointer;
+    }
+
+    .error {
+      color: red;
+      margin: 0.5rem 0;
+    }
+
+    .success {
+      color: green;
+      margin: 0.5rem 0;
+    }
+
+  }
+  /* ===== Desktop ===== */
+  @media (min-width: 768px) {
+    max-width: 90%;
+
+    form {
+      width: 90%;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 4.5rem;
+      row-gap: 1.5rem;
+      padding: 1rem;
+      border-radius: 7px;
+
+      /* ===== Image sur toute la largeur ===== */
+      &::before {
+        display: none;
+      }
+
+      /* =====éléments pleine largeur ===== */
+      .error,
+      .success,
+      button {
+        grid-column: 1 / -1;
+        text-align: center;
+      }
+      .info {
+        display: none;
+      }
+
+      button {
+        width: 40%;
+        justify-self: center;
+        padding: 0.5rem 0;
+      }
+
+      .field {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      label,
+      input {
+        width: 90%;
+        margin: auto;
+      }
+
+    }
+
+  }
+
+}
+
+
+

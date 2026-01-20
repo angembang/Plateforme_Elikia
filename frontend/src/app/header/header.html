@@ -1,0 +1,37 @@
+<div class="header">
+
+  <!-- Menu burger -->
+  <button class="burger" (click)="toggleMenu()" aria-label="Menu">
+    <i class="fa-solid fa-bars"></i>
+  </button>
+
+  <!-- LOGO -->
+  <div class="logo">
+    <img ngSrc="/images/logo_elikia.png" alt="Elikia Elikia" fill/>
+  </div>
+
+  <!-- Desktop navigation -->
+  <nav class="nav-desktop"
+       aria-label="Navigation principale">
+    <a routerLink="/register">Adhésion</a>
+    <a routerLink="/login">Se connecter</a>
+    <!-- futurs liens ici -->
+  </nav>
+
+  <!-- Search button -->
+  <div class="search">
+    <button class="search-btn" aria-label="Recherche">
+      <i class="fa-solid fa-magnifying-glass"></i>
+    </button>
+  </div>
+
+</div>
+
+<!-- Mobile navigation -->
+<nav class="nav-mobile"
+     aria-label="Navigation mobile"
+     [class.open]="menuOpen">
+  <a routerLink="/register" (click)="closeMenu()">Adhésion</a>
+  <a routerLink="/login" (click)="closeMenu()">Se connecter</a>
+</nav>
+

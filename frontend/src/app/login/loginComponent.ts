@@ -1,13 +1,12 @@
 import { Component } from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuthService} from '../services/auth.service';
-import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   selector: 'app-login',
   imports: [
     ReactiveFormsModule,
-    RouterLink
   ],
   templateUrl: './loginComponent.html',
   styleUrl: './loginComponent.scss',
@@ -17,10 +16,10 @@ export class LoginComponent {
   loginForm!: FormGroup;
 
   constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
-    private router: Router,
-    private route: ActivatedRoute
+    private readonly fb: FormBuilder,
+    private readonly authService: AuthService,
+    private readonly router: Router,
+    private readonly route: ActivatedRoute
   ) {
     // Reactive form
     this.loginForm = this.fb.group({
@@ -35,7 +34,7 @@ export class LoginComponent {
       return;
     }
 
-    this.authService.login(this.loginForm.value as any)
+    this.authService.login(this.loginForm.value)
       .subscribe({
         next: result => {
           if (result.code === '200') {

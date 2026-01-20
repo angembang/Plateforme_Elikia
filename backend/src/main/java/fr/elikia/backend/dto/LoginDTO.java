@@ -1,5 +1,6 @@
 package fr.elikia.backend.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -9,10 +10,20 @@ import jakarta.validation.constraints.Size;
  * Contains only fields allowed to be sent by the client.
  */
 public class LoginDTO {
+    @Schema(
+            description = "Adresse email de l'utilisateur",
+            example = "user@mail.com"
+    )
     @NotBlank
     @Email
     private String email;
-    @NotBlank
+
+    @Schema(
+            description = "Mot de passe",
+            format = "password",
+            accessMode = Schema.AccessMode.WRITE_ONLY
+    )
+    @NotBlank(message = "Password is required")
     @Size(min = 8, max = 100, message = "Password must be between 8 and 100 characters")
     private String password;
 

@@ -2,15 +2,21 @@ package fr.elikia.backend.controller;
 
 import fr.elikia.backend.bll.AuthService;
 import fr.elikia.backend.bo.LogicResult;
+import fr.elikia.backend.dto.AuthResponseDTO;
 import fr.elikia.backend.dto.LoginDTO;
 import fr.elikia.backend.dto.RegisterDTO;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("api/auth")
+@Tag(name = "Authentification", description = "Gestion de la connexion et de l'adhésion")
 public class AuthController {
     private final AuthService authService;
 
@@ -22,9 +28,19 @@ public class AuthController {
      * Post mapping for register
      * @return the register method of the Auth service
      */
+    @Operation(
+            summary = "Demande d'adhésion",
+            description = "Soumet une demande d'adhésion qui sera validée par un administrateur"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Demande envoyée"),
+            @ApiResponse(responseCode = "400", description = "Données invalides"),
+            @ApiResponse(responseCode = "409", description = "Email déjà utilisé")
+    })
     @PostMapping("/register")
-    public LogicResult<Void> register(@RequestBody RegisterDTO registerDTO){
-        return authService.register(registerDTO);
+    public  ResponseEntity<LogicResult<Void>> register(@RequestBody RegisterDTO registerDTO){
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(authService.register(registerDTO));
     }
 
 
@@ -32,9 +48,49 @@ public class AuthController {
      * Post mapping for login
      * @return the login method of the Auth service
      */
+    @Operation(
+            summary = "Connexion utilisateur",
+            description = "Permet à un administrateur ou un membre validé de se connecter"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Connexion réussie"),
+            @ApiResponse(responseCode = "401", description = "Email ou mot de passe incorrect"),
+            @ApiResponse(responseCode = "403", description = "Compte non validé ou accès refusé"),
+            @ApiResponse(responseCode = "423", description = "Compte temporairement bloqué")
+    })
     @PostMapping("/login")
-    public LogicResult<String> login(@RequestBody LoginDTO loginDTO) {
-        return authService.login(loginDTO);
+    public ResponseEntity<LogicResult<AuthResponseDTO>> login(@RequestBody LoginDTO loginDTO) {
+
+        LogicResult<String> result = authService.login(loginDTO);
+
+        HttpStatus status = HttpStatus.resolve(
+                Integer.parseInt(result.getCode())
+        );
+
+        if (status == null) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        // If failed (no token)
+        if (result.getData() == null) {
+            return ResponseEntity
+                    .status(status)
+                    .body(new LogicResult<>(
+                            result.getCode(),
+                            result.getMessage(),
+                            null
+                    ));
+        }
+
+        // Success
+        return ResponseEntity
+                .status(status)
+                .body(new LogicResult<>(
+                        result.getCode(),
+                        result.getMessage(),
+                        new AuthResponseDTO(result.getData())
+                ));
     }
+
 
 }

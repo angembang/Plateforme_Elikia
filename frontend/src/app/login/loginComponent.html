@@ -1,13 +1,17 @@
-<div class="auth-container">
+<section class="auth-container">
 
-  <h2>Login</h2>
+  <h2 class="form-title">Connexion</h2>
 
   <form [formGroup]="loginForm" (ngSubmit)="submit()">
 
     <!-- Email -->
     <div class="form-group">
-      <label>Email</label>
-      <input type="email" formControlName="email" />
+      <label for="email">Email</label>
+      <input
+        type="email"
+        id="email"
+        placeholder="Adresse email"
+        formControlName="email" />
 
       @if(loginForm.get('email')?.touched &&
       loginForm.get('email')?.invalid) {
@@ -17,14 +21,17 @@
 
     <!-- Password -->
     <div class="form-group">
-      <label>Password</label>
-      <input type="password" formControlName="password" />
+      <label for="password">Mot de passe</label>
+      <input
+        type="password"
+        id="password"
+        placeholder="Mot de passe"
+        formControlName="password" />
 
-        @if(loginForm.get('password')?.touched &&
-        loginForm.get('password')?.invalid) {
-          <small>Password must be at least 8 characters</small>
-        }
-
+      @if(loginForm.get('password')?.touched &&
+      loginForm.get('password')?.invalid) {
+        <small>Password must be at least 8 characters</small>
+      }
     </div>
 
     <!-- Backend error -->
@@ -34,15 +41,10 @@
       </div>
     }
 
-    <button type="submit" [disabled]="loginForm.invalid">
-      Login
+    <button type="submit">
+      Se connecter
     </button>
 
   </form>
 
-  <p>
-    Don't have an account?
-    <a routerLink="/register">Register</a>
-  </p>
-
-</div>
+</section>

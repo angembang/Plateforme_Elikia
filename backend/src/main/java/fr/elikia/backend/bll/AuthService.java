@@ -47,87 +47,82 @@ public class AuthService {
     public LogicResult<String> login(LoginDTO dto) {
 
         // Sanitize user input email (XSS protection)
-        String email = InputSanitizer.sanitize(dto.getEmail()).toLowerCase();
+        String email = dto.getEmail() != null
+                ? dto.getEmail().trim().toLowerCase()
+                : null;
+        // Retrieve user input password
+        String inputPassword = dto.getPassword();
 
         /*
          Try to find the user first in the admin repository, then in the member repository
          If user is not found, return 401 Unauthorized
          */
+        // Try to authenticate Admin first
         Admin admin = idaoAdmin.findByEmail(email);
-        User user;
         if (admin != null) {
-            user = admin;
-        } else {
-            Member member = idaoMember.findByEmail(email);
-            if (member == null) {
-                return new LogicResult<>("401", "Invalid credentials", null);
-            }
-            // Retrieve the actual user object from the Optional
-            user = member;
-
-            // ==========================================
-            // Block connexion process if member not validated
-            // ==========================================
-            if(!"VALIDE".equals(member.getStatus())) {
-                return new LogicResult<>("403", "Account not validate yet", null);
-            }
+            return authenticateUser(admin, inputPassword, "ADMIN");
         }
 
-        // ==========================
-        // Check for account lock
-        // ==========================
-        if (user.getLockUntil() != null &&
-                user.getLockUntil().isAfter(LocalDateTime.now())) {
-
-            // Account is temporarily locked; return 423 Locked
-            return new LogicResult<>(
-                    "423",
-                    "Account temporarily locked. Please try again later.",
-                    null
-            );
+        // Then try to authenticate Member
+        Member member = idaoMember.findByEmail(email);
+        if (member != null) {
+            return authenticateUser(member, inputPassword, "MEMBER");
         }
 
-        // Password verification
-        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+        // User not found
+        return new LogicResult<>("401", "Invalid email or password", null);
+    }
 
-            // Increment failed login attempts
+    /**
+     * Handles authentication logic for any User (Admin or Member)
+     */
+    private LogicResult<String> authenticateUser(User user, String rawPassword, String role) {
+        // ---- Check account lock
+        if (user.getLockUntil() != null && user.getLockUntil().isAfter(LocalDateTime.now())) {
+            return new LogicResult<>("423", "Account temporarily locked. Please try again later.", null);
+        }
+
+        // ---- Password verification
+        if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
             user.setFailedLoginAttempts(user.getFailedLoginAttempts() + 1);
-
-            // Lock the account for 30 minutes if failed attempts exceed 3
             if (user.getFailedLoginAttempts() >= 3) {
                 user.setLockUntil(LocalDateTime.now().plusMinutes(30));
             }
-
-            // Save the updated user state (failed attempts and lock)
-            if(user instanceof Admin) {
-                idaoAdmin.update((Admin) user);
-            } else {
-                idaoMember.update((Member) user);
-            }
-
-            // Return 401 Unauthorized
-            return new LogicResult<>("401", "Invalid credentials", null);
+            saveUser(user);
+            return new LogicResult<>("401", "Incorrect password", null);
         }
 
-        // ==========================
-        // Successful login
-        // ==========================
+        // ---- Member-specific status check
+        if (user instanceof Member member) {
+            String status = member.getStatus();
+            if (!"VALIDE".equals(status)) {
+                String message = switch (status) {
+                    case "INSCRIPTION_TRANSMISE" -> "Your membership is currently being processed.";
+                    case "ANNULEE" -> "Your membership has been cancelled. Please contact support.";
+                    default -> "Your membership is not active.";
+                };
+                return new LogicResult<>("403", message, null);
+            }
+        }
 
-        // Reset failed login attempts and lock status
+        // ---- Successful login
         user.setFailedLoginAttempts(0);
         user.setLockUntil(null);
-        // Save the updated user state (failed attempts and lock)
-        if(user instanceof Admin) {
-            idaoAdmin.update((Admin) user);
-        } else {
-            idaoMember.update((Member) user);
+        saveUser(user);
+
+        String token = jwtService.generateToken(user.getEmail(), role);
+        return new LogicResult<>("200", role + " login successful", token);
+    }
+
+    /**
+     * Saves a User entity (Admin or Member)
+     */
+    private void saveUser(User user) {
+        if (user instanceof Admin admin) {
+            idaoAdmin.update(admin);
+        } else if (user instanceof Member member) {
+            idaoMember.update(member);
         }
-
-        // Generate JWT token for the authenticated user
-        String token = jwtService.generateToken(user);
-
-        // Return success status with JWT token
-        return new LogicResult<>("200", "Login successful", token);
     }
 
 
@@ -145,11 +140,12 @@ public class AuthService {
         boolean isValid = true;
 
         // ======================================
-        // Sanitize user inputs (XSS protection)
+        // Retrieve and sanitize user inputs (XSS protection)
         // =======================================
         String firstName = InputSanitizer.sanitize(dto.getFirstName());
         String lastName = InputSanitizer.sanitize(dto.getLastName());
-        String password = InputSanitizer.sanitize(dto.getPassword());
+        String password = dto.getPassword();
+        String confirmPassword = dto.getConfirmPassword();
         String email = dto.getEmail() != null
                 ? dto.getEmail().trim().toLowerCase()
                 : null;
@@ -160,7 +156,7 @@ public class AuthService {
         isValid &= isValidEmail(email, result);
         isValid &= isEmailUnique(email, result);
         isValid &= isValidPassword(password, result);
-        isValid &= isPasswordConfirmed(dto.getPassword(), dto.getConfirmPassword(), result);
+        isValid &= isPasswordConfirmed(password, confirmPassword, result);
 
         if (!isValid) {
             return result;
@@ -169,7 +165,7 @@ public class AuthService {
         // ==========================
         // Password hashing
         // ==========================
-        String hashedPassword = passwordEncoder.encode(dto.getPassword());
+        String hashedPassword = passwordEncoder.encode(password);
 
         // Create member entity
         Member member = new Member();
