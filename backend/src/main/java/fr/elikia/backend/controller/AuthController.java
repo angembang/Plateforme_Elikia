@@ -32,11 +32,18 @@ public class AuthController {
             summary = "Demande d'adhésion",
             description = "Soumet une demande d'adhésion qui sera validée par un administrateur"
     )
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Demande envoyée"),
-            @ApiResponse(responseCode = "400", description = "Données invalides"),
-            @ApiResponse(responseCode = "409", description = "Email déjà utilisé")
-    })
+    @ApiResponse(
+            responseCode = "201",
+            description = "Request send"
+    )
+    @ApiResponse(
+            responseCode = "400",
+            description = "valid data"
+    )
+    @ApiResponse(
+            responseCode = "409",
+            description = "Email already in use"
+    )
     @PostMapping("/register")
     public  ResponseEntity<LogicResult<Void>> register(@RequestBody RegisterDTO registerDTO){
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -52,12 +59,22 @@ public class AuthController {
             summary = "Connexion utilisateur",
             description = "Permet à un administrateur ou un membre validé de se connecter"
     )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Connexion réussie"),
-            @ApiResponse(responseCode = "401", description = "Email ou mot de passe incorrect"),
-            @ApiResponse(responseCode = "403", description = "Compte non validé ou accès refusé"),
-            @ApiResponse(responseCode = "423", description = "Compte temporairement bloqué")
-    })
+    @ApiResponse(
+            responseCode = "200",
+            description = "connexion réussie"
+    )
+    @ApiResponse(
+            responseCode = "401",
+            description = "Email ou mot de passe incorrect"
+    )
+    @ApiResponse(
+            responseCode = "403",
+            description = "compte non validé ou accès refusé"
+    )
+    @ApiResponse(
+            responseCode = "423",
+            description = "Compte temporairement bloqué"
+    )
     @PostMapping("/login")
     public ResponseEntity<LogicResult<AuthResponseDTO>> login(@RequestBody LoginDTO loginDTO) {
 

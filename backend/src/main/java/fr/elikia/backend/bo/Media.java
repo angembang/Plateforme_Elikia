@@ -2,42 +2,56 @@ package fr.elikia.backend.bo;
 
 import jakarta.persistence.*;
 
-@Entity
-@Table(name = "media")
+@Entity // Marks this class as a JPA entity
+@Table(name = "media") // Maps to media table
 public class Media {
+    // Primary key
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long mediaId;
 
+    // Caption or title of the media
     private String caption;
+    // Path to the stored image file
     private String imagePath;
+    // URL of the video if the media is a video
     private String videoUrl;
 
+    /**
+     * A Media can belong to one Event (optional).
+     */
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = true)
     private Event event;
 
+    /**
+     * A Media can belong to one Workshop (optional).
+     */
     @ManyToOne
     @JoinColumn(name = "workshop_id", nullable = true)
     private Workshop workshop;
 
+    /**
+     * A Media can belong to one News (optional).
+     */
     @ManyToOne
     @JoinColumn(name = "news_id", nullable = true)
     private News news;
 
+    /**
+     * A Media can belong to one Achievement (optional).
+     */
     @ManyToOne
     @JoinColumn(name = "achievement_id", nullable = true)
     private Achievement achievement;
 
 
 
-    // ========================================================
-    // Constructors
-    // ========================================================
-
+    // Default constructor required by JPA
     public Media() {
     }
 
+    // Full constructor
     public Media(Long mediaId, String caption, String imagePath, String videoUrl, Event event, Workshop workshop,
                  News news, Achievement achievement) {
         this.mediaId = mediaId;
@@ -51,9 +65,7 @@ public class Media {
     }
 
 
-    // ========================================================
-    // Getters & Setters
-    // ========================================================
+    // Getters and setters
 
     public Long getMediaId() {
         return mediaId;

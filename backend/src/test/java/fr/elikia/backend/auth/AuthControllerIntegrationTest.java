@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class AuthControllerIntegrationTest {
+class AuthControllerIntegrationTest {
     @Autowired
     private WebApplicationContext context;
 

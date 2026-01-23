@@ -1,7 +1,6 @@
 package fr.elikia.backend.dao.idao;
 
 import fr.elikia.backend.bo.Admin;
-import fr.elikia.backend.bo.Member;
 
 import java.util.List;
 

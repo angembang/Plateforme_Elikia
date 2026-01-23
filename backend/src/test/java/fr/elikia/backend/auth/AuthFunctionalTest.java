@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class AuthFunctionalTest {
+class AuthFunctionalTest {
     @Autowired
     private WebApplicationContext context;
 
