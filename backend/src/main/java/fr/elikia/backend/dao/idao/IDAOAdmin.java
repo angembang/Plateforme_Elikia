@@ -5,15 +5,15 @@ import fr.elikia.backend.bo.Admin;
 import java.util.List;
 
 public interface IDAOAdmin {
-    public List<Admin> findAll();
+    List<Admin> findAll();
 
-    public Admin findById(Long adminId);
+    Admin findById(Long adminId);
 
-    public Admin findByEmail(String adminEmail);
+    Admin findByEmail(String adminEmail);
 
-    public boolean deleteById(Long adminId);
+    boolean deleteById(Long adminId);
 
-    public Admin create(Admin admin);
+    Admin create(Admin admin);
 
-    public Admin update(Admin admin);
+    Admin update(Admin admin);
 }

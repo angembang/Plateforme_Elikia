@@ -2,6 +2,7 @@
 
 .header {
   display: flex;
+  width: 100vw;
   align-items: center;
   justify-content: space-between;
   background-color: $bg-main;
@@ -49,17 +50,19 @@
 /* ===== Nav desktop ===== */
 .nav-desktop {
   display: none;
-  gap: 1.5rem;
+  gap: 2.5rem;
 
   a {
     color: $text-soft;
     text-decoration: none;
     font-weight: 500;
     transition: color 0.2s ease;
+    padding: 0.25rem 0.7rem;
 
     &:hover {
       color: $action;
     }
+
   }
 }
 
@@ -74,7 +77,7 @@
   display: flex;
   flex-direction: column;
   padding: 1.5rem;
-  gap: 1rem;
+  gap: 2.5rem;
   transform: translateX(-100%);
   transition: transform 0.3s ease;
   z-index: 1000;
@@ -92,6 +95,19 @@
       color: $action;
     }
   }
+}
+
+.menu-overlay {
+  border: none;
+  padding: 0;
+  cursor: default;
+  position: fixed;
+  top: 64px;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 64px);
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 900;
 }
 
 /* ===== Desktop ===== */
@@ -119,6 +135,13 @@
 
   .nav-mobile {
     display: none;
+  }
+
+  a.active {
+    pointer-events: none;
+    opacity: 0.5;
+    cursor: default;
+    text-decoration: underline;
   }
 }
 

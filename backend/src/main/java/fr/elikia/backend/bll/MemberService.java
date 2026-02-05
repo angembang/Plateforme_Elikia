@@ -47,7 +47,7 @@ public class MemberService {
         if (roleName != null) {
             Role role = idaoRole.findByName(roleName);
             if (role == null) {
-                return new LogicResult<>("404", "Role not found", null);
+                return new LogicResult<>("404", "Role not found",null);
             }
             member.setRole(role);
         }

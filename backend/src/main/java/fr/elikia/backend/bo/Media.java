@@ -1,5 +1,6 @@
 package fr.elikia.backend.bo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity // Marks this class as a JPA entity
@@ -22,6 +23,7 @@ public class Media {
      */
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = true)
+    @JsonIgnore
     private Event event;
 
     /**
@@ -29,6 +31,7 @@ public class Media {
      */
     @ManyToOne
     @JoinColumn(name = "workshop_id", nullable = true)
+    @JsonIgnore
     private Workshop workshop;
 
     /**
@@ -36,6 +39,7 @@ public class Media {
      */
     @ManyToOne
     @JoinColumn(name = "news_id", nullable = true)
+    @JsonIgnore
     private News news;
 
     /**
@@ -43,6 +47,7 @@ public class Media {
      */
     @ManyToOne
     @JoinColumn(name = "achievement_id", nullable = true)
+    @JsonIgnore
     private Achievement achievement;
 
 

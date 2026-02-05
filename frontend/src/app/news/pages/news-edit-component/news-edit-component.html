@@ -1,0 +1,72 @@
+<section class="news-container">
+  <h2>Edit News</h2>
+
+  <form [formGroup]="newsForm" (ngSubmit)="submit()">
+
+    <!-- Title -->
+    <div>
+      <label for="title">Title</label>
+      <input type="text" formControlName="title" id="title" name="title">
+    </div>
+
+    <!-- Content -->
+    <div>
+      <label for="content">Content</label>
+      <editor
+        [apiKey]="tinymceApikey"
+        formControlName="content"
+        [init]="editorConfig">
+      </editor>
+    </div>
+
+    <!-- Visibility -->
+    <div>
+      <label for="visibility">Visibility</label>
+      <select formControlName="visibility" id="visibility" name="visibility">
+        <option value="PUBLIC">Public</option>
+        <option value="MEMBER_ONLY">Members only</option>
+      </select>
+    </div>
+
+    <!-- Status -->
+    <div>
+      <label for="status">Status</label>
+      <select formControlName="contentStatus" id="status" name="status">
+        <option value="CREATED">Created</option>
+        <option value="PUBLISHED">Published</option>
+      </select>
+    </div>
+
+    <!-- Existing image -->
+    @if (existingMediaPath) {
+      <div class="current-image">
+        <p>Current image</p>
+        <img
+          [src]="environment.apiBackendUrl + '/uploads/media/' + existingMediaPath"
+          alt="current img"
+          width="250"
+        />
+      </div>
+    }
+
+    <!-- New image -->
+    <div>
+      <label for="image">Replace image (optional)</label>
+      <input type="file" (change)="onFileSelected($event)" id="image" name="image">
+    </div>
+
+
+    <!-- Publication date -->
+    @if (newsForm.value.contentStatus === 'CREATED') {
+      <div>
+        <label for="publishedAt">Publication date</label>
+        <input type="datetime-local" formControlName="publishedAt" id="publishedAt" name="publishedAt">
+      </div>
+    }
+
+    <div class="actions">
+      <button type="submit">Save changes</button>
+    </div>
+
+  </form>
+</section>

@@ -17,8 +17,8 @@ export class RegisterComponent {
   registerForm!: FormGroup
 
   constructor(
-    private fb: FormBuilder,
-    private authService: AuthService
+    private readonly fb: FormBuilder,
+    private readonly authService: AuthService
   ) {
     this.registerForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
@@ -41,7 +41,7 @@ export class RegisterComponent {
       return;
     }
 
-    this.authService.register(this.registerForm.value as any)
+    this.authService.register(this.registerForm.value)
       .subscribe({
         next: result => {
           if (result.code === '201') {

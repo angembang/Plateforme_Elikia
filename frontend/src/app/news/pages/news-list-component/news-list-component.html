@@ -1,0 +1,79 @@
+<section class="news-list">
+
+  @for (news of newsList; track news.newsId) {
+    <article class="news-card">
+      @if (news.mediaList?.[0]; as media) {
+        <div class="news-image">
+          <img
+            ngSrc="{{ apiUrlBack + '/uploads/media/' + media.imagePath }}"
+            alt="news-img"
+            priority
+            fill/>
+        </div>
+      }
+
+      <div class="news-content">
+        <div class="news-header">
+
+          <h3>{{ news.title }}</h3>
+
+          @if (isAdmin) {
+            <span
+              class="status-badge"
+              [ngClass]="getStatusClass(news.contentStatus)">
+                {{ getStatusLabel(news.contentStatus) }}
+            </span>
+          }
+
+        </div>
+
+        <small class="published-date">
+          {{ getPublishedLabel(news)}} {{ news.publishedAt | date:'dd/MM/yyyy à HH:mm' }}
+        </small>
+
+        <p [innerHTML]="news.content | slice:0:50"></p>
+
+        <a class="read-more"  (click)="goToDetail(news.newsId)">
+          Voir
+        </a>
+
+        @if (isAdmin) {
+          <div class="admin-actions">
+            <button (click)="deleteNews(news.newsId)">Delete</button>
+            <button (click)="updateNews(news.newsId)">Modifier</button>
+          </div>
+        }
+      </div>
+
+    </article>
+  }
+
+</section>
+
+<nav class="pagination">
+
+  <!-- Previous button -->
+  <button
+    (click)="previousPage()"
+    [disabled]="isFirstPage">
+    ‹ Prev
+  </button>
+
+  <!-- Page numbers -->
+  @for (page of pages; track page) {
+    <button
+      (click)="goToPage(page)"
+      [class.active]="isActivePage(page)">
+      {{ page + 1 }}
+    </button>
+  }
+
+  <!-- Next button -->
+  <button
+    (click)="nextPage()"
+    [disabled]="isLastPage">
+    Next ›
+  </button>
+
+</nav>
+

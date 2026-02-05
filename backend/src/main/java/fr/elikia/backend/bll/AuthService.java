@@ -5,6 +5,7 @@ import fr.elikia.backend.dao.idao.IDAOAdmin;
 import fr.elikia.backend.dao.idao.IDAOMember;
 import fr.elikia.backend.dao.idao.IDAORole;
 import fr.elikia.backend.dto.LoginDTO;
+import fr.elikia.backend.dto.NewsDTO;
 import fr.elikia.backend.dto.RegisterDTO;
 import fr.elikia.backend.security.InputSanitizer;
 import fr.elikia.backend.security.jwt.JwtService;
@@ -47,11 +48,11 @@ public class AuthService {
     public LogicResult<String> login(LoginDTO dto) {
 
         // Sanitize user input email (XSS protection)
-        String email = dto.getEmail() != null
-                ? dto.getEmail().trim().toLowerCase()
-                : null;
-        // Retrieve user input password
-        String inputPassword = dto.getPassword();
+        String email = dto.getEmail() == null
+                ? null
+                : dto.getEmail().trim().toLowerCase();
+
+        String rawPassword = dto.getPassword();
 
         /*
          Try to find the user first in the admin repository, then in the member repository
@@ -60,13 +61,13 @@ public class AuthService {
         // Try to authenticate Admin first
         Admin admin = idaoAdmin.findByEmail(email);
         if (admin != null) {
-            return authenticateUser(admin, inputPassword, "ADMIN");
+            return authenticateUser(admin, rawPassword, "ADMIN");
         }
 
         // Then try to authenticate Member
         Member member = idaoMember.findByEmail(email);
         if (member != null) {
-            return authenticateUser(member, inputPassword, "MEMBER");
+            return authenticateUser(member, rawPassword, "MEMBER");
         }
 
         // User not found
@@ -134,44 +135,26 @@ public class AuthService {
      * @return LogicResult indicating success or failure
      */
     public LogicResult<Void> register(RegisterDTO dto) {
+        // Prepare a default validation error result
+        LogicResult<Void> result = validationError();
 
-        LogicResult<Void> result =
-                new LogicResult<>("400", "Validation error", null);
-        boolean isValid = true;
-
-        // ======================================
-        // Retrieve and sanitize user inputs (XSS protection)
-        // =======================================
-        String firstName = InputSanitizer.sanitize(dto.getFirstName());
-        String lastName = InputSanitizer.sanitize(dto.getLastName());
-        String password = dto.getPassword();
-        String confirmPassword = dto.getConfirmPassword();
-        String email = dto.getEmail() != null
-                ? dto.getEmail().trim().toLowerCase()
-                : null;
-
-        // Validation chain
-        isValid &= isValidFirstName(firstName, result);
-        isValid &= isValidLastName(lastName, result);
-        isValid &= isValidEmail(email, result);
-        isValid &= isEmailUnique(email, result);
-        isValid &= isValidPassword(password, result);
-        isValid &= isPasswordConfirmed(password, confirmPassword, result);
-
-        if (!isValid) {
+        // Validate and sanitize register input
+        AuthService.SanitizedRegisterInput input = validateAndSanitizeNews(dto, result);
+        if (input == null) {
+            // Validation failed, result already filled
             return result;
         }
 
         // ==========================
         // Password hashing
         // ==========================
-        String hashedPassword = passwordEncoder.encode(password);
+        String hashedPassword = passwordEncoder.encode(input.password);
 
         // Create member entity
         Member member = new Member();
-        member.setFirstName(firstName);
-        member.setLastName(lastName);
-        member.setEmail(email);
+        member.setFirstName(input.firstName);
+        member.setLastName(input.lastName);
+        member.setEmail(input.email);
         member.setPassword(hashedPassword);
         member.setCreatedAt(LocalDate.now());
 
@@ -214,6 +197,10 @@ public class AuthService {
     // =========================================================
 
     private boolean isValidFirstName(String firstName, LogicResult<?> result) {
+        return isValidConditionFirstName(firstName, result);
+    }
+
+    static boolean isValidConditionFirstName(String firstName, LogicResult<?> result) {
         if (firstName == null || firstName.isBlank()) {
             result.setMessage("First name is required");
             return false;
@@ -226,6 +213,10 @@ public class AuthService {
     }
 
     private boolean isValidLastName(String lastName, LogicResult<?> result) {
+        return isValidConditionLastName(lastName, result);
+    }
+
+    static boolean isValidConditionLastName(String lastName, LogicResult<?> result) {
         if (lastName == null || lastName.isBlank()) {
             result.setMessage("Last name is required");
             return false;
@@ -238,6 +229,10 @@ public class AuthService {
     }
 
     private boolean isValidEmail(String email, LogicResult<?> result) {
+        return isValidConditionEmail(email, result);
+    }
+
+    static boolean isValidConditionEmail(String email, LogicResult<?> result) {
         if (email == null || email.isBlank()) {
             result.setMessage("Email is required");
             return false;
@@ -259,6 +254,10 @@ public class AuthService {
     }
 
     private boolean isValidPassword(String password, LogicResult<?> result) {
+        return isValidConditionPassword(password, result);
+    }
+
+    static boolean isValidConditionPassword(String password, LogicResult<?> result) {
         if (password == null || password.isBlank()) {
             result.setMessage("Password is required");
             return false;
@@ -278,6 +277,83 @@ public class AuthService {
             return false;
         }
         return true;
+    }
+
+
+    /**
+     * Validates and sanitizes all fields of a RegisterDTO
+
+     * This method centralizes:
+     * - XSS sanitization
+     * - Business validation rules
+
+     * If a validation rule fails, the provided LogicResult is filled
+     * and the method returns null.
+     *
+     * @param dto Input DTO
+     * @param result Result object used to store validation error messages
+     *
+     * @return A SanitizedNewsInput object if valid, or null if validation fails
+     */
+    private AuthService.SanitizedRegisterInput validateAndSanitizeNews(
+            RegisterDTO dto,
+            LogicResult<?> result) {
+
+        // Sanitize user inputs to prevent XSS attacks
+        String firstName = InputSanitizer.sanitize(dto.getFirstName());
+        String lastName = InputSanitizer.sanitize(dto.getLastName());
+        String password = dto.getPassword();
+        String confirmPassword = dto.getConfirmPassword();
+        String email = dto.getEmail() != null
+                ? dto.getEmail().trim().toLowerCase()
+                : null;
+
+        // Apply validation rules sequentially
+        if (!isValidFirstName(firstName, result)) return null;
+        if (!isValidLastName(lastName, result)) return null;
+        if (!isValidEmail(email, result)) return null;
+        if (!isEmailUnique(email, result)) return null;
+        if (!isValidPassword(password, result)) return null;
+        if (!isPasswordConfirmed(password, confirmPassword, result)) return null;
+
+        // Return a container object with sanitized and validated values
+        return new AuthService.SanitizedRegisterInput(
+                firstName,
+                lastName,
+                password,
+                confirmPassword,
+                email
+        );
+    }
+
+
+    /**
+     * Immutable container for sanitized and validated Register input data
+
+     * This record is used as an internal data structure between:
+     * - the validation layer
+     * - and the business logic of create/update operations
+
+     * Responsibilities:
+     * - Hold only trusted, sanitized values
+     * - Prevent propagation of raw user input further in the service layer
+     * - Guarantee that all fields have passed business validation rules
+
+     * This object is never exposed outside the service layer
+     */
+    private record SanitizedRegisterInput(String firstName, String lastName,
+                                      String email,
+                                      String password,
+                                      String confirmPassword) {
+    }
+
+
+    /**
+     * Initial validation error
+     */
+    private <T> LogicResult<T> validationError() {
+
+        return new LogicResult<>("400", "Validation error", null);
     }
 
 

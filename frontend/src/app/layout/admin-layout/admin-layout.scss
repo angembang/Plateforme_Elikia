@@ -1,0 +1,71 @@
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+/* Sidebar */
+.admin-sidebar {
+  width: 260px;
+  background-color: #1e1e2f;
+  color: #fff;
+  padding: 20px;
+}
+
+.admin-title {
+  font-size: 20px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+/* Menu sections */
+.menu-section {
+  margin-bottom: 20px;
+}
+
+.menu-title {
+  font-weight: bold;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  font-size: 13px;
+  color: #bdbdbd;
+}
+
+.submenu {
+  list-style: none;
+  padding-left: 10px;
+}
+
+.submenu li {
+  margin: 6px 0;
+}
+
+.submenu a,
+.logout a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 14px;
+  display: block;
+  padding: 6px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.submenu a:hover,
+.logout a:hover {
+  background-color: #2e2e48;
+}
+
+/* Logout */
+.logout {
+  margin-top: 40px;
+  border-top: 1px solid #333;
+  padding-top: 15px;
+}
+
+/* Content */
+.admin-content {
+  flex: 1;
+  padding: 40px;
+  background-color: #f5f6fa;
+}

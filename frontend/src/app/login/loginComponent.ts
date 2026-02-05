@@ -38,8 +38,16 @@ export class LoginComponent {
       .subscribe({
         next: result => {
           if (result.code === '200') {
+            const role = this.authService.getUserRole();
 
-            // Redirect after login
+            if(role === 'ADMIN') {
+              this.router.navigate(['/admin'])
+                .then(r => () => {})
+                .catch(() => {});
+              return;
+            }
+
+            // if no admin, redirect to member space
             const returnUrl =
               this.route.snapshot.queryParamMap.get('returnUrl') || '/';
 

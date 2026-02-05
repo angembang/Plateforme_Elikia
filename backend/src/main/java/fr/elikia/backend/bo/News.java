@@ -19,7 +19,7 @@ public class News {
     private String title;
 
     // Content is mandatory
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
     // Publication date time of the news

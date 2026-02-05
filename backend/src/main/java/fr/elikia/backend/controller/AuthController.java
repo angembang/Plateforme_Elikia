@@ -7,14 +7,12 @@ import fr.elikia.backend.dto.LoginDTO;
 import fr.elikia.backend.dto.RegisterDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("api/auth")
 @Tag(name = "Authentification", description = "Gestion de la connexion et de l'adhésion")
 public class AuthController {

@@ -1,0 +1,51 @@
+@if (news) {
+  <!-- Actions -->
+  <div class="detail-actions">
+
+    <button class="btn back" (click)="goBack()">
+      <-- Retour à la liste d'actualités
+    </button>
+
+    @if (isAdmin) {
+
+      <div class="admin-buttons">
+
+        <button class="btn edit" (click)="goToEdit()">
+          Modifier
+        </button>
+
+        <button class="btn delete" (click)="deleteNews()">
+          Supprimer
+        </button>
+
+      </div>
+
+    }
+
+  </div>
+  <section class="news-detail">
+
+    <!-- Image -->
+    @if (news.mediaList?.[0]; as media) {
+      <div class="news-image">
+        <img
+          ngSrc="{{ apiUrlBack + '/uploads/media/' + media.imagePath }}"
+          alt="news img"
+          priority
+          fill/>
+      </div>
+    }
+
+    <!-- Content -->
+    <div class="news-content">
+      <h2>{{ news.title }}</h2>
+
+      <small class="published-date">
+        Publié le {{ news.publishedAt | date:'dd/MM/yyyy à HH:mm' }}
+      </small>
+    </div>
+    <div class="news-text" [innerHTML]="news.content"></div>
+
+  </section>
+
+}

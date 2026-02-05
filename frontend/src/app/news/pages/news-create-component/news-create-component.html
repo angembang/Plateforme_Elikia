@@ -1,0 +1,71 @@
+<section class="news-container">
+  <h2>Create News</h2>
+
+  <form [formGroup]="newsForm" (ngSubmit)="submit()">
+
+    <!-- Title -->
+    <div>
+      <label for="title">Title</label>
+      <input type="text" formControlName="title" id="title" name="title">
+    </div>
+
+    <!-- Content -->
+    <div>
+      <label for="content">Content</label>
+      <editor
+        [apiKey]="tinymceApikey"
+        formControlName="content"
+        [init]="editorConfig">
+      </editor>
+    </div>
+
+    <!-- Visibility -->
+    <div>
+      <label for="visibility">Visibility</label>
+      <select formControlName="visibility" id="visibility" name="visibility">
+        <option value="PUBLIC">Public</option>
+        <option value="MEMBER_ONLY">Members only</option>
+      </select>
+    </div>
+
+    <!-- Status -->
+    <div>
+      <label for="contentStatus">Status</label>
+      <select formControlName="contentStatus" id="contentStatus" name="contentStatus">
+        <option value="CREATED">Created</option>
+        <option value="PUBLISHED">Published</option>
+      </select>
+    </div>
+
+    <!-- Image -->
+    <div>
+      <label for="image">Image</label>
+      <input type="file" (change)="onFileSelected($event)" id="image" name="image">
+    </div>
+
+    <!-- -----------------Submit--------------------------- -->
+    <!-- Publication date (only for CREATED) -->
+    @if (newsForm.value.contentStatus === 'CREATED') {
+      <div>
+        <label for="publishedAt">Publication date</label>
+        <input type="datetime-local" formControlName="publishedAt" id="publishedAt" name="publishedAt">
+      </div>
+    }
+
+    <!-- Actions -->
+    <div class="actions">
+      @if (isCreated) {
+        <button type="button" class="create-btn" (click)="create()">
+          Create
+        </button>
+      }
+      @if (isPublished) {
+        <button type="button" class="publish-btn" (click)="publish()">
+          Publish
+        </button>
+
+      }
+    </div>
+
+  </form>
+</section>

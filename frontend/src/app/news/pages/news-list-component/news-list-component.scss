@@ -1,0 +1,142 @@
+@use 'styles/variables' as *;
+
+.news-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem;
+  background-color: $color-light-bg;
+
+  .news-card {
+    display: flex;
+    background-color: $color-card-bg;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid $color-border;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: translateY(-4px);
+    }
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+  }
+
+  .news-image {
+    position: relative;
+    width: 100%;
+    height: 200px;
+
+    img {
+      object-fit: cover;
+    }
+  }
+
+  .news-content {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    h3 {
+      color: $bg-main;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: $action;
+      flex-grow: 1;
+    }
+
+    .published-date {
+      display: block;
+      font-size: 0.8rem;
+      color: #777;
+      margin-bottom: 0.5rem;
+    }
+
+    .read-more {
+      align-self: flex-start;
+      padding: 0.4rem 0.8rem;
+      background-color: $bg-main;
+      color: $text-main;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+
+    .admin-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.8rem;
+
+      button {
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        border: none;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        color: $text-main;
+        transition: opacity 0.2s ease;
+
+        &:hover {
+          opacity: 0.9;
+        }
+      }
+
+      /* Bouton Delete */
+      button:first-child {
+        background-color: #e53935;
+      }
+
+      /* Update button */
+      button:last-child {
+        background-color: $action;
+        color: $bg-main;
+      }
+    }
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 2rem 0;
+
+  button {
+    min-width: 36px;
+    padding: 0.4rem 0.7rem;
+    border-radius: 6px;
+    border: 1px solid $color-border;
+    background-color: white;
+    cursor: pointer;
+    font-weight: 600;
+
+    &:hover:not(:disabled) {
+      background-color: $bg-main;
+      color: $text-main;
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    &.active {
+      background-color: $bg-main;
+      color: $text-main;
+      pointer-events: none;
+    }
+  }
+}

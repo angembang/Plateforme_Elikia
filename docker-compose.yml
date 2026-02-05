@@ -28,6 +28,8 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
     restart: always
+    volumes:
+      - ./uploads:/uploads
 
   frontend:
     build:

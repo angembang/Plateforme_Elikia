@@ -5,17 +5,48 @@
     <i class="fa-solid fa-bars"></i>
   </button>
 
-  <!-- LOGO -->
+  <!-- Logo -->
   <div class="logo">
-    <img ngSrc="/images/logo_elikia.png" alt="Elikia Elikia" fill/>
+    <img ngSrc="/images/logo_elikia.png" alt="Elikia Elikia"  priority fill/>
   </div>
 
   <!-- Desktop navigation -->
   <nav class="nav-desktop"
        aria-label="Navigation principale">
-    <a routerLink="/register">Adhésion</a>
-    <a routerLink="/login">Se connecter</a>
-    <!-- futurs liens ici -->
+    <a routerLink="/"
+       routerLinkActive="active"
+       [routerLinkActiveOptions]="{ exact: true }">
+      Faire un don
+    </a>
+    <a routerLink="/register"
+       routerLinkActive="active"
+       [routerLinkActiveOptions]="{ exact: true }">
+      Adhésion
+    </a>
+    <a routerLink="/"
+       routerLinkActive="active"
+       [routerLinkActiveOptions]="{ exact: true }">
+      Evènements
+    </a>
+    <a routerLink="/"
+       routerLinkActive="active"
+       [routerLinkActiveOptions]="{ exact: true }">
+      Ateliers
+    </a>
+    <a routerLink="/"
+       routerLinkActive="active"
+       [routerLinkActiveOptions]="{ exact: true }">
+      Réalisations
+    </a>
+    <a routerLink="/news"
+       routerLinkActive="active">
+      Actualités
+    </a>
+    <a routerLink="/login"
+       routerLinkActive="active"
+       [routerLinkActiveOptions]="{ exact: true }">
+      Se connecter
+    </a>
   </nav>
 
   <!-- Search button -->
@@ -27,11 +58,55 @@
 
 </div>
 
+
+<!-- Overlay -->
+@if (menuOpen) {
+  <button
+    class="menu-overlay"
+    type="button"
+    aria-label="Fermer le menu"
+    (click)="closeMenu()">
+  </button>
+}
+
 <!-- Mobile navigation -->
 <nav class="nav-mobile"
      aria-label="Navigation mobile"
      [class.open]="menuOpen">
-  <a routerLink="/register" (click)="closeMenu()">Adhésion</a>
-  <a routerLink="/login" (click)="closeMenu()">Se connecter</a>
+  <a routerLink="/"
+     routerLinkActive="active"
+     (click)="closeMenu()">
+    Faire un don
+  </a>
+  <a routerLink="/register"
+     routerLinkActive="active"
+     (click)="closeMenu()">
+    Adhésion
+  </a>
+  <a routerLink="/"
+     routerLinkActive="active"
+     (click)="closeMenu()">
+    Evènements
+  </a>
+  <a routerLink="/"
+     routerLinkActive="active"
+     (click)="closeMenu()">
+    Ateliers
+  </a>
+  <a routerLink="/"
+     routerLinkActive="active"
+     (click)="closeMenu()">
+    Réalisations
+  </a>
+  <a routerLink="/news"
+     routerLinkActive="active"
+     (click)="closeMenu()">
+    Actualités
+  </a>
+  <a routerLink="/login"
+     routerLinkActive="active"
+     (click)="closeMenu()">
+    Se connecter
+  </a>
 </nav>
 

@@ -20,7 +20,38 @@
     <h2>Réalisations</h2>
   </section>
 
-  <section>
+  <section class="latest-news">
     <h2>Actualités</h2>
+
+    @if (latestNews.length > 0) {
+      <div class="cards">
+        @for (news of latestNews; track news.newsId) {
+          <article class="card">
+
+            @if (news.mediaList?.[0]; as media) {
+              <img
+                [src]="apiUrlback + '/uploads/media/' + media.imagePath"
+                alt="news img"
+              />
+            }
+
+            <h3>{{ news.title }}</h3>
+
+            <small>
+              {{ news.publishedAt | date:'dd/MM/yyyy' }}
+            </small>
+
+            <p [innerHTML]="news.content | slice:0:80"></p>
+
+            <a [routerLink]="['/news/detail', news.newsId]">
+              Lire la suite
+            </a>
+
+          </article>
+        }
+      </div>
+    } @else {
+      <p>Aucune actualité pour le moment.</p>
+    }
   </section>
 </div>

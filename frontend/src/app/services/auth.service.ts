@@ -21,19 +21,24 @@ export class AuthService {
   /**
    * LoginComponent user and store JWT token
    */
-  login(payload: LoginRequest): Observable<LogicResult<string>> {
+  login(payload: LoginRequest): Observable<LogicResult<{token: string}>> {
     return this.http
-      .post<LogicResult<string>>(`${this.API_URL}/login`, payload)
+      .post<LogicResult<{token: string}>>(`${this.API_URL}/login`, payload)
       .pipe(
         tap(result => {
           // If login is successful, store JWT token
-          if (result.code === '200' && result.data) {
-            this.storage.setToken(result.data);
+          if (result.code === '200' && result.data?.token) {
+            this.storage.setToken(result.data.token);
+            // Decode and store role
+            const role = this.extractRoleFromToken(result.data.token)
+            if(role) {
+              this.storage.setRole(role);
+            }
           }
         }),
         catchError(err => {
           // Transform http error to LogicResult
-          return of(err.error as LogicResult<string>);
+          return of(err.error as LogicResult<{token: string}>);
         })
       );
   }
@@ -60,6 +65,27 @@ export class AuthService {
    */
   isAuthenticated(): boolean {
     return this.storage.hasToken();
+  }
+
+
+  /**
+   * extract role from token
+   */
+  private extractRoleFromToken(token: string): string | null {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.role || null;
+    } catch {
+      return null;
+    }
+  }
+
+
+  /**
+   * Get user role
+   */
+  getUserRole(): string | null {
+    return this.storage.getRole();
   }
 
 }
