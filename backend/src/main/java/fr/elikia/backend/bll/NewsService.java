@@ -177,7 +177,7 @@ public class NewsService {
         if (news.isEmpty()) {
             return new LogicResult<>(
                     "200",
-                    "No published news found",
+                    "No news found",
                     List.of()
             );
         }
@@ -213,6 +213,51 @@ public class NewsService {
         Page<News> pageResult =
                 idaoNews.findPublishedNewsPage(
                         ContentStatus.PUBLISHED,
+                        pageable
+                );
+
+        // Return an empty page if no data found
+        if (pageResult.isEmpty()) {
+            return new LogicResult<>(
+                    "200",
+                    "No published news found",
+                    Page.empty(pageable)
+            );
+        }
+
+        // Successful response
+        return new LogicResult<>(
+                "200",
+                "Published news page retrieved",
+                pageResult
+        );
+    }
+
+
+    /**
+     * Retrieve a paginated list of published news according to the visibility (PUBLIC || MEMBER_ONLY)
+     *
+     * @param page page index (0-based)
+     * @param size number of items per page
+     * @return LogicResult containing a page of News
+     */
+    public LogicResult<Page<News>> findAllByContentStatusAndVisibilityAfterOrderByPublishedAtDesc(
+            int page,
+            int size
+    ) {
+
+        // Create pagination information with sorting
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(Sort.Direction.DESC, "publishedAt")
+        );
+
+        // Call DAO instead of repository
+        Page<News> pageResult =
+                idaoNews.findAllByContentStatusAndVisibilityAfterOrderByPublishedAtDesc(
+                        ContentStatus.PUBLISHED,
+                        Visibility.MEMBER_ONLY,
                         pageable
                 );
 

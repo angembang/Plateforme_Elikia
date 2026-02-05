@@ -2,6 +2,7 @@ package fr.elikia.backend.dao.idao;
 
 import fr.elikia.backend.bo.ContentStatus;
 import fr.elikia.backend.bo.News;
+import fr.elikia.backend.bo.Visibility;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -20,6 +21,12 @@ public interface IDAONews {
     List<News> findLastPublishedNews(int limit);
 
     Page<News> findPublishedNewsPage(ContentStatus contentStatus, Pageable pageable);
+
+    Page<News> findAllByContentStatusAndVisibilityAfterOrderByPublishedAtDesc(
+            ContentStatus contentStatus,
+            Visibility visibility,
+            Pageable pageable
+    );
 
     News findById(Long newsId);
 

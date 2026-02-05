@@ -3,6 +3,7 @@ package fr.elikia.backend.bll;
 import fr.elikia.backend.bo.*;
 import fr.elikia.backend.dao.idao.*;
 import fr.elikia.backend.security.InputSanitizer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,7 +33,8 @@ public class MediaService {
     private static final Set<String> ALLOWED_IMAGE_EXTENSIONS =
             Set.of(".jpg", ".jpeg", ".png");
     // Root directory where all uploaded media files are stored
-    private static final String MEDIA_STORAGE_ROOT = "/uploads/media";
+    @Value("${media.storage.path}")
+    private String mediaStorageRoot;
 
     // IDAO dependencies used to resolve parent entities
     private final IDAONews idaoNews;
@@ -663,7 +665,7 @@ public class MediaService {
                 generateSafeFileName(ownerTitle, originalFileName);
 
         try {
-            Path storageDirectory = Paths.get(MEDIA_STORAGE_ROOT);
+            Path storageDirectory = Paths.get(mediaStorageRoot);
             Files.createDirectories(storageDirectory);
 
             Files.copy(

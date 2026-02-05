@@ -2,6 +2,7 @@ package fr.elikia.backend.dao;
 
 import fr.elikia.backend.bo.ContentStatus;
 import fr.elikia.backend.bo.News;
+import fr.elikia.backend.bo.Visibility;
 import fr.elikia.backend.dao.idao.IDAONews;
 import fr.elikia.backend.repository.NewsRepository;
 import org.springframework.data.domain.Page;
@@ -50,6 +51,21 @@ public class NewsDAO implements IDAONews {
                         pageable
                 );
     }
+
+
+    @Override
+    public Page<News> findAllByContentStatusAndVisibilityAfterOrderByPublishedAtDesc(
+            ContentStatus contentStatus,
+            Visibility visibility,
+            Pageable pageable
+    ) {
+        return newsRepository.findAllByContentStatusAndVisibilityAfterOrderByPublishedAtDesc(
+                contentStatus,
+                visibility,
+                pageable
+        );
+    }
+
 
 
     @Override

@@ -227,6 +227,42 @@ public class NewsController {
 
 
     /**
+     * Retrieve paginated published news according to the visibility (MEMBER_ONLY).
+     *
+     * @param page page index (0-based)
+     * @param size number of items per page (default 12)
+     * @return paginated list of published news
+     */
+    @Operation(
+            summary = "Retrieve paginated published news reserved for members",
+            description = "Returns a paginated list of published news"
+    )
+    @ApiResponse(responseCode = "200", description = "News page retrieved")
+    @GetMapping("/Member/page")
+    public ResponseEntity<LogicResult<Page<News>>> findPublishedNewsPageForMember(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "9") int size
+    ) {
+
+        LogicResult<Page<News>> result =
+                newsService.findAllByContentStatusAndVisibilityAfterOrderByPublishedAtDesc(page, size);
+
+        HttpStatus status = HttpStatus.resolve(
+                Integer.parseInt(result.getCode())
+        );
+
+        if (status == null) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return ResponseEntity
+                .status(status)
+                .body(result);
+    }
+
+
+
+    /**
      * Show news detail
      *
      * @param newsId the unique identifier of the news
