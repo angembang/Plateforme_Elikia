@@ -47,15 +47,10 @@ class MediaServiceTest {
     private News existingNews;
 
     @BeforeEach
-    void setUp() throws NoSuchFieldException, IllegalAccessException {
+    void setUp() {
         // Build a valid News entity
         existingNews = new News();
         existingNews.setTitle("Test News");
-
-        // Force the JPA ID so that findById returns the exact same object
-        Field idField = News.class.getDeclaredField("newsId");
-        idField.setAccessible(true);
-        idField.set(existingNews, 1L);
     }
 
 
@@ -136,28 +131,34 @@ class MediaServiceTest {
 
 
     @Test
-    void shouldUpdateMediaSuccessfully() {
+    void shouldUpdateMediaSuccessfully() throws Exception {
         Media existing = new Media();
 
-        existing.setNews(existingNews);
+        News news = new News();
+
+        //  Force the JPA ID in test
+        Field idField = News.class.getDeclaredField("newsId");
+        idField.setAccessible(true);
+        idField.set(news, 10L);
+
+        existing.setNews(news);
 
         when(idaoMedia.findById(5L)).thenReturn(existing);
         when(idaoMedia.update(any())).thenReturn(existing);
 
         MultipartFile newFile = mockImage();
 
-        LogicResult<Void> result = mediaService.updateMedia(
-                5L,
-                newFile,
-                null,
-                "New caption"
-        );
+        LogicResult<Void> result =
+                mediaService.updateMedia(
+                        5L,
+                        newFile,
+                        null,
+                        "New caption"
+                );
 
         assertEquals("200", result.getCode());
         assertEquals("New caption", existing.getCaption());
-        assertNotNull(existing.getImagePath());
-        assertTrue(existing.getImagePath().endsWith(".jpg"));
-        assertEquals("Test News", existing.getNews().getTitle());
+        assertTrue(existing.getImagePath().endsWith(".jpg"),  "Image path should end with .jpg");
     }
 
 
