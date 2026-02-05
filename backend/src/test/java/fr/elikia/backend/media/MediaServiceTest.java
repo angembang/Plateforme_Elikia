@@ -131,34 +131,28 @@ class MediaServiceTest {
 
 
     @Test
-    void shouldUpdateMediaSuccessfully() throws Exception {
+    void shouldUpdateMediaSuccessfully()  {
         Media existing = new Media();
 
-        News news = new News();
-
-        //  Force the JPA ID in test
-        Field idField = News.class.getDeclaredField("newsId");
-        idField.setAccessible(true);
-        idField.set(news, 10L);
-
-        existing.setNews(news);
+        existing.setNews(existingNews);
 
         when(idaoMedia.findById(5L)).thenReturn(existing);
         when(idaoMedia.update(any())).thenReturn(existing);
 
         MultipartFile newFile = mockImage();
 
-        LogicResult<Void> result =
-                mediaService.updateMedia(
-                        5L,
-                        newFile,
-                        null,
-                        "New caption"
-                );
+        LogicResult<Void> result = mediaService.updateMedia(
+                5L,
+                newFile,
+                null,
+                "New caption"
+        );
 
         assertEquals("200", result.getCode());
         assertEquals("New caption", existing.getCaption());
-        assertTrue(existing.getImagePath().endsWith(".jpg"),  "Image path should end with .jpg");
+        assertNotNull(existing.getImagePath());
+        assertTrue(existing.getImagePath().endsWith(".jpg"));
+        assertEquals("Test News", existing.getNews().getTitle());
     }
 
 

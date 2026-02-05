@@ -84,10 +84,10 @@ describe('AuthService', () => {
     };
 
     // GIVEN: a fake successful backend response
-    const mockResponse: LogicResult<string> = {
+    const mockResponse: LogicResult<{ token: string }> = {
       code: '200',                 // Business success code
       message: 'Login successful',// Success message
-      data: 'fake-jwt-token'      // Fake JWT token returned by backend
+      data: {token: 'fake-jwt-token'}     // Fake JWT token returned by backend
     };
 
     // WHEN: call the login() method
@@ -97,7 +97,7 @@ describe('AuthService', () => {
       expect(result.code).toBe('200');
 
       // AND: the returned token should match the fake token
-      expect(result.data).toBe('fake-jwt-token');
+      expect(result.data?.token).toBe('fake-jwt-token');
 
       // AND: the token should be stored using AuthStorageService
       expect(storageSpy.setToken).toHaveBeenCalledWith('fake-jwt-token');
