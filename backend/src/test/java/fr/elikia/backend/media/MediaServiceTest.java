@@ -47,10 +47,15 @@ class MediaServiceTest {
     private News existingNews;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws NoSuchFieldException, IllegalAccessException {
         // Build a valid News entity
         existingNews = new News();
         existingNews.setTitle("Test News");
+
+        // Force the JPA ID so that findById returns the exact same object
+        Field idField = News.class.getDeclaredField("newsId");
+        idField.setAccessible(true);
+        idField.set(existingNews, 1L);
     }
 
 
@@ -131,7 +136,7 @@ class MediaServiceTest {
 
 
     @Test
-    void shouldUpdateMediaSuccessfully()  {
+    void shouldUpdateMediaSuccessfully() {
         Media existing = new Media();
 
         existing.setNews(existingNews);
