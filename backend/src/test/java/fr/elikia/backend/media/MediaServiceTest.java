@@ -47,10 +47,17 @@ class MediaServiceTest {
     private News existingNews;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws NoSuchFieldException, IllegalAccessException {
         // Build a valid News entity
         existingNews = new News();
         existingNews.setTitle("Test News");
+
+        // Inject test storage path
+        Field field = MediaService.class.getDeclaredField("mediaStorageRoot");
+        field.setAccessible(true);
+        field.set(mediaService, System.getProperty("java.io.tmpdir") + "/test-media");
+
+
     }
 
 
