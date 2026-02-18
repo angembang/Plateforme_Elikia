@@ -1,10 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {News} from '../../../models/News';
-import {NewsService} from '../../../services/news-service';
+import {NewsService} from '../../../services/news/news-service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {AuthService} from '../../../services/auth.service';
+import {AuthService} from '../../../services/auth/auth.service';
 import {environment} from '../../../../environments/environment';
 import {DatePipe, NgClass, NgOptimizedImage, SlicePipe} from '@angular/common';
+import {PaginationService} from '../../../services/pagination/pagination-service';
 
 @Component({
   selector: 'app-news-list-component',
@@ -44,7 +45,8 @@ export class NewsListComponent implements OnInit {
     private readonly newsService: NewsService,
     private readonly authService: AuthService,
     private readonly router: Router,
-    private readonly route: ActivatedRoute
+    private readonly route: ActivatedRoute,
+    private readonly paginationService: PaginationService
   ) {}
 
   ngOnInit(): void {
@@ -58,29 +60,23 @@ export class NewsListComponent implements OnInit {
     // Listen to query params (?page= & size=)
     this.route.queryParams.subscribe(params => {
 
-      // If no page param → redirect to page 0
-      if (!params['page']) {
+      const pagination =
+        this.paginationService.handlePaginationParams(
+          params,
+          this.route,
+          this.pageSize
+        );
 
-        this.router.navigate([], {
-          relativeTo: this.route,
-          queryParams: {
-            page: 0,
-            size: this.pageSize
-          },
-          queryParamsHandling: 'merge'
-        }).then(r => {});
+      if (!pagination) return;
 
-        return;
-      }
-
-      // Read pagination params from URL
-      this.currentPage = Number(params['page']) || 0;
-      this.pageSize = Number(params['size']) || 12;
+      this.currentPage = pagination.page;
+      this.pageSize = pagination.size;
 
       // Load backend data for admin
-      if(this.isAdminPage) {
-        this.loadNews()
+      if (this.isAdminPage) {
+        this.loadNews();
       }
+
       // Load backend data for public
       this.loadPublishedNewsPage();
     });

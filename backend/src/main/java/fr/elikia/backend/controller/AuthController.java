@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/auth")
+@RequestMapping("/api/auth")
 @Tag(name = "Authentification", description = "Gestion de la connexion et de l'adhésion")
 public class AuthController {
     private final AuthService authService;

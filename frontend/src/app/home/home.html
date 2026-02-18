@@ -9,7 +9,56 @@
   </section>
 
   <section>
-    <h2>Evénements à venir</h2>
+    <h2>Événements à venir</h2>
+    @if (latestEvent.length > 0) {
+      <div class="cards">
+        @for (event of latestEvent; track event.eventId) {
+          <article class="card">
+
+            @if (event.mediaList?.[0]; as media) {
+              <div class="news-image">
+                <!-- IMAGE -->
+                @if (event.displayType === 'IMAGE') {
+                  <img
+                    [src]="apiUrlBack + '/uploads/media/' + media.imagePath"
+                    alt="event-img"
+                  />
+
+                }
+                <!-- VIDEO -->
+                @if (event.displayType === 'VIDEO') {
+                  <iframe
+                    title="event-video"
+                    width="100%"
+                    height="200"
+                    [src]="getSafeYoutubeUrl(media.videoUrl!)"
+                    allowfullscreen>
+                  </iframe>
+                }
+
+              </div>
+
+            }
+
+
+            <h3>{{ event.title }}</h3>
+
+            <small>
+              {{ event.startDate | date:'dd/MM/yyyy' }}
+            </small>
+
+            <p [innerHTML]="event.description | slice:0:80"></p>
+
+            <a [routerLink]="['/event/detail', event.eventId]" class="read-more-home">
+              voir
+            </a>
+
+          </article>
+        }
+      </div>
+    } @else {
+      <p>Aucun évènement pour le moment</p>
+    }
   </section>
 
   <section>
@@ -30,7 +79,7 @@
 
             @if (news.mediaList?.[0]; as media) {
               <img
-                [src]="apiUrlback + '/uploads/media/' + media.imagePath"
+                [src]="apiUrlBack + '/uploads/media/' + media.imagePath"
                 alt="news img"
               />
             }
@@ -43,7 +92,7 @@
 
             <p [innerHTML]="news.content | slice:0:80"></p>
 
-            <a [routerLink]="['/news/detail', news.newsId]">
+            <a [routerLink]="['/news/detail', news.newsId]" class="read-more-home">
               Lire la suite
             </a>
 
@@ -51,7 +100,7 @@
         }
       </div>
     } @else {
-      <p>Aucune actualité pour le moment.</p>
+      <p>Aucune actualité pour le moment</p>
     }
   </section>
 </div>

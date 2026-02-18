@@ -11,7 +11,7 @@
 
     <!-- Content -->
     <div>
-      <label for="content">Content</label>
+      <label>Content</label>
       <editor
         [apiKey]="tinymceApikey"
         formControlName="content"
@@ -45,7 +45,7 @@
           [src]="environment.apiBackendUrl + '/uploads/media/' + existingMediaPath"
           alt="current img"
           width="250"
-        />
+         src=""/>
       </div>
     }
 

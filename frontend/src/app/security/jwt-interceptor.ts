@@ -1,6 +1,6 @@
 import {HttpErrorResponse, HttpInterceptorFn} from '@angular/common/http';
 import { inject } from '@angular/core';
-import { AuthStorageService } from '../services/auth-storage.service';
+import { AuthStorageService } from '../services/auth-storage/auth-storage.service';
 import {catchError, throwError} from 'rxjs';
 
 export const jwtInterceptor: HttpInterceptorFn =

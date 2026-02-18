@@ -13,7 +13,7 @@ public class MediaDTO {
             description = "le titre du media",
             example = "logo de l'Association Elikia"
     )
-    @Size(min = 3, max = 200, message = "The caption must be between 3 and 100 characters")
+    @Size(min = 3, max = 255, message = "The caption must be between 3 and 255 characters")
     private String caption;
 
     // Path to the image file

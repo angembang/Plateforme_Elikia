@@ -1,0 +1,188 @@
+<section class="news-container">
+  <h2>Edit Event</h2>
+  <!-- Display error message if exists -->
+  @if (errorMessage) {
+    <div class="error-box">
+      <h3>{{ errorMessage }}</h3>
+    </div>
+  }
+
+  <form [formGroup]="eventForm" (ngSubmit)="submit()">
+
+    <!-- Title -->
+    <div>
+      <label for="title">Title</label>
+      <input type="text" formControlName="title" id="title" name="title">
+    </div>
+
+    <!-- Description -->
+    <div>
+      <label>Description</label>
+      <editor
+        [apiKey]="tinymceApikey"
+        formControlName="description"
+        [init]="editorConfig">
+      </editor>
+    </div>
+
+    <!-- Start date -->
+    <div>
+      <label for="startDate">Start date</label>
+      <input type="datetime-local" formControlName="startDate" id="startDate" name="startDate">
+    </div>
+
+    <!-- End date -->
+    <div>
+      <label for="endDate">End date</label>
+      <input type="datetime-local" formControlName="endDate" id="endDate" name="endDate">
+    </div>
+
+
+    <!-- Location -->
+    <div>
+      <label for="location">Location</label>
+      <input type="text" formControlName="location" id="location" name="location">
+    </div>
+
+    <!-- Address -->
+    <div>
+      <label for="address">Address</label>
+      <input type="text" formControlName="address" id="address" name="address">
+    </div>
+
+
+    <!-- Capacity -->
+    <div>
+      <label for="capacity">Capacity</label>
+      <input type="number" formControlName="capacity" id="capacity" name="capacity">
+    </div>
+
+    <!-- Visibility -->
+    <div>
+      <label for="visibility">Visibility</label>
+      <select formControlName="visibility" id="visibility" name="visibility">
+        <option value="PUBLIC">Public</option>
+        <option value="MEMBER_ONLY">Members only</option>
+      </select>
+    </div>
+
+    <!------------------------- Image ------------------------------>
+    <!-- Existing images -->
+    @if (existingImages.length) {
+      <div class="media-section">
+
+        <h4>Images actuelles</h4>
+
+        <div class="image-preview">
+
+          @for (img of existingImages; track img.id) {
+
+            <div class="img-box">
+
+              <img
+                [src]="environment.apiBackendUrl + '/uploads/media/' + img.path"
+                alt="event-existing-img"
+              />
+
+              <button
+                type="button"
+                (click)="removeExistingImage(img)">
+                ✕
+              </button>
+
+            </div>
+
+          }
+
+        </div>
+
+      </div>
+
+    }
+
+    <!-- New images -->
+    <div class="form-group">
+      <label for="image">Ajouter des images</label>
+      <input
+        type="file"
+        multiple
+        accept="image/*"
+        (change)="onImagesSelected($event)"
+        id="image"
+        name="image"
+      />
+
+    </div>
+
+    <!-- New images preview -->
+    @if (selectedImages.length) {
+
+      <h4>Nouvelles images</h4>
+
+      <div class="image-preview">
+
+        @for (file of selectedImages; track file) {
+
+          <div class="img-box">
+            <img
+              [src]="file | filePreview"
+              alt="news-event-img"/>
+
+          </div>
+
+        }
+
+      </div>
+
+    }
+
+    <!-- Video -->
+    <div class="form-group">
+      <label for="videoUrl">YouTube Video URL</label>
+      <input
+        type="url"
+        formControlName="videoUrl"
+        id="videoUrl"
+        name="videoUrl"
+        placeholder="https://www.youtube.com/watch?v=..."
+      >
+    </div>
+
+    @if (existingVideoUrl) {
+      <div class="video-box">
+        <iframe
+          title="event-video"
+          width="100%"
+          height="200"
+          [src]="getEmbedUrl(existingVideoUrl.url) | safeUrl">
+        </iframe>
+        <button
+          type="button"
+          class="remove-video"
+          (click)="removeExistingVideo()">
+          ✕
+        </button>
+
+      </div>
+
+    }
+    @if (eventForm.get('videoUrl')?.invalid &&
+    eventForm.get('videoUrl')?.touched) {
+
+      <small class="error">
+        Invalid YouTube URL
+      </small>
+    }
+
+
+    <!-- Actions -->
+    <div class="actions">
+      <button type="submit" class="create-btn">
+        Update
+      </button>
+
+    </div>
+  </form>
+</section>
+
+

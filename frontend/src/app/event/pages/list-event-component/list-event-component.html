@@ -1,0 +1,98 @@
+<section class="news-list-section">
+
+  <h2>Évènements</h2>
+
+  <div class="news-list">
+
+  @for (eventElikia of eventList; track eventElikia.eventId) {
+    <article class="news-card">
+      @if (eventElikia.mediaList?.[0]; as media) {
+
+        <div class="news-image">
+
+          <!-- IMAGE -->
+          @if (eventElikia.displayType === 'IMAGE') {
+
+            <img
+              ngSrc="{{ apiUrlBack + '/uploads/media/' + media.imagePath }}"
+              alt="event-img"
+              fill
+            />
+
+          }
+
+          <!-- VIDEO -->
+          @if (eventElikia.displayType === 'VIDEO') {
+
+            <iframe
+              title="event-video"
+              width="100%"
+              height="200"
+              [src]="getSafeYoutubeUrl(media.videoUrl!)"
+              allowfullscreen>
+            </iframe>
+
+          }
+
+        </div>
+      }
+
+      <div class="news-content">
+
+        <div class="news-header">
+          <h3>{{ eventElikia.title }}</h3>
+        </div>
+
+        <small class="published-date">
+          Le {{ eventElikia.startDate | date:'dd/MM/yyyy à HH:mm' }}
+        </small>
+
+        <p [innerHTML]="eventElikia.description | slice:0:50"></p>
+
+        <a class="read-more"  (click)="goToDetail(eventElikia.eventId)">
+          Voir
+        </a>
+
+        @if (isAdmin) {
+          <div class="admin-actions">
+            <button (click)="deleteEvent(eventElikia.eventId)">Delete</button>
+            <button (click)="updateEvent(eventElikia.eventId)">Modifier</button>
+          </div>
+        }
+      </div>
+
+    </article>
+  }
+
+  </div>
+
+</section>
+
+<nav class="pagination">
+
+  <!-- Previous button -->
+  <button
+    (click)="previousPage()"
+    [disabled]="isFirstPage">
+    ‹ Prev
+  </button>
+
+  <!-- Page numbers -->
+  @for (page of pages; track page) {
+    <button
+      (click)="goToPage(page)"
+      [class.active]="isActivePage(page)">
+      {{ page + 1 }}
+    </button>
+  }
+
+  <!-- Next button -->
+  <button
+    (click)="nextPage()"
+    [disabled]="isLastPage">
+    Next ›
+  </button>
+
+</nav>
+
+

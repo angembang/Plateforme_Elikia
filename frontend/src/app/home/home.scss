@@ -100,9 +100,12 @@
     a {
       display: inline-block;
       margin-top: 0.5rem;
-      color: $bg-main;
+      color: white;
       font-weight: 600;
       text-decoration: none;
+      background-color: $bg-main;
+      padding: 0.5rem 1rem;
+      border-radius: 7px;
     }
 
 

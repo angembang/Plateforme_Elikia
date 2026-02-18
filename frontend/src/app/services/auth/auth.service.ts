@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {AuthStorageService} from './auth-storage.service';
-import {LoginRequest} from '../models/LoginRequest';
+import {AuthStorageService} from '../auth-storage/auth-storage.service';
+import {LoginRequest} from '../../models/LoginRequest';
 import {catchError, Observable, of, tap} from 'rxjs';
-import {LogicResult} from '../models/LogicResult';
-import {RegisterRequest} from '../models/RegisterRequest';
-import {environment} from '../../environments/environment';
+import {LogicResult} from '../../models/LogicResult';
+import {RegisterRequest} from '../../models/RegisterRequest';
+import {environment} from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',

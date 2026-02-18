@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {LogicResult} from '../models/LogicResult';
-import {environment} from '../../environments/environment';
-import {News} from '../models/News';
-import {Page} from '../models/Page';
+import {LogicResult} from '../../models/LogicResult';
+import {environment} from '../../../environments/environment';
+import {News} from '../../models/News';
+import {Page} from '../../models/Page';
 
 @Injectable({
   providedIn: 'root',

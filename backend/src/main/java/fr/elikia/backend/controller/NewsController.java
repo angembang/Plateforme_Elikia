@@ -24,7 +24,7 @@ import java.util.List;
  * REST controller responsible for managing News endpoints.
  */
 @RestController
-@RequestMapping("api/news")
+@RequestMapping("/api/news")
 @Tag(
         name = "News",
         description = "Endpoints for managing News and their associated Media"
@@ -238,7 +238,9 @@ public class NewsController {
             description = "Returns a paginated list of published news"
     )
     @ApiResponse(responseCode = "200", description = "News page retrieved")
-    @GetMapping("/Member/page")
+    @GetMapping("/member/page")
+    @RequiredJWTAuth
+    @RequiredRole("MEMBER")
     public ResponseEntity<LogicResult<Page<News>>> findPublishedNewsPageForMember(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "9") int size

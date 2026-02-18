@@ -1,3 +1,5 @@
+@use 'styles/variables' as *;
+
 :host {
   display: flex;
   flex-direction: column;

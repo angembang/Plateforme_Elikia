@@ -1,0 +1,124 @@
+
+@if (event) {
+  <!-- Actions -->
+  <div class="detail-actions">
+
+    <button class="btn back" (click)="goBack()">
+      <-- Retour à la liste des évènements
+    </button>
+
+    @if (isAdmin) {
+
+      <div class="admin-buttons">
+
+        <button class="btn edit" (click)="goToEdit()">
+          Modifier
+        </button>
+
+        <button class="btn delete" (click)="deleteEvent()">
+          Supprimer
+        </button>
+
+      </div>
+
+    }
+
+  </div>
+  <section class="news-detail">
+
+    <!-- Image -->
+    <!-- Slider if more then one images -->
+    @if (images.length > 1) {
+
+      <div class="image-slider">
+
+        <div
+          class="slider-track"
+          [style.transform]="'translateX(-' + (currentIndex * 100) + '%)'"
+        >
+
+          @for (img of images; track img) {
+            <img
+              ngSrc="{{ apiUrlBack + '/uploads/media/' + img }}"
+              alt="event img"
+              width="1000"
+              height="600"
+              priority
+              />
+          }
+
+        </div>
+
+        <!-- Buttons -->
+        <button class="slider-btn left" (click)="prevImage()">
+          ‹
+        </button>
+
+        <button class="slider-btn right" (click)="nextImage()">
+          ›
+        </button>
+
+      </div>
+    }
+
+    @else if (images.length === 1) {
+      <!-- else if event has so one image -->
+      <div class="news-image">
+
+        <img
+          ngSrc="{{ apiUrlBack + '/uploads/media/' + images[0] }}"
+          fill
+          alt="event img"
+        />
+
+      </div>
+
+    }
+    @else if (!images.length && videoUrl) {
+      <!-- else if event has only  video (no image) -->
+      <div class="news-video">
+
+        <iframe
+          title="event-video"
+          width="100%"
+          height="250"
+          [src]="getSafeYoutubeUrl(videoUrl!)"
+          allowfullscreen>
+        </iframe>
+
+      </div>
+
+    }
+
+    <!-- Content -->
+    <div class="news-content">
+      <h2>{{ event.title }}</h2>
+
+      <small class="published-date">
+        Du {{ event.startDate | date:'dd/MM/yyyy à HH:mm' }}
+        au {{ event.endDate | date:'dd/MM/yyyy à HH:mm' }}
+      </small>
+
+    </div>
+    <div class="news-text" [innerHTML]="event.description"></div>
+
+    <!-- event has images and video (video must be after the content) -->
+    @if (images.length && videoUrl) {
+
+      <div class="news-video bottom-video">
+
+        <iframe
+          title="event-video"
+          width="100%"
+          height="250"
+          [src]="getSafeYoutubeUrl(videoUrl!)"
+          allowfullscreen>
+        </iframe>
+
+      </div>
+
+    }
+
+  </section>
+
+}

@@ -1,0 +1,33 @@
+.media-section {
+  margin: 1rem 0;
+}
+
+.image-preview {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.img-box, .video-box {
+  position: relative;
+}
+
+.img-box img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.img-box button, .video-box button {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  background: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+}

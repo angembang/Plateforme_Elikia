@@ -93,13 +93,37 @@ form::before {
       row-gap: 1.5rem;
       padding: 1rem;
       border-radius: 7px;
+      grid-template-areas:
+      "first password"
+      "last confirm"
+      "email .";
 
-      /* ===== Image sur toute la largeur ===== */
+      .first-name {
+        grid-area: first;
+      }
+
+      .last-name {
+        grid-area: last;
+      }
+
+      .email {
+        grid-area: email;
+      }
+
+      .password {
+        grid-area: password;
+      }
+
+      .confirm-password {
+        grid-area: confirm;
+      }
+
+      /* ===== Image 100% width ===== */
       &::before {
         display: none;
       }
 
-      /* =====éléments pleine largeur ===== */
+      /* ===== elements 100% width ===== */
       .error,
       .success,
       button {

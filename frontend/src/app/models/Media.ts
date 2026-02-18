@@ -3,7 +3,7 @@
  *
  * A Media can belong to exactly ONE parent:
  * - News
- * - Event
+ * - EventElikia
  * - Workshop
  * - Achievement
  */

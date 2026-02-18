@@ -20,7 +20,7 @@ public class NewsDTO {
             example = "Rennes: l'Association Elikia organise la nuit du conte ce 2 février au CDAS de Maurepas"
     )
     @NotBlank(message = "the title is required")
-    @Size(min = 3, max = 150, message = "The title must be between 3 and 150 characters")
+    @Size(min = 3, max = 255, message = "The title must be between 3 and 255 characters")
     private String title;
 
     // Content of the news

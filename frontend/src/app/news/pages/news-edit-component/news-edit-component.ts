@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {NewsService} from '../../../services/news-service';
+import {NewsService} from '../../../services/news/news-service';
 import {environment} from '../../../../environments/environment';
 import {EditorComponent} from '@tinymce/tinymce-angular';
 
@@ -22,10 +22,10 @@ export class NewsEditComponent implements OnInit {
   existingMediaPath?: string;
 
   constructor(
-    private readonly route: ActivatedRoute,
-    private readonly fb: FormBuilder,
-    private readonly newsService: NewsService,
-    private readonly router: Router
+  private readonly route: ActivatedRoute,
+  private readonly fb: FormBuilder,
+  private readonly newsService: NewsService,
+  private readonly router: Router
   ) {}
 
   private handleError(err: any, fallbackMessage: string): void {
@@ -120,7 +120,11 @@ export class NewsEditComponent implements OnInit {
     height: 350,
     menubar: false,
     plugins: [
-      'lists link image preview code',
+      'lists',
+      'link',
+      'image',
+      'preview',
+      'code',
       'wordcount'
     ],
     toolbar:

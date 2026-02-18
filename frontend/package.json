@@ -6,7 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "cross-env CHROME_BIN=C:/Users/Utilisateur/.cache/puppeteer/chrome/win64-143.0.7499.192/chrome-win64/chrome.exe ng test --watch=false --browsers=ChromeHeadless"
   },
   "prettier": {
     "printWidth": 100,
@@ -22,12 +22,12 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/common": "^20.3.0",
-    "@angular/compiler": "^20.3.0",
-    "@angular/core": "^20.3.0",
-    "@angular/forms": "^20.3.0",
-    "@angular/platform-browser": "^20.3.0",
-    "@angular/router": "^20.3.0",
+    "@angular/common": "^20.3.16",
+    "@angular/compiler": "^20.3.16",
+    "@angular/core": "^20.3.16",
+    "@angular/forms": "^20.3.16",
+    "@angular/platform-browser": "^20.3.16",
+    "@angular/router": "^20.3.16",
     "@fortawesome/fontawesome-free": "^7.1.0",
     "@fortawesome/free-solid-svg-icons": "^7.1.0",
     "@tinymce/tinymce-angular": "^9.1.1",
@@ -39,7 +39,7 @@
   "devDependencies": {
     "@angular/build": "^20.3.3",
     "@angular/cli": "^20.3.3",
-    "@angular/compiler-cli": "^20.3.0",
+    "@angular/compiler-cli": "^20.3.16",
     "@types/jasmine": "~5.1.0",
     "cross-env": "^10.1.0",
     "jasmine-core": "~5.9.0",

@@ -12,6 +12,10 @@ import {AdminComponent} from './admin/adminComponent';
 import {NewsCreateComponent} from './news/pages/news-create-component/news-create-component';
 import {NewsEditComponent} from './news/pages/news-edit-component/news-edit-component';
 import {NewsDetailComponent} from './news/pages/news-detail-component/news-detail-component';
+import {CreateEventComponent} from './event/pages/create-event-component/create-event-component';
+import {ListEventComponent} from './event/pages/list-event-component/list-event-component';
+import {DetailEventComponent} from './event/pages/detail-event-component/detail-event-component';
+import {EditEventComponent} from './event/pages/edit-event-component/edit-event-component';
 
 export const routes: Routes = [
   // ------- Public / main layout --------------
@@ -25,6 +29,9 @@ export const routes: Routes = [
       { path: '', component: Home },
       { path: 'news', component: NewsListComponent},
       { path: 'news/detail/:id', component: NewsDetailComponent},
+      { path: 'event', component: ListEventComponent},
+      { path: 'event/detail/:id', component: DetailEventComponent},
+      {path: 'event/edit/:id', component: EditEventComponent},
 
     ]
   },
@@ -33,19 +40,15 @@ export const routes: Routes = [
     path: 'admin', component: AdminLayout,
     canActivate: [adminGuard],
     children: [
-      {
-        path: '', component: AdminComponent
-      },
-      {
-        path:'news/management', component: NewsListComponent
-      },
-      {
-        path: 'news/create', component: NewsCreateComponent
-      },
-      {
-        path: 'news/edit/:id', component: NewsEditComponent
-      },
-      { path: 'news/detail/:id', component: NewsDetailComponent},
+      {path: '', component: AdminComponent},
+      {path:'news/management', component: NewsListComponent},
+      {path: 'news/create', component: NewsCreateComponent},
+      {path: 'news/edit/:id', component: NewsEditComponent},
+      {path: 'news/detail/:id', component: NewsDetailComponent},
+      {path: 'event/create', component: CreateEventComponent},
+      {path: 'event', component: ListEventComponent},
+      {path: 'event/detail/:id', component: DetailEventComponent},
+      {path: 'event/edit/:id', component: EditEventComponent},
     ]
   }
 

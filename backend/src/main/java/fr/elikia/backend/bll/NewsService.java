@@ -4,6 +4,7 @@ import fr.elikia.backend.bo.*;
 import fr.elikia.backend.dao.idao.IDAONews;
 import fr.elikia.backend.dto.NewsDTO;
 import fr.elikia.backend.security.InputSanitizer;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -55,6 +56,7 @@ public class NewsService {
      *
      * @return LogicResult indicating success or failure
      */
+    @Transactional
     public LogicResult<Void> createNews(
             NewsDTO newsDTO,
             List<MultipartFile> files) {
@@ -209,7 +211,7 @@ public class NewsService {
                 Sort.by(Sort.Direction.DESC, "publishedAt")
         );
 
-        // Call DAO instead of repository
+        // Call IDAO
         Page<News> pageResult =
                 idaoNews.findPublishedNewsPage(
                         ContentStatus.PUBLISHED,
@@ -253,7 +255,7 @@ public class NewsService {
                 Sort.by(Sort.Direction.DESC, "publishedAt")
         );
 
-        // Call DAO instead of repository
+        // Call DAO
         Page<News> pageResult =
                 idaoNews.findAllByContentStatusAndVisibilityAfterOrderByPublishedAtDesc(
                         ContentStatus.PUBLISHED,
@@ -312,6 +314,7 @@ public class NewsService {
      *
      * @return LogicResult indicating success or failure
      */
+    @Transactional
     public LogicResult<Void> updateNews(Long newsId, NewsDTO newsDTO,  List<MultipartFile> files) {
         // Validate the identifier
         if(newsId == null || newsId <= 0) {
@@ -369,6 +372,7 @@ public class NewsService {
     /**
      * Delete news
      */
+    @Transactional
     public LogicResult<Void> deleteNews (Long newsId) {
         if(newsId == null || newsId <= 0) {
             return new LogicResult<>("400", "The news identifier is required", null);

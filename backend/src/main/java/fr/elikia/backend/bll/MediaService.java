@@ -3,6 +3,7 @@ package fr.elikia.backend.bll;
 import fr.elikia.backend.bo.*;
 import fr.elikia.backend.dao.idao.*;
 import fr.elikia.backend.security.InputSanitizer;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -80,6 +81,7 @@ public class MediaService {
      *
      * @return LogicResult containing the created Media or an error
      */
+    @Transactional
     public LogicResult<Media> createMedia(MultipartFile file,
                                           String videoUrl,
                                           String caption,
@@ -94,13 +96,11 @@ public class MediaService {
         String sanitizedCaption = caption != null
                 ? InputSanitizer.sanitize(caption)
                 : null;
-        if (isValidCaption(sanitizedCaption, result)) {
+        if (isInvalidCaption(sanitizedCaption, result)) {
             return result;
         }
-        String sanitizedVideoUrl = videoUrl != null
-                ? InputSanitizer.sanitize(videoUrl)
-                : null;
-        if (isValidVideoUrl(sanitizedVideoUrl, result)) {
+
+        if (isInvalidVideoUrl(videoUrl, result)) {
             return result;
         }
 
@@ -126,7 +126,7 @@ public class MediaService {
         }
 
         // ---------- Global media validation ----------
-        if (isValidMedia(imagePath, sanitizedVideoUrl, result)) {
+        if (isInvalidMedia(imagePath, videoUrl, result)) {
             return result;
         }
 
@@ -134,7 +134,7 @@ public class MediaService {
         Media media = new Media();
         media.setCaption(sanitizedCaption);
         media.setImagePath(imagePath);
-        media.setVideoUrl(sanitizedVideoUrl);
+        media.setVideoUrl(videoUrl);
 
         if (!attachOwner(media, newsId, eventId, workshopId, achievementId, result)) {
             return result;
@@ -193,7 +193,7 @@ public class MediaService {
         // ---------- Caption ----------
         if (caption != null) {
             String sanitizedCaption = InputSanitizer.sanitize(caption);
-            if (isValidCaption(sanitizedCaption, result)) {
+            if (isInvalidCaption(sanitizedCaption, result)) {
                 return result;
             }
             existingMedia.setCaption(sanitizedCaption);
@@ -201,11 +201,10 @@ public class MediaService {
 
         // ---------- Video URL ----------
         if (videoUrl != null) {
-            String sanitizedVideoUrl = InputSanitizer.sanitize(videoUrl);
-            if (isValidVideoUrl(sanitizedVideoUrl, result)) {
+            if (isInvalidVideoUrl(videoUrl, result)) {
                 return result;
             }
-            existingMedia.setVideoUrl(sanitizedVideoUrl);
+            existingMedia.setVideoUrl(videoUrl);
         }
 
         // ---------- Resolve existing owner ----------
@@ -241,7 +240,7 @@ public class MediaService {
         }
 
         // ---------- Final validation ----------
-        if (isValidMedia(existingMedia.getImagePath(),
+        if (isInvalidMedia(existingMedia.getImagePath(),
                 existingMedia.getVideoUrl(),
                 result)) {
             return result;
@@ -254,7 +253,6 @@ public class MediaService {
 
         return new LogicResult<>("200", "Media updated successfully", null);
     }
-
 
     /**
      * Delete media
@@ -278,13 +276,13 @@ public class MediaService {
     /**
      * Validates the media caption
      */
-    private boolean isValidCaption(String caption, LogicResult<?> result) {
+    private boolean isInvalidCaption(String caption, LogicResult<?> result) {
         if (caption == null || caption.isBlank()) {
             result.setMessage("the caption is required");
             return true;
         }
-        if (caption.length() < 3 || caption.length() > 200) {
-            result.setMessage("The caption must be between 3 and 200 characters");
+        if (caption.length() < 3 || caption.length() > 255) {
+            result.setMessage("The caption must be between 3 and 255 characters");
             return true;
         }
         return false;
@@ -294,7 +292,7 @@ public class MediaService {
     /**
      * Validates a single media according to strict business rules
      */
-    private boolean isValidMedia(
+    private boolean isInvalidMedia(
             String imagePath,
             String videoUrl,
             LogicResult<?> result) {
@@ -315,7 +313,7 @@ public class MediaService {
      * - YouTube only
      * - Valid format
      */
-    private boolean isValidVideoUrl(String videoUrl, LogicResult<?> result) {
+    private boolean isInvalidVideoUrl(String videoUrl, LogicResult<?> result) {
 
         if (videoUrl == null || videoUrl.isBlank()) {
             return false;
@@ -390,29 +388,6 @@ public class MediaService {
     private <T> LogicResult<T> validationError() {
 
         return new LogicResult<>("400", "Validation error", null);
-    }
-
-
-    /**
-     * Immutable container for sanitized and validated Media input data.
-
-     * This record is used internally to transport only trusted values
-     * from the validation layer to the business logic.
-
-     * Responsibilities:
-     * - Hold only sanitized user input
-     * - Guarantee that all business validation rules have passed
-     * - Avoid propagating raw DTO data inside the service
-
-     * This object is never exposed outside the MediaService.
-     */
-    private record SanitizedMediaInput(// Sanitized and validated media caption.
-                                      String caption,
-                                      // Sanitized and validated image path (maybe null)
-                                      String imagePath,
-                                      // Sanitized and validated video URL (maybe null)
-                                       String videoUrl) {
-        // Immutable data carrier only
     }
 
 
@@ -681,4 +656,5 @@ public class MediaService {
             return null;
         }
     }
+
 }

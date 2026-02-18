@@ -16,6 +16,11 @@
     <a routerLink="/"
        routerLinkActive="active"
        [routerLinkActiveOptions]="{ exact: true }">
+      Accueil
+    </a>
+    <a routerLink="/"
+       routerLinkActive="active"
+       [routerLinkActiveOptions]="{ exact: true }">
       Faire un don
     </a>
     <a routerLink="/register"
@@ -23,10 +28,9 @@
        [routerLinkActiveOptions]="{ exact: true }">
       Adhésion
     </a>
-    <a routerLink="/"
-       routerLinkActive="active"
-       [routerLinkActiveOptions]="{ exact: true }">
-      Evènements
+    <a routerLink="/event"
+       routerLinkActive="active">
+      Évènements
     </a>
     <a routerLink="/"
        routerLinkActive="active"
@@ -76,6 +80,11 @@
   <a routerLink="/"
      routerLinkActive="active"
      (click)="closeMenu()">
+    Accueil
+  </a>
+  <a routerLink="/"
+     routerLinkActive="active"
+     (click)="closeMenu()">
     Faire un don
   </a>
   <a routerLink="/register"
@@ -83,10 +92,10 @@
      (click)="closeMenu()">
     Adhésion
   </a>
-  <a routerLink="/"
+  <a routerLink="/event"
      routerLinkActive="active"
      (click)="closeMenu()">
-    Evènements
+    Évènements
   </a>
   <a routerLink="/"
      routerLinkActive="active"

@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {NewsService} from '../../../services/news-service';
+import {NewsService} from '../../../services/news/news-service';
 import {Router} from '@angular/router';
 import {EditorComponent} from '@tinymce/tinymce-angular';
 import {environment} from '../../../../environments/environment';
@@ -93,7 +93,7 @@ export class NewsCreateComponent implements OnInit {
     // Append JSON as Blob
     formData.append(
       'news',
-      new Blob([JSON.stringify(newsDTO)], { type: 'application/json' })
+      new Blob([JSON.stringify(newsDTO)], {type: 'application/json'})
     );
 
     // Append file(s) if present
@@ -150,7 +150,11 @@ export class NewsCreateComponent implements OnInit {
     height: 350,
     menubar: false,
     plugins: [
-      'lists link image preview code',
+      'lists',
+      'link',
+      'image',
+      'preview',
+      'code',
       'wordcount'
     ],
     toolbar:

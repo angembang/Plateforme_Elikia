@@ -2,9 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {News} from '../../../models/News';
 import {environment} from '../../../../environments/environment';
 import {ActivatedRoute, Router} from '@angular/router';
-import {NewsService} from '../../../services/news-service';
+import {NewsService} from '../../../services/news/news-service';
 import {DatePipe, NgOptimizedImage} from '@angular/common';
-import {AuthService} from '../../../services/auth.service';
+import {AuthService} from '../../../services/auth/auth.service';
 
 @Component({
   selector: 'app-news-detail-component',

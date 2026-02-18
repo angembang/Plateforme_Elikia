@@ -1,4 +1,8 @@
-<section class="news-list">
+<section class="news-list-section">
+
+  <h2>Actualités</h2>
+
+  <div class="news-list">
 
   @for (news of newsList; track news.newsId) {
     <article class="news-card">
@@ -7,7 +11,7 @@
           <img
             ngSrc="{{ apiUrlBack + '/uploads/media/' + media.imagePath }}"
             alt="news-img"
-            priority
+            priority="false"
             fill/>
         </div>
       }
@@ -47,6 +51,7 @@
 
     </article>
   }
+  </div>
 
 </section>
 

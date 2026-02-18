@@ -2,10 +2,10 @@ import { TestBed } from '@angular/core/testing';
 
 import { AuthService } from './auth.service';
 import {HttpTestingController, provideHttpClientTesting} from '@angular/common/http/testing';
-import {AuthStorageService} from './auth-storage.service';
-import {LoginRequest} from '../models/LoginRequest';
-import {LogicResult} from '../models/LogicResult';
-import {environment} from '../../environments/environment';
+import {AuthStorageService} from '../auth-storage/auth-storage.service';
+import {LoginRequest} from '../../models/LoginRequest';
+import {LogicResult} from '../../models/LogicResult';
+import {environment} from '../../../environments/environment';
 import {provideHttpClient} from '@angular/common/http';
 
 describe('AuthService', () => {
