@@ -1,8 +1,8 @@
 package fr.elikia.backend.news;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.elikia.backend.bo.ContentStatus;
-import fr.elikia.backend.bo.Visibility;
+import fr.elikia.backend.bo.enums.ContentStatus;
+import fr.elikia.backend.bo.enums.Visibility;
 import fr.elikia.backend.dto.NewsCreationRequest;
 import fr.elikia.backend.dto.NewsDTO;
 import fr.elikia.backend.security.jwt.JwtService;

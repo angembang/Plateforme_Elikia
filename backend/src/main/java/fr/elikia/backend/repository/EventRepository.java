@@ -1,9 +1,7 @@
 package fr.elikia.backend.repository;
 
-import fr.elikia.backend.bo.ContentStatus;
 import fr.elikia.backend.bo.Event;
-import fr.elikia.backend.bo.News;
-import fr.elikia.backend.bo.Visibility;
+import fr.elikia.backend.bo.enums.Visibility;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,7 +21,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
 
     /**
-     * Retrieve the all events ordered by the start date
+     * Retrieve all events ordered by the start date
      */
     Page<Event> findAllByOrderByStartDateDesc(
             Pageable pageable
@@ -31,7 +29,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
 
     /**
-     * Retrieve the all events ordered by the start date limit 4
+     * Retrieve 4 latest events
      */
     @Query("""
         SELECT e FROM Event e

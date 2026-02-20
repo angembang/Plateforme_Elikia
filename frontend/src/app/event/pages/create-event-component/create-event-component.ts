@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
 import {EditorComponent} from '@tinymce/tinymce-angular';
 import {EventService} from '../../../services/event/event-service';
 import {Router} from '@angular/router';
-import {environment} from '../../../../environments/environment';
 import {ErrorHandlerService} from '../../../services/error/error-handler-service';
-import {EventFormService} from '../../../services/event/event-form-service';
+import {BaseFormService} from '../../../services/form/base-form-service';
+import {BaseMediaFormComponent} from '../../../media/base-media-form-component/base-media-form-component';
 
 @Component({
   selector: 'app-create-event-component',
@@ -16,44 +16,16 @@ import {EventFormService} from '../../../services/event/event-form-service';
   templateUrl: './create-event-component.html',
   styleUrl: './create-event-component.scss',
 })
-export class CreateEventComponent implements OnInit {
-  // Reactive form instance
-  eventForm!: FormGroup;
-  // error message
-  errorMessage?: string;
-
-  // Optional image file
-  selectedFiles: File[] = [];
-
-  private handleError(err: any, fallbackMessage: string): void {
-    console.error('HTTP Error:', err);
-    // Backend sends LogicResult
-    if (err?.error?.message) {
-      this.errorMessage = err.error.message;
-      return;
-    }
-    // Backend sends string
-    if (typeof err?.error === 'string') {
-      this.errorMessage = err.error;
-      return;
-    }
-    // Angular error message
-    if (err?.message) {
-      this.errorMessage = err.message;
-      return;
-    }
-    // Fallback
-    this.errorMessage = fallbackMessage;
-  }
-
-
+export class CreateEventComponent extends BaseMediaFormComponent implements OnInit {
   // Constructor
   constructor(
-    private readonly fb: FormBuilder,
+    fb: FormBuilder,
     private readonly eventService: EventService,
     private readonly router: Router,
     private readonly errorHandler: ErrorHandlerService,
-    private readonly eventFormService: EventFormService) {}
+    private readonly baseFormService: BaseFormService) {
+    super(fb);
+  }
 
   ngOnInit(): void {
     this.initForm();
@@ -64,36 +36,7 @@ export class CreateEventComponent implements OnInit {
    * Initialize the reactive form
    */
   private initForm(): void {
-    this.eventForm = this.fb.group({
-      title: ['', [Validators.required, Validators.maxLength(150)]],
-      description: ['', [Validators.required, Validators.maxLength(2000)]],
-      startDate: ['', Validators.required],
-      endDate: ['', Validators.required],
-      location: ['', [Validators.required, Validators.maxLength(30)]],
-      address: ['', [Validators.required, Validators.maxLength(200)]],
-      capacity: [0, [Validators.required, Validators.min(1)]],
-      visibility: ['PUBLIC', Validators.required],
-      videoUrl: ['', [Validators.pattern(/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/)]]
-    });
-  }
-
-
-  // Handle file selection from input[type=file]
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-
-    if (!input.files) return;
-
-    for (const element of input.files) {
-      const file = element;
-
-      if (file.size > 10 * 1024 * 1024) {
-        this.errorMessage = "Image trop lourde (max 10MB)";
-        continue;
-      }
-
-      this.selectedFiles.push(file);
-    }
+    this.form = this.initBaseForm();
   }
 
 
@@ -104,28 +47,19 @@ export class CreateEventComponent implements OnInit {
     // Clear the error message
     this.errorMessage = undefined;
     const validationError =
-      this.eventFormService.validateForm(this.eventForm);
+      this.baseFormService.validateForm(this.form);
 
     if (validationError) {
-      this.eventForm.markAllAsTouched();
+      this.form.markAllAsTouched();
       this.errorMessage = validationError;
       return;
     }
 
     const formData =
-      this.eventFormService.buildFormData(this.eventForm);
+      this.baseFormService.buildFormData(this.form, 'event');
 
     // Files
-    this.selectedFiles.forEach(file => {
-      formData.append('files', file);
-    });
-
-    const hasImage = this.selectedFiles.length > 0;
-    const hasVideo = !!this.eventForm.value.videoUrl;
-
-    if (!hasImage && !hasVideo) {
-      this.errorMessage =
-        'Veuillez fournir une image ou une vidéo';
+    if (!this.appendMediaAndValidate(formData)) {
       return;
     }
 
@@ -153,31 +87,5 @@ export class CreateEventComponent implements OnInit {
 
     return regex.test(url);
   }
-
-
-  /**
-   * Configuration tinymce
-   */
-  editorConfig = {
-    height: 350,
-    menubar: false,
-    plugins: [
-      'lists',
-      'link',
-      'image',
-      'preview',
-      'code',
-      'wordcount'
-    ],
-    toolbar:
-      'undo redo | bold italic underline | ' +
-      'bullist numlist | alignleft aligncenter alignright | ' +
-      'link | removeformat',
-    branding: false
-  };
-
-  // Tinymce api key
-  tinymceApikey = environment.tinymceApiKey
-
 
 }

@@ -47,7 +47,9 @@
               {{ event.startDate | date:'dd/MM/yyyy' }}
             </small>
 
-            <p [innerHTML]="event.description | slice:0:80"></p>
+            <p class="card-p">
+              {{ event.description | truncate:80 }}
+            </p>
 
             <a [routerLink]="['/event/detail', event.eventId]" class="read-more-home">
               voir
@@ -57,17 +59,67 @@
         }
       </div>
     } @else {
-      <p>Aucun évènement pour le moment</p>
+      <p class="card-p">Aucun évènement pour le moment</p>
     }
   </section>
 
   <section>
     <h2>Ateliers à venir</h2>
+    @if (latestWorkshop.length > 0) {
+      <div class="cards">
+        @for (workshop of latestWorkshop; track workshop.workshopId) {
+          <article class="card">
+
+            @if (workshop.mediaList?.[0]; as media) {
+              <div class="news-image">
+                <!-- IMAGE -->
+                @if (workshop.displayType === 'IMAGE') {
+                  <img
+                    [src]="apiUrlBack + '/uploads/media/' + media.imagePath"
+                    alt="workshop-img"
+                  />
+
+                }
+                <!-- VIDEO -->
+                @if (workshop.displayType === 'VIDEO') {
+                  <iframe
+                    title="workshop-video"
+                    width="100%"
+                    height="200"
+                    [src]="getSafeYoutubeUrl(media.videoUrl!)"
+                    allowfullscreen>
+                  </iframe>
+                }
+
+              </div>
+
+            }
+
+            <h3>{{ workshop.title }}</h3>
+
+            <small>
+              {{ workshop.startDate | date:'dd/MM/yyyy' }}
+            </small>
+
+            <p class="card-p">
+              {{ workshop.description | truncate:80 }}
+            </p>
+
+            <a [routerLink]="['/workshop/detail', workshop.workshopId]" class="read-more-home">
+              voir
+            </a>
+
+          </article>
+        }
+      </div>
+    } @else {
+      <p class="card-p">Aucun atelier pour le moment</p>
+    }
   </section>
 
-  <section>
+  <!--<section>
     <h2>Réalisations</h2>
-  </section>
+  </section>-->
 
   <section class="latest-news">
     <h2>Actualités</h2>
@@ -90,7 +142,9 @@
               {{ news.publishedAt | date:'dd/MM/yyyy' }}
             </small>
 
-            <p [innerHTML]="news.content | slice:0:80"></p>
+            <p class="card-p">
+              {{ news.content | truncate:80 }}
+            </p>
 
             <a [routerLink]="['/news/detail', news.newsId]" class="read-more-home">
               Lire la suite
@@ -100,7 +154,7 @@
         }
       </div>
     } @else {
-      <p>Aucune actualité pour le moment</p>
+      <p class="card-p">Aucune actualité pour le moment</p>
     }
   </section>
 </div>

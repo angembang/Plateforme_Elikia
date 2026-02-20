@@ -1,6 +1,6 @@
 package fr.elikia.backend.bll.schedule;
 
-import fr.elikia.backend.bo.ContentStatus;
+import fr.elikia.backend.bo.enums.ContentStatus;
 import fr.elikia.backend.bo.News;
 import fr.elikia.backend.dao.idao.IDAONews;
 import jakarta.transaction.Transactional;

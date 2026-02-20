@@ -4,9 +4,10 @@ import {FormGroup} from '@angular/forms';
 @Injectable({
   providedIn: 'root',
 })
-export class EventFormService {
+export class BaseFormService {
   /**
    * Validate form and return error message if invalid
+   * @param form
    */
   validateForm(form: FormGroup): string | null {
 
@@ -39,15 +40,16 @@ export class EventFormService {
     return 'Formulaire invalide';
   }
 
-
   /**
    * Build FormData from form
+   * @param form
+   * @param entityKey
    */
-  buildFormData(form: FormGroup): FormData {
+  buildFormData(form: FormGroup, entityKey: string): FormData {
 
     const formData = new FormData();
 
-    const eventDTO = {
+    const dto = {
       title: form.value.title,
       description: form.value.description,
       startDate: form.value.startDate,
@@ -59,9 +61,9 @@ export class EventFormService {
     };
 
     formData.append(
-      'event',
+      entityKey,
       new Blob(
-        [JSON.stringify(eventDTO)],
+        [JSON.stringify(dto)],
         { type: 'application/json' }
       )
     );

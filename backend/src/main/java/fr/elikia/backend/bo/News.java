@@ -1,5 +1,7 @@
 package fr.elikia.backend.bo;
 
+import fr.elikia.backend.bo.enums.ContentStatus;
+import fr.elikia.backend.bo.enums.Visibility;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

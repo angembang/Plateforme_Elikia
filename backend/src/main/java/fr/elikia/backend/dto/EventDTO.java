@@ -1,6 +1,6 @@
 package fr.elikia.backend.dto;
 
-import fr.elikia.backend.bo.Visibility;
+import fr.elikia.backend.bo.enums.Visibility;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
  * DTO used for event registration.
  * Contains only fields allowed to be sent by the client.
  */
-public class EventDTO {
+public class EventDTO implements ActivityDTO {
     // Title of the event
     @Schema(
             description = "Titre de l'évènement",
@@ -38,7 +38,7 @@ public class EventDTO {
     // Start date
     @Schema(
             description = "Date de début de l'évènement",
-            example = "14/12/2011 à 11h00"
+            example = "14/12/2012 à 11h00"
     )
     private LocalDateTime startDate;
 
@@ -46,7 +46,7 @@ public class EventDTO {
     // End date
     @Schema(
             description = "Date de fin de l'évènement",
-            example = "14/12/2011 à 22h00"
+            example = "14/12/2012 à 22h00"
     )
     private LocalDateTime endDate;
 

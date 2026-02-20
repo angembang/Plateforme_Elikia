@@ -7,7 +7,7 @@
     </div>
   }
 
-  <form [formGroup]="eventForm" (ngSubmit)="submit()">
+  <form [formGroup]="form" (ngSubmit)="submit()">
 
     <!-- Title -->
     <div>
@@ -107,7 +107,7 @@
         type="file"
         multiple
         accept="image/*"
-        (change)="onImagesSelected($event)"
+        (change)="onFileSelected($event)"
         id="image"
         name="image"
       />
@@ -115,18 +115,18 @@
     </div>
 
     <!-- New images preview -->
-    @if (selectedImages.length) {
+    @if (selectedFiles.length) {
 
       <h4>Nouvelles images</h4>
 
       <div class="image-preview">
 
-        @for (file of selectedImages; track file) {
+        @for (file of selectedFiles; track file) {
 
           <div class="img-box">
             <img
               [src]="file | filePreview"
-              alt="news-event-img"/>
+              alt="new-event-img"/>
 
           </div>
 
@@ -166,8 +166,8 @@
       </div>
 
     }
-    @if (eventForm.get('videoUrl')?.invalid &&
-    eventForm.get('videoUrl')?.touched) {
+    @if (form.get('videoUrl')?.invalid &&
+    form.get('videoUrl')?.touched) {
 
       <small class="error">
         Invalid YouTube URL

@@ -1,4 +1,4 @@
-package fr.elikia.backend.bo;
+package fr.elikia.backend.bo.enums;
 
 public enum Visibility {
     PUBLIC,

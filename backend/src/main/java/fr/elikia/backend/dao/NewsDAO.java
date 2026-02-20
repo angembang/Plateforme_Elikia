@@ -1,8 +1,8 @@
 package fr.elikia.backend.dao;
 
-import fr.elikia.backend.bo.ContentStatus;
+import fr.elikia.backend.bo.enums.ContentStatus;
 import fr.elikia.backend.bo.News;
-import fr.elikia.backend.bo.Visibility;
+import fr.elikia.backend.bo.enums.Visibility;
 import fr.elikia.backend.dao.idao.IDAONews;
 import fr.elikia.backend.repository.NewsRepository;
 import org.springframework.data.domain.Page;

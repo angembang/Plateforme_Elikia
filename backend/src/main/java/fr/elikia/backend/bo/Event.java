@@ -1,5 +1,6 @@
 package fr.elikia.backend.bo;
 
+import fr.elikia.backend.bo.enums.Visibility;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -8,7 +9,7 @@ import java.util.List;
 
 @Entity
 @Table( name = "event" )
-public class Event {
+public class Event implements ActivityEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long eventId;

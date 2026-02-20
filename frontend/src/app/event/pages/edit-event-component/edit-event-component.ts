@@ -1,13 +1,14 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {EventService} from '../../../services/event/event-service';
 import {environment} from '../../../../environments/environment';
 import {EditorComponent} from '@tinymce/tinymce-angular';
-import {SafeUrlPipe} from '../../../safe-url-pipe';
-import {FilePreviewPipe} from '../../../file-preview-pipe';
+import {SafeUrlPipe} from '../../../pipe/url/safe-url-pipe';
+import {FilePreviewPipe} from '../../../pipe/preview/file-preview-pipe';
 import {ErrorHandlerService} from '../../../services/error/error-handler-service';
-import {EventFormService} from '../../../services/event/event-form-service';
+import {BaseFormService} from '../../../services/form/base-form-service';
+import {BaseMediaFormComponent} from '../../../media/base-media-form-component/base-media-form-component';
 
 @Component({
   selector: 'app-edit-event-component',
@@ -21,53 +22,26 @@ import {EventFormService} from '../../../services/event/event-form-service';
   templateUrl: './edit-event-component.html',
   styleUrl: './edit-event-component.scss',
 })
-export class EditEventComponent implements OnInit {
-  eventForm!: FormGroup;
+export class EditEventComponent extends BaseMediaFormComponent implements OnInit {
   eventId!: number;
-  errorMessage?: string;
-
-  // Existing medias
-  existingImages: { id: number; path: string }[] = [];
-  existingVideoUrl?: { id: number; url: string};
-
-// New medias
-  selectedImages: File[] = [];
-  selectedVideoUrl?: string;
-
-// Removed images
-  removedMediaIds: number[] = [];
 
   protected readonly environment = environment;
 
   constructor(
     private readonly route: ActivatedRoute,
-    private readonly fb: FormBuilder,
+    fb: FormBuilder,
     private readonly eventService: EventService,
     private readonly router: Router,
     private readonly errorHandler: ErrorHandlerService,
-    private readonly eventFormService: EventFormService
-  ) {}
+    private readonly baseFormService: BaseFormService) {
+    super(fb)
+  }
 
 
   ngOnInit(): void {
     this.eventId = Number(this.route.snapshot.paramMap.get('id'));
-    this.initForm();
+    this.form = this.initBaseForm();
     this.loadEvent();
-  }
-
-  private initForm() {
-    this.eventForm = this.fb.group({
-      title: ['', [Validators.required, Validators.maxLength(255)]],
-      description: ['', [Validators.required, Validators.maxLength(2000)]],
-      startDate: ['', [Validators.required]],
-      endDate: ['', [Validators.required]],
-      location: ['', [Validators.required, Validators.maxLength(255)]],
-      address: ['', [Validators.required, Validators.maxLength(255)]],
-      capacity: [0, [Validators.required, Validators.max(50000)]],
-      visibility: ['PUBLIC', Validators.required],
-      videoUrl: ['', [Validators.pattern(/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/)]]
-    });
-
   }
 
 
@@ -75,43 +49,10 @@ export class EditEventComponent implements OnInit {
     this.eventService.getEventById(this.eventId).subscribe({
       next: result => {
         if (result.code && result.data) {
-          this.eventForm.patchValue({
-            title: result.data.title,
-            description: result.data.description,
-            startDate: result.data.startDate,
-            endDate: result.data.endDate,
-            location: result.data.location,
-            address: result.data.address,
-            capacity: result.data.capacity,
-            visibility: result.data.visibility
-          });
-          // Retrieve existing medias
-          if(result.data.mediaList?.length) {
-            this.existingImages = result.data.mediaList
-              .filter(m => m.imagePath)
-              .map(m => ({
-                id: m.mediaId,
-                path: m.imagePath!
-              }));
-
-            const video = result.data.mediaList.find(m => m.videoUrl);
-
-            if (video && video.videoUrl) {
-
-              this.existingVideoUrl = {
-                id: video.mediaId,
-                url: video.videoUrl
-              };
-
-              // Pre-fill the form field
-              this.eventForm.patchValue({
-                videoUrl: video.videoUrl
-              });
-            }
-          }
+          this.patchFormAndMedia(result.data)
         }
       },
-      error: err => console.error('Error loading news', err)
+      error: err => console.error('Error loading event', err)
     })
   }
 
@@ -120,19 +61,19 @@ export class EditEventComponent implements OnInit {
     // Clear the error message
     this.errorMessage = undefined;
     const validationError =
-      this.eventFormService.validateForm(this.eventForm);
+      this.baseFormService.validateForm(this.form);
 
     if (validationError) {
-      this.eventForm.markAllAsTouched();
+      this.form.markAllAsTouched();
       this.errorMessage = validationError;
       return;
     }
 
     const formData =
-      this.eventFormService.buildFormData(this.eventForm);
+      this.baseFormService.buildFormData(this.form, 'event');
 
     // Images
-    this.selectedImages.forEach(file => {
+    this.selectedFiles.forEach(file => {
       formData.append('files', file);
     });
 
@@ -166,30 +107,6 @@ export class EditEventComponent implements OnInit {
 
 
   /**
-   * Mange multi images
-   * @param event
-   */
-  onImagesSelected(event: Event): void {
-    // Reset before adding
-    this.selectedImages = [];
-
-    const input = event.target as HTMLInputElement;
-
-    if (!input.files) return;
-
-    for (const file of Array.from(input.files)) {
-
-      if (file.size > 10 * 1024 * 1024) {
-        this.errorMessage = 'Image trop lourde (max 10MB)';
-        continue;
-      }
-
-      this.selectedImages.push(file);
-    }
-  }
-
-
-  /**
    * Remove existing image
    * @param img
    */
@@ -212,9 +129,8 @@ export class EditEventComponent implements OnInit {
 
     if (!url) return '';
 
-    const match = url.match(
-      /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/
-    );
+    const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/;
+    const match = regex.exec(url);
 
     return match
       ? `https://www.youtube.com/embed/${match[1]}`
@@ -236,33 +152,8 @@ export class EditEventComponent implements OnInit {
 
     // Delete side ui
     this.existingVideoUrl = undefined;
-    this.eventForm.patchValue({videoUrl: ''});
+    this.form.patchValue({videoUrl: ''});
 
   }
-
-
-  /**
-   * Configuration tinymce
-   */
-  editorConfig = {
-    height: 350,
-    menubar: false,
-    plugins: [
-      'lists',
-      'link',
-      'image',
-      'preview',
-      'code',
-      'wordcount'
-    ],
-    toolbar:
-      'undo redo | bold italic underline | ' +
-      'bullist numlist | alignleft aligncenter alignright | ' +
-      'link | removeformat',
-    branding: false
-  };
-
-  // Tinymce api key
-  tinymceApikey = environment.tinymceApiKey
 
 }

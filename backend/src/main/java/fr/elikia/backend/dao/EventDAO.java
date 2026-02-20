@@ -1,7 +1,7 @@
 package fr.elikia.backend.dao;
 
 import fr.elikia.backend.bo.Event;
-import fr.elikia.backend.bo.Visibility;
+import fr.elikia.backend.bo.enums.Visibility;
 import fr.elikia.backend.dao.idao.IDAOEvent;
 import fr.elikia.backend.repository.EventRepository;
 import org.springframework.data.domain.Page;

@@ -7,13 +7,16 @@ import {DatePipe, SlicePipe} from '@angular/common';
 import {EventService} from '../services/event/event-service';
 import {EventElikia} from '../models/EventElikia';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
+import {Workshop} from '../models/Workshop';
+import {WorkshopService} from '../services/workshop/workshop-service';
+import {TruncatePipe} from '../pipe/shared/truncate-pipe';
 
 @Component({
   selector: 'app-home',
   imports: [
     DatePipe,
-    SlicePipe,
-    RouterLink
+    RouterLink,
+    TruncatePipe
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss',
@@ -22,14 +25,15 @@ export class Home implements OnInit {
   protected readonly apiUrlBack = environment.apiBackendUrl;
 
   latestNews: News[] = [];
-
   latestEvent: EventElikia[] = [];
+  latestWorkshop: Workshop[] = [];
   errorMessage?: string;
 
   constructor(
     private readonly router: Router,
     private readonly newsService: NewsService,
     private readonly eventService: EventService,
+    private readonly workshopService: WorkshopService,
     private readonly sanitizer: DomSanitizer) {}
 
   private handleError(err: any, fallbackMessage: string): void {
@@ -48,6 +52,7 @@ export class Home implements OnInit {
   ngOnInit(): void {
     this.loadLatestNews();
     this.loadLatestEvent();
+    this.loadLatestWorkshop();
   }
 
   /**
@@ -100,6 +105,43 @@ export class Home implements OnInit {
       error: err => this.handleError(err, 'Error loading latest event')
     });
   }
+
+
+  /**
+   * load the latest workshop (limit 4)
+   * @private
+   */
+  private loadLatestWorkshop(): void {
+    this.workshopService.getLatestWorkshop().subscribe({
+      next: result => {
+        if (result.code === '200' && result.data) {
+
+          this.latestWorkshop = result.data.map(workshop => {
+
+            const media = workshop.mediaList?.[0];
+
+            let displayType: 'IMAGE' | 'VIDEO' | 'NONE' = 'NONE';
+
+            if (media?.imagePath) {
+              displayType = 'IMAGE';
+            }
+            else if (media?.videoUrl) {
+              displayType = 'VIDEO';
+            }
+
+            return {
+              ...workshop,
+              displayType
+            };
+          });
+
+        }
+
+      },
+      error: err => this.handleError(err, 'Error loading latest workshop')
+    });
+  }
+
 
 
   getSafeYoutubeUrl(url: string): SafeResourceUrl {

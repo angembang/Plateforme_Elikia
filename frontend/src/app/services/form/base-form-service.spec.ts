@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { EventFormService } from './event-form-service';
+import { BaseFormService } from './base-form-service';
 
-describe('EventFormService', () => {
-  let service: EventFormService;
+describe('BaseFormService', () => {
+  let service: BaseFormService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(EventFormService);
+    service = TestBed.inject(BaseFormService);
   });
 
   it('should be created', () => {

@@ -1,7 +1,7 @@
 package fr.elikia.backend.dto;
 
-import fr.elikia.backend.bo.ContentStatus;
-import fr.elikia.backend.bo.Visibility;
+import fr.elikia.backend.bo.enums.ContentStatus;
+import fr.elikia.backend.bo.enums.Visibility;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

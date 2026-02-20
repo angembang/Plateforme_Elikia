@@ -3,6 +3,7 @@ package fr.elikia.backend.event;
 import fr.elikia.backend.bll.EventService;
 import fr.elikia.backend.bll.MediaService;
 import fr.elikia.backend.bo.*;
+import fr.elikia.backend.bo.enums.Visibility;
 import fr.elikia.backend.dao.idao.IDAOEvent;
 import fr.elikia.backend.dto.EventDTO;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class EventServiceTest {
+class EventServiceTest {
     // MOCKED IDAO DEPENDENCIES
     @Mock
     private IDAOEvent idaoEvent;
@@ -146,7 +147,7 @@ public class EventServiceTest {
 
         // Assert
         assertEquals("400", result.getCode());
-        assertTrue(result.getMessage().startsWith("Media creation failed"));
+        assertTrue(result.getMessage().startsWith("Invalid image"));
 
         verify(idaoEvent).create(any(Event.class));
         verify(mediaService).createMedia(

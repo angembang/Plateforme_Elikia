@@ -1,8 +1,11 @@
 package fr.elikia.backend.dao;
 
+import fr.elikia.backend.bo.enums.Visibility;
 import fr.elikia.backend.bo.Workshop;
 import fr.elikia.backend.dao.idao.IDAOWorkshop;
 import fr.elikia.backend.repository.WorkshopRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -52,5 +55,31 @@ public class WorkshopDAO implements IDAOWorkshop {
         }
         return workshopRepository.save(workshop);
 
+    }
+
+
+    // Retrieve workshops by their visibility ordered by the start date desc
+    @Override
+    public Page<Workshop> findAllByVisibilityOrderByStartDateDesc(
+            Visibility visibility,
+            Pageable pageable) {
+        return workshopRepository.findAllByVisibilityOrderByStartDateDesc(
+                visibility,
+                pageable
+        );
+    }
+
+    // Retrieve all workshop ordered by the start date
+    @Override
+    public Page<Workshop> findAllByOrderByStartDateDesc(
+            Pageable pageable) {
+        return workshopRepository.findAllByOrderByStartDateDesc(pageable);
+
+    }
+
+    // Retrieve 4 latest workshops
+    @Override
+    public List<Workshop> findAllByOrderByStartDateDesc() {
+        return workshopRepository.findAllByOrderByStartDateDesc();
     }
 }

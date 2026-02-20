@@ -1,5 +1,6 @@
 package fr.elikia.backend.bo;
 
+import fr.elikia.backend.bo.enums.RegistrationStatus;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

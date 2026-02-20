@@ -5,7 +5,6 @@ import fr.elikia.backend.dao.idao.IDAOAdmin;
 import fr.elikia.backend.dao.idao.IDAOMember;
 import fr.elikia.backend.dao.idao.IDAORole;
 import fr.elikia.backend.dto.LoginDTO;
-import fr.elikia.backend.dto.NewsDTO;
 import fr.elikia.backend.dto.RegisterDTO;
 import fr.elikia.backend.security.InputSanitizer;
 import fr.elikia.backend.security.jwt.JwtService;

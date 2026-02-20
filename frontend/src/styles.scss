@@ -355,9 +355,16 @@ body {
 
   .published-date {
     display: block;
-    margin-bottom: 1.5rem;
     color: $action;
     font-size: 0.9rem;
+    margin-top: 1.5rem;
+  }
+
+  .location {
+    color: $bg-main;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    font-weight: bold;
   }
 
 }
@@ -398,8 +405,13 @@ body {
     }
 
     .published-date {
-      padding: 0;
+      padding-top: 0.5rem;
       text-align: center;
+    }
+
+    .location {
+      text-align: center;
+
     }
 
   }
@@ -456,6 +468,79 @@ body {
   color: #ffffff;
 }
 
+.image-slider {
+  grid-row: 1;
+  grid-column: 1;
+  position: relative;
+  width: 100%;
+  height: 260px;
+  overflow: hidden;
+}
+
+.image-slider img {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  scroll-snap-align: center;
+  border-radius: 10px;
+}
+
+.news-video {
+  grid-column: 1 / -1;
+}
+
+.slider-track {
+  display: flex;
+  transition: transform 0.4s ease;
+  width: 100%;
+  height: 100%;
+}
+
+.slider-track img {
+  width: 100%;
+  height: 100%;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* Buttons */
+
+.slider-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.5);
+  color: white;
+  border: none;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+.slider-btn.left {
+  left: 10px;
+}
+
+.slider-btn.right {
+  right: 10px;
+}
+
+@media (max-width: 768px) {
+
+  .image-slider {
+    grid-column: 1;
+    grid-row: 2;
+    height: 220px;
+  }
+
+}
+
+
 
 
 /* ***********************  Style for display error div **************************/
@@ -467,6 +552,43 @@ body {
   margin-bottom: 15px;
   border-radius: 6px;
   font-weight: 500;
+}
+
+
+
+/* ***********************  Style for edit event and workshop **************************/
+.media-section {
+  margin: 1rem 0;
+}
+
+.image-preview {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.img-box, .video-box {
+  position: relative;
+}
+
+.img-box img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.img-box button, .video-box button {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  background:#e53935;
+  color: $text-main;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
 }
 
 

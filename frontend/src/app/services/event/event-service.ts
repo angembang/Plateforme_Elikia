@@ -5,7 +5,6 @@ import {Observable} from 'rxjs';
 import {EventElikia} from '../../models/EventElikia';
 import {LogicResult} from '../../models/LogicResult';
 import {Page} from '../../models/Page';
-import {News} from '../../models/News';
 
 @Injectable({
   providedIn: 'root',

@@ -7,6 +7,7 @@ import {EventElikia} from '../../../models/EventElikia';
 import {DatePipe, NgOptimizedImage, SlicePipe} from '@angular/common';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 import {PaginationService} from '../../../services/pagination/pagination-service';
+import {BaseListComponent} from '../../../list/base-list-component/base-list-component';
 
 @Component({
   selector: 'app-list-event-component',
@@ -18,7 +19,7 @@ import {PaginationService} from '../../../services/pagination/pagination-service
   templateUrl: './list-event-component.html',
   styleUrl: './list-event-component.scss',
 })
-export class ListEventComponent implements OnInit {
+export class ListEventComponent extends BaseListComponent implements OnInit {
 
   // Backend base URL (for images)
   protected readonly apiUrlBack = environment.apiBackendUrl;
@@ -26,73 +27,34 @@ export class ListEventComponent implements OnInit {
   // List of event displayed on current page
   eventList: EventElikia[] = [];
 
-  // Page indexes for pagination buttons
-  pages: number[] = [];
-
-  // Pagination state
-  currentPage = 0;
-  pageSize = 12;
-  totalPages = 0;
-  isFirstPage = true;
-  isLastPage = false;
-
-  // User role
-  isAdmin = false;
-  isMember = false;
-
-  // User page
-  isAdminPage = false;
-  isMemberPage = false;
-
   constructor(
     private readonly eventService: EventService,
-    private readonly authService: AuthService,
-    private readonly router: Router,
-    private readonly route: ActivatedRoute,
+    authService: AuthService,
+    router: Router,
+    route: ActivatedRoute,
     private readonly sanitizer: DomSanitizer,
-    private readonly paginationService: PaginationService
-  ) {}
+    paginationService: PaginationService
+  ) {
+    super(authService, router, route, paginationService);
+  }
 
   ngOnInit() {
-    // Check if user is admin
-    this.isAdmin = this.authService.getUserRole() === 'ADMIN';
+    this.initRoleAndRouteContext();
 
-    // Check if user is member
-    this.isMember = this.authService.getUserRole() === 'MEMBER';
+    this.handlePagination(() => {
 
-    // check if current route is admin page
-    this.isAdminPage = this.router.url.includes('/admin');
-
-    // check if current route is member page
-    this.isMemberPage = this.router.url.includes('/member');
-
-    // Listen to query params (?page= & size=)
-    this.route.queryParams.subscribe(params => {
-      const pagination =
-        this.paginationService.handlePaginationParams(
-          params,
-          this.route,
-          this.pageSize
-        );
-
-      if (!pagination) return;
-
-      this.currentPage = pagination.page;
-      this.pageSize = pagination.size;
-
-      // Load backend data for admin
       if (this.isAdminPage) {
+        // Load backend data for admin
         this.loadAdminEvent();
-      }
-
-      // Load backend data for member
-      if (this.isMemberPage) {
+      } else if (this.isMemberPage) {
+        // Load backend data for member
         this.loadMemberEvent();
+      } else {
+        // Load backend data for public
+        this.loadPublicEventPage();
       }
 
-      // Load backend data for public
-      this.loadPublicEventPage();
-    })
+    });
   }
 
 
@@ -160,57 +122,6 @@ export class ListEventComponent implements OnInit {
         this.loadAdminEvent();
       }
     });
-  }
-
-
-  /**
-   * Go to previous page
-   */
-  previousPage(): void {
-
-    if (this.isFirstPage) return;
-
-    this.goToPage(this.currentPage - 1);
-  }
-
-
-  /**
-   * Go to next page
-   */
-  nextPage(): void {
-
-    if (this.isLastPage) return;
-
-    this.goToPage(this.currentPage + 1);
-  }
-
-
-  /**
-   * Navigate to a specific page
-   */
-  goToPage(page: number): void {
-
-    if (page < 0 || page >= this.totalPages) {
-      return;
-    }
-
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: {
-        page: page,
-        size: this.pageSize
-      },
-      queryParamsHandling: 'merge'
-    }).then(r => {});
-  }
-
-
-  /**
-   * Check the active page
-   * @param page
-   */
-  isActivePage(page: number): boolean {
-    return page === this.currentPage;
   }
 
 

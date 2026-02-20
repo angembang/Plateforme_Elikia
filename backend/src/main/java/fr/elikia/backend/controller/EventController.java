@@ -28,7 +28,8 @@ import java.util.List;
 @Tag(
         name = "Event",
         description = "Endpoints for managing Event and their associated Media"
-)public class EventController {
+)
+public class EventController {
     // Business service dependency
     private final EventService eventService;
 
@@ -344,7 +345,5 @@ import java.util.List;
                 .status(status)
                 .body(result);
     }
-
-
 
 }

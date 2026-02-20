@@ -1,6 +1,8 @@
 package fr.elikia.backend.bll;
 
 import fr.elikia.backend.bo.*;
+import fr.elikia.backend.bo.enums.ContentStatus;
+import fr.elikia.backend.bo.enums.Visibility;
 import fr.elikia.backend.dao.idao.IDAONews;
 import fr.elikia.backend.dto.NewsDTO;
 import fr.elikia.backend.security.InputSanitizer;

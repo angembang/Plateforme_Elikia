@@ -21,6 +21,11 @@
 
       </div>
 
+    } @else {
+      <button class="btn edit">
+        S'inscrire à l'évènement
+      </button>
+
     }
 
   </div>
@@ -98,6 +103,8 @@
         Du {{ event.startDate | date:'dd/MM/yyyy à HH:mm' }}
         au {{ event.endDate | date:'dd/MM/yyyy à HH:mm' }}
       </small>
+
+      <p class="location">Lieu: {{ event.location }} | {{ event.address }}</p>
 
     </div>
     <div class="news-text" [innerHTML]="event.description"></div>

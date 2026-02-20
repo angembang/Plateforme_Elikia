@@ -1,0 +1,99 @@
+<section class="news-list-section">
+
+  <h2>Ateliers</h2>
+
+  <div class="news-list">
+
+    @for (workshop of workshopList; track workshop.workshopId) {
+      <article class="news-card">
+        @if (workshop.mediaList?.[0]; as media) {
+
+          <div class="news-image">
+
+            <!-- IMAGE -->
+            @if (workshop.displayType === 'IMAGE') {
+
+              <img
+                ngSrc="{{ apiUrlBack + '/uploads/media/' + media.imagePath }}"
+                alt="workshop-img"
+                fill
+              />
+
+            }
+
+            <!-- VIDEO -->
+            @if (workshop.displayType === 'VIDEO') {
+
+              <iframe
+                title="workshop-video"
+                width="100%"
+                height="200"
+                [src]="getSafeYoutubeUrl(media.videoUrl!)"
+                allowfullscreen>
+              </iframe>
+
+            }
+
+          </div>
+        }
+
+        <div class="news-content">
+
+          <div class="news-header">
+            <h3>{{ workshop.title }}</h3>
+          </div>
+
+          <small class="published-date">
+            Le {{ workshop.startDate | date:'dd/MM/yyyy à HH:mm' }}
+          </small>
+
+          <p [innerHTML]="workshop.description | slice:0:50"></p>
+
+          <a class="read-more"  (click)="goToDetail(workshop.workshopId)">
+            Voir
+          </a>
+
+          @if (isAdmin) {
+            <div class="admin-actions">
+              <button (click)="deleteWorkshop(workshop.workshopId)">Delete</button>
+              <button (click)="updateWorkshop(workshop.workshopId)">Modifier</button>
+            </div>
+          }
+        </div>
+
+      </article>
+    }
+
+  </div>
+
+</section>
+
+<nav class="pagination">
+
+  <!-- Previous button -->
+  <button
+    (click)="previousPage()"
+    [disabled]="isFirstPage">
+    ‹ Prev
+  </button>
+
+  <!-- Page numbers -->
+  @for (page of pages; track page) {
+    <button
+      (click)="goToPage(page)"
+      [class.active]="isActivePage(page)">
+      {{ page + 1 }}
+    </button>
+  }
+
+  <!-- Next button -->
+  <button
+    (click)="nextPage()"
+    [disabled]="isLastPage">
+    Next ›
+  </button>
+
+</nav>
+
+
+
