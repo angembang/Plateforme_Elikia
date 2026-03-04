@@ -3,20 +3,23 @@ import {Router, RouterLink} from '@angular/router';
 import {NewsService} from '../services/news/news-service';
 import {News} from '../models/News';
 import {environment} from '../../environments/environment';
-import {DatePipe, SlicePipe} from '@angular/common';
+import {DatePipe, NgOptimizedImage} from '@angular/common';
 import {EventService} from '../services/event/event-service';
 import {EventElikia} from '../models/EventElikia';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 import {Workshop} from '../models/Workshop';
 import {WorkshopService} from '../services/workshop/workshop-service';
 import {TruncatePipe} from '../pipe/shared/truncate-pipe';
+import {SafeUrlPipe} from '../pipe/url/safe-url-pipe';
 
 @Component({
   selector: 'app-home',
   imports: [
     DatePipe,
     RouterLink,
-    TruncatePipe
+    TruncatePipe,
+    SafeUrlPipe,
+    NgOptimizedImage
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss',
@@ -47,6 +50,10 @@ export class Home implements OnInit {
 
   goToLogin() {
     this.router.navigate(["/login"]).then(r => {})
+  }
+
+  goToHome() {
+    this.router.navigate([""]).then(r => {})
   }
 
   ngOnInit(): void {
@@ -148,5 +155,8 @@ export class Home implements OnInit {
     const embedUrl = url.replace('watch?v=', 'embed/');
     return this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
   }
+
+  // Google map url
+  googleMapUrl = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2677.6573783837503!2d-1.672440624244541!3d47.8462305712128!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x480f3dedf633f7e1%3A0xd9a10ce1969c9845!2s4%20Rue%20des%20Chardonnerets%2C%2035470%20Bain-de-Bretagne!5e0!3m2!1sfr!2sfr!4v1772636525316!5m2!1sfr!2sfr';
 
 }

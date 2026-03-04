@@ -1,12 +1,32 @@
 <div class="home-page">
   <section>
     <h1>Construire un avenir solidaire</h1>
-    <p></p>
     <div class="membership-donation-link">
       <button (click)="goToRegister()">J'adhère à l'association</button>
-      <button (click)="goToLogin()">Je fais un don</button>
+      <button (click)="goToHome()">Je fais un don</button>
     </div>
   </section>
+
+  <!-- Section présentation de l'association -->
+  <section class="about-association">
+    <h2>À propos de l'association Elikia</h2>
+    <div class="asso-content">
+      <div class="elikia-img">
+        <img ngSrc="/images/presentation_asso_elikia.png"
+             alt="Elikia Elikia"
+             width="1024"
+             height="1536" />
+      </div>
+      <div class="asso-content-p">
+        <p>
+          L'association Elikia accompagne des jeunes dans leur insertion sociale et professionnelle.
+          Nous proposons des ateliers, événements et accompagnements personnalisés pour favoriser
+          l'autonomie et l'épanouissement de chacun.
+        </p>
+      </div>
+    </div>
+  </section>
+
 
   <section>
     <h2>Événements à venir</h2>
@@ -30,7 +50,7 @@
                   <iframe
                     title="event-video"
                     width="100%"
-                    height="200"
+                    height="150"
                     [src]="getSafeYoutubeUrl(media.videoUrl!)"
                     allowfullscreen>
                   </iframe>
@@ -156,5 +176,19 @@
     } @else {
       <p class="card-p">Aucune actualité pour le moment</p>
     }
+  </section>
+
+  <!-- Section Google Map -->
+  <section class="map-section full-width">
+    <h2>Nous trouver</h2>
+    <iframe
+      title="adresse de l'association"
+      width="100%"
+      height="400"
+      style="border:0"
+      loading="lazy"
+      allowfullscreen
+      [src]="googleMapUrl | safeUrl">
+    </iframe>
   </section>
 </div>

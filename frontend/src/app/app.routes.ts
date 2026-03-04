@@ -20,6 +20,7 @@ import {CreateWorkshopComponent} from './workshop/pages/create-workshop-componen
 import {ListWorkshopComponent} from './workshop/pages/list-workshop-component/list-workshop-component';
 import {DetailWorkshopComponent} from './workshop/pages/detail-workshop-component/detail-workshop-component';
 import {EditWorkshopComponent} from './workshop/pages/edit-workshop-component/edit-workshop-component';
+import {LegacyPolicyComponent} from './rgpd/legacy-policy-component/legacy-policy-component';
 
 export const routes: Routes = [
   // ------- Public / main layout --------------
@@ -39,6 +40,7 @@ export const routes: Routes = [
       { path: 'workshop', component: ListWorkshopComponent },
       { path: 'workshop/detail/:id', component: DetailWorkshopComponent },
       { path: 'workshop/edit/:id', component: DetailWorkshopComponent },
+      { path: 'legacy', component: LegacyPolicyComponent },
     ]
   },
   // ------------------- Admin layout ----------------
