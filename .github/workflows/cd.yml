@@ -31,7 +31,7 @@ jobs:
       # Prevents SSH from prompting for host verification (non-interactive environment)
       - name: Add VPS to known hosts
         run: |
-          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -4 -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
 
       # Step 4: Ensure the deployment directory exists on the VPS
       # If ~/app does not exist, it is created
