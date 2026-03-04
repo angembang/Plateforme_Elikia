@@ -3,13 +3,17 @@ name: CD - Deploy to VPS
 
 # Trigger the workflow on push events to the main branch
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows:
+      - "CI - Frontend"
+      - "CI - Backend"
+    types:
+      - completed
 
 # Define the jobs executed by this workflow
 jobs:
   deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     # Use the latest Ubuntu GitHub-hosted runner
     runs-on: ubuntu-latest
 
