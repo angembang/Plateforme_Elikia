@@ -13,6 +13,8 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - elikia-network
 
   backend:
     container_name: elikia-backend
@@ -30,6 +32,8 @@ services:
     restart: always
     volumes:
       - ./uploads:/uploads
+    networks:
+      - elikia-network
 
   frontend:
     build:
@@ -40,6 +44,12 @@ services:
     restart: always
     depends_on:
       - backend
+    networks:
+      - elikia-network
 
 volumes:
   mysql_data:
+
+networks:
+  elikia-network:
+    driver: bridge

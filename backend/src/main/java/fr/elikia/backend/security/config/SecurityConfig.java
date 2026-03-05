@@ -68,7 +68,7 @@ public class SecurityConfig implements WebMvcConfigurer {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:4200"));
+        config.setAllowedOrigins(List.of("http://localhost:4200", "https://www.association-elikia.fr"));
         config.setAllowedMethods(List.of(
                 "GET", "POST", "PUT", "DELETE", "OPTIONS"
         ));
