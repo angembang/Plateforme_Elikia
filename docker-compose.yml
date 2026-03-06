@@ -22,6 +22,8 @@ services:
       - "8080:8080"
     depends_on:
       - mysql
+    env_file:
+      - .env
     environment:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}

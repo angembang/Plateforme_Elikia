@@ -55,7 +55,25 @@ jobs:
             --exclude '.git' \
             ./ ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:~/app/
 
-      # Step 6: Restart Docker containers on the VPS
+      # Step 6: Create .env file on VPS
+      - name: Create .env file
+        run: |
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "cat > ~/app/.env <<EOF
+          MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}
+          MYSQL_USER=${{ secrets.MYSQL_USER }}
+          MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
+
+          SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}
+          SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}
+          SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+          SPRING_PROFILES_ACTIVE=${{ secrets.SPRING_PROFILES_ACTIVE }}
+
+          JWT_SECRET_TOKEN=${{ secrets.JWT_SECRET_TOKEN }}
+          JWT_EXPIRATION=${{ secrets.JWT_EXPIRATION }}
+          EOF"
+
+      # Step 7: Restart Docker containers on the VPS
       # Stops running containers
       # Rebuilds images if necessary
       # Starts containers in detached mode
@@ -63,7 +81,7 @@ jobs:
         run: |
           ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "
             cd ~/app && \
-            docker compose down && \
+            docker compose down --remove-orphans && \
             docker compose build && \
             docker compose up -d
           "
