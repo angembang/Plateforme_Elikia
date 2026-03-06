@@ -81,7 +81,7 @@ jobs:
         run: |
           ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "
             cd ~/app && \
-            docker compose down --remove-orphans && \
-            docker compose build && \
+            docker compose down --remove-orphans || true && \
+            docker rm -f elikia-mysql elikia-backend elikia-frontend || true && \
             docker compose up -d
           "
