@@ -3,10 +3,17 @@
   <h2>Demande d'adhésion</h2>
 
   <form [formGroup]="registerForm" (ngSubmit)="submit()">
-    <p class="info">
-      La demande d'adhésion sera examinée par un administrateur.
-      Vous pourrez vous connecter une fois votre adhésion validée.
-    </p>
+    @if (errorMessage) {
+      <div class="error">
+        {{ errorMessage }}
+      </div>
+    }
+
+    @if (successMessage) {
+      <div class="success">
+        {{ successMessage }}
+      </div>
+    }
 
     <div class="field first-name">
       <label for="firstName">Prénom</label>
@@ -56,12 +63,6 @@
     @if (errorMessage) {
       <div class="error">
         {{ errorMessage }}
-      </div>
-    }
-
-    @if (successMessage) {
-      <div class="success">
-        {{ successMessage }}
       </div>
     }
 

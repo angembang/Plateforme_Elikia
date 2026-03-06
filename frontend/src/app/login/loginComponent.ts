@@ -14,6 +14,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 export class LoginComponent {
   errorMessage?: string;
   loginForm!: FormGroup;
+  isLocked = false;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -30,13 +31,21 @@ export class LoginComponent {
 
   submit(): void {
 
-    if (this.loginForm.invalid) {
+    if (this.loginForm.invalid || this.isLocked) {
       return;
     }
 
     this.authService.login(this.loginForm.value)
       .subscribe({
         next: result => {
+          // Account Locked
+          if (result.code === '423') {
+            this.errorMessage = "Votre compte est temporairement bloqué après plusieurs tentatives de connexion. Veuillez réessayer dans 30 minutes";
+            this.isLocked = true;
+            this.loginForm.disable();
+            return;
+          }
+
           if (result.code === '200') {
             const role = this.authService.getUserRole();
 

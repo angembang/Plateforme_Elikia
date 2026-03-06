@@ -60,12 +60,12 @@ form::before {
     }
 
     button {
-      padding: 0.5rem 1rem;
+      padding: 0.7rem 1rem;
       font-weight: bold;
       border-radius: 10px;
       border: 1px solid #ccc;
-      background-color: $bg-main;
-      color: white;
+      background-color: $action;
+      color: $bg-main;
       cursor: pointer;
     }
 
@@ -138,6 +138,7 @@ form::before {
         width: 40%;
         justify-self: center;
         padding: 0.5rem 0;
+        margin: 1rem;
       }
 
       .field {

@@ -3,6 +3,11 @@
   <h2 class="form-title">Connexion</h2>
 
   <form [formGroup]="loginForm" (ngSubmit)="submit()">
+    @if (errorMessage) {
+      <div class="error-box">
+        {{ errorMessage}}
+      </div>
+    }
 
     <!-- Email -->
     <div class="form-group">
@@ -41,7 +46,7 @@
       </div>
     }
 
-    <button type="submit">
+    <button type="submit" [disabled]="isLocked">
       Se connecter
     </button>
 
