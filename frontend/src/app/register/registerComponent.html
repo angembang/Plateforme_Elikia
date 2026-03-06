@@ -15,6 +15,11 @@
       </div>
     }
 
+    <p class="info">
+      La demande d'adhésion sera examinée par un administrateur.
+      Vous pourrez vous connecter une fois votre adhésion validée.
+    </p>
+
     <div class="field first-name">
       <label for="firstName">Prénom</label>
       <input
@@ -59,12 +64,6 @@
         placeholder="Confirmation du mot de passe"
         formControlName="confirmPassword" >
     </div>
-
-    @if (errorMessage) {
-      <div class="error">
-        {{ errorMessage }}
-      </div>
-    }
 
     <button type="submit">
       Soumettre la demande d'adhésion
