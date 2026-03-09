@@ -1,7 +1,7 @@
 export const environment = {
-  production: false,
-  apiUrl: "http://localhost:8080/api",
-  apiBackendUrl: "http://localhost:8080",
+  production: true,
+  apiUrl: "https://www.association-elikia.fr/api",
+  apiBackendUrl: "https://www.association-elikia.fr",
   tinymceApiKey: "tezye03wmjsy94ybj3g8ccpeytbwk52p08mdwxp73zvujffe"
 
 };
