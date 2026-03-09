@@ -1,6 +1,10 @@
 <section class="auth-container">
 
   <h2>Demande d'adhésion</h2>
+  <p class="info">
+    La demande d'adhésion sera examinée par un administrateur.
+    Vous pourrez vous connecter une fois votre adhésion validée.
+  </p>
 
   <form [formGroup]="registerForm" (ngSubmit)="submit()">
     @if (errorMessage) {
@@ -14,11 +18,6 @@
         {{ successMessage }}
       </div>
     }
-
-    <p class="info">
-      La demande d'adhésion sera examinée par un administrateur.
-      Vous pourrez vous connecter une fois votre adhésion validée.
-    </p>
 
     <div class="field first-name">
       <label for="firstName">Prénom</label>
