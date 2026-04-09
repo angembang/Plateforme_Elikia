@@ -21,6 +21,7 @@ import {ListWorkshopComponent} from './workshop/pages/list-workshop-component/li
 import {DetailWorkshopComponent} from './workshop/pages/detail-workshop-component/detail-workshop-component';
 import {EditWorkshopComponent} from './workshop/pages/edit-workshop-component/edit-workshop-component';
 import {LegacyPolicyComponent} from './rgpd/legacy-policy-component/legacy-policy-component';
+import {SuccessfulPageComponent} from './register/successful-page-component/successful-page-component';
 
 export const routes: Routes = [
   // ------- Public / main layout --------------
@@ -29,6 +30,7 @@ export const routes: Routes = [
     children: [
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
+      { path: 'register/success', component: SuccessfulPageComponent },
       { path: 'header', component: Header },
       { path: 'footer', component: Footer },
       { path: '', component: Home },

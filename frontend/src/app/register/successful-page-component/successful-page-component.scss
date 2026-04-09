@@ -1,0 +1,22 @@
+@use 'styles/variables' as *;
+
+.register-success-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: $bg-main;
+  .register-success-paragraph {
+    padding: 0 2rem;
+    text-align: center;
+    font-size: 1.2rem;
+    margin-top: 0;
+  }
+
+  a {
+    background-color: $action;
+    padding: 0.5rem 1rem;
+    border-radius: 7px;
+    box-shadow: 1px 5px 5px gray;
+  }
+}

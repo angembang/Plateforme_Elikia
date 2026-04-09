@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuthService} from '../services/auth/auth.service';
+import {Router} from '@angular/router';
 
 
 @Component({
@@ -13,12 +14,13 @@ import {AuthService} from '../services/auth/auth.service';
 })
 export class RegisterComponent {
   successMessage?: string;
-  errorMessage?: string;
+  errorMessage?: string | null;
   registerForm!: FormGroup
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly router: Router
   ) {
     this.registerForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
@@ -31,13 +33,14 @@ export class RegisterComponent {
 
   submit(): void {
     if (this.registerForm.invalid) {
+      this.errorMessage = "Le formulaire est invalide";
       return;
     }
 
     const { password, confirmPassword } = this.registerForm.value;
 
     if (password !== confirmPassword) {
-      this.errorMessage = 'Passwords do not match';
+      this.errorMessage = 'Les mots de passe ne correspondent pas';
       return;
     }
 
@@ -45,8 +48,7 @@ export class RegisterComponent {
       .subscribe({
         next: result => {
           if (result.code === '201') {
-            this.successMessage = result.message;
-            this.registerForm.reset();
+            this.router.navigate(['/register/success']).then(r => {});
           } else {
             this.errorMessage = result.message;
           }
@@ -56,5 +58,6 @@ export class RegisterComponent {
         }
       });
   }
+
 
 }

@@ -68,11 +68,24 @@ form::before {
       color: $bg-main;
       cursor: pointer;
       margin: 1rem;
+      box-shadow: 1px 3px 3px 3px gray;
     }
 
-    .error {
+    // disabled button
+    button:disabled {
+      background-color: #cccccc;
+      color: #666666;
+      border: 1px solid #999999;
+      cursor: not-allowed;
+    }
+    // not disabled button
+    button:not(:disabled):hover {
+      background-color: $bg-main;
+      color: white;
+    }
+
+    small {
       color: red;
-      margin: 0.5rem 0;
     }
 
     .success {
@@ -125,11 +138,13 @@ form::before {
       }
 
       /* ===== elements 100% width ===== */
-      .error,
-      .success,
+      .error-box,
       button {
         grid-column: 1 / -1;
         text-align: center;
+      }
+      .error-box {
+        width: 100%;
       }
 
       button {
@@ -154,7 +169,7 @@ form::before {
 
   }
 
-}
+  }
 
 
 

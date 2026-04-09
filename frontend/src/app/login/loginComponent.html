@@ -20,7 +20,7 @@
 
       @if(loginForm.get('email')?.touched &&
       loginForm.get('email')?.invalid) {
-        <small>Invalid email address</small>
+        <small>L'adresse mail est invalide</small>
       }
     </div>
 
@@ -35,7 +35,7 @@
 
       @if(loginForm.get('password')?.touched &&
       loginForm.get('password')?.invalid) {
-        <small>Password must be at least 8 characters</small>
+        <small>Le mot de passe doit contenir au moins 8 caractères</small>
       }
     </div>
 
