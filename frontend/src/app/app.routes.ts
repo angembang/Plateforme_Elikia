@@ -9,6 +9,7 @@ import {MainLayout} from './layout/main-layout/main-layout';
 import {AdminLayout} from './layout/admin-layout/admin-layout';
 import {NewsListComponent} from './news/pages/news-list-component/news-list-component';
 import {AdminComponent} from './admin/adminComponent';
+import {MemberListComponent} from './member/pages/member-list-component/member-list-component';
 import {NewsCreateComponent} from './news/pages/news-create-component/news-create-component';
 import {NewsEditComponent} from './news/pages/news-edit-component/news-edit-component';
 import {NewsDetailComponent} from './news/pages/news-detail-component/news-detail-component';
@@ -63,6 +64,8 @@ export const routes: Routes = [
       { path: 'workshop', component: ListWorkshopComponent },
       { path: 'workshop/detail/:id', component: DetailWorkshopComponent },
       { path: 'workshop/edit/:id', component: EditWorkshopComponent },
+      // Affichage de la liste des membres enregistrés
+      { path: 'members', component: MemberListComponent },
     ]
   }
 
