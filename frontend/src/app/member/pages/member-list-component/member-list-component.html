@@ -1,0 +1,31 @@
+<section class="members-section">
+  <h2>Members</h2>
+
+  <table class="members-table">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nom</th>
+      <th>Email</th>
+      <th>Numéro membre</th>
+      <th>Date adhésion</th>
+      <th>Status</th>
+      <th>Rôle</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    @for (member of members; track member.userId) {
+    <tr>
+      <td>{{ member.userId }}</td>
+      <td>{{ member.firstName }} {{ member.lastName }}</td>
+      <td>{{ member.email }}</td>
+      <td>{{ member.membershipNumber }}</td>
+      <td>{{ member.membershipDate | date:'dd/MM/yyyy' }}</td>
+      <td>{{ member.status }}</td>
+      <td>{{ member.role.name }}</td>
+    </tr>
+    }
+    </tbody>
+  </table>
+</section>
