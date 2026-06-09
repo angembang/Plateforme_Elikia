@@ -1,6 +1,7 @@
 package fr.elikia.backend.controller;
 
 import fr.elikia.backend.bll.AdminService;
+import fr.elikia.backend.bll.MemberService;
 import fr.elikia.backend.bo.LogicResult;
 import fr.elikia.backend.dto.RegisterDTO;
 import fr.elikia.backend.security.jwt.RequiredJWTAuth;
@@ -11,6 +12,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import fr.elikia.backend.bo.Member;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/admin")
@@ -19,10 +22,14 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Admin Dashbord", description = "Gestion de l'espace admin")
 public class AdminController {
     private final AdminService adminService;
+    private final MemberService memberService;
 
-    public AdminController(AdminService adminService) {
+
+
+    public AdminController(AdminService adminService, MemberService memberService) {
 
         this.adminService = adminService;
+        this.memberService = memberService;
     }
 
     /**
@@ -51,6 +58,14 @@ public class AdminController {
                 .body(adminService.createAdmin(registerDTO));
     }
 
-
+    /**
+     * Récupère tous les membres pour l'interface d'administration.
+     *
+     * @return liste des membres enregistrés
+     */
+    @GetMapping("/members")
+    public ResponseEntity<LogicResult<List<Member>>> getAllMembers() {
+        return ResponseEntity.ok(memberService.findAll());
+    }
 
 }
