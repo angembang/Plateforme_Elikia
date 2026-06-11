@@ -5,6 +5,7 @@ import fr.elikia.backend.bo.Member;
 import fr.elikia.backend.bo.Role;
 import fr.elikia.backend.dao.idao.IDAOMember;
 import fr.elikia.backend.dao.idao.IDAORole;
+import fr.elikia.backend.dto.MemberAdminDTO;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -28,8 +29,13 @@ public class MemberService {
     /**
      * Retrieve all members
      */
-    public LogicResult<List<Member>> findAll() {
-        return new LogicResult<>("200", "Members retrieved", idaoMember.findAll());
+    public LogicResult<List<MemberAdminDTO>> findAll() {
+        List<MemberAdminDTO> members = idaoMember.findAll()
+                .stream()
+                .map(MemberAdminDTO::new)
+                .toList();
+
+        return new LogicResult<>("200", "Members retrieved", members);
     }
 
     /**
