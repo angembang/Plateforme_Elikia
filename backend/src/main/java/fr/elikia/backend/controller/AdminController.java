@@ -4,6 +4,7 @@ import fr.elikia.backend.bll.AdminService;
 import fr.elikia.backend.bll.MemberService;
 import fr.elikia.backend.bo.LogicResult;
 import fr.elikia.backend.bo.Member;
+import fr.elikia.backend.dto.MemberAdminDTO;
 import fr.elikia.backend.dto.RegisterDTO;
 import fr.elikia.backend.dto.RejectMembershipDTO;
 import fr.elikia.backend.security.jwt.RequiredJWTAuth;
@@ -57,21 +58,22 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(adminService.createAdmin(registerDTO));
     }
+
     /**
-     * Récupère toutes les demandes d'adhésion en attente
+     * Récupère toutes les member
      * pour l'interface d'administration.
      */
     @Operation(
-            summary = "Liste des demandes d'adhésion",
-            description = "Récupère toutes les demandes d'adhésion en attente de validation"
+            summary = "Liste des membres",
+            description = "Récupère tous les membres enregistrés pour l'interface d'administration"
     )
     @ApiResponse(
             responseCode = "200",
-            description = "Demandes d'adhésion récupérées avec succès"
+            description = "Membres récupérés avec succès"
     )
-    @GetMapping("/membership-requests")
-    public ResponseEntity<LogicResult<List<Member>>> getMembershipRequests() {
-        return ResponseEntity.ok(memberService.findPendingMembershipRequests());
+    @GetMapping("/members")
+    public ResponseEntity<LogicResult<List<MemberAdminDTO>>> getAllMembers() {
+        return ResponseEntity.ok(memberService.findAll());
     }
 
     /**
