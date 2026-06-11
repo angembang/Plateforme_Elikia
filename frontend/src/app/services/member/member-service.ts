@@ -9,14 +9,36 @@ import { Member } from '../../models/Member';
   providedIn: 'root',
 })
 export class MemberService {
-  private readonly API_URL = `${environment.apiUrl}/admin/members`;
+  private readonly ADMIN_API_URL = `${environment.apiUrl}/admin`;
 
   constructor(private readonly http: HttpClient) {}
 
+   /**
+     * Récupère la liste complète des membres enregistrés.
+     */
+    getAllMembers(): Observable<LogicResult<Member[]>> {
+      return this.http.get<LogicResult<Member[]>>(
+        `${this.ADMIN_API_URL}/members`
+      );
+    }
+
   /**
-   * Récupère la liste complète des membres enregistrés.
+   * Accepte une demande d'adhésion.
    */
-  getAllMembers(): Observable<LogicResult<Member[]>> {
-    return this.http.get<LogicResult<Member[]>>(this.API_URL);
+  acceptMembership(id: number): Observable<LogicResult<Member>> {
+    return this.http.patch<LogicResult<Member>>(
+      `${this.ADMIN_API_URL}/membership-requests/${id}/accept`,
+      {}
+    );
+  }
+
+  /**
+   * Refuse une demande d'adhésion avec un motif.
+   */
+  rejectMembership(id: number, reason: string): Observable<LogicResult<Member>> {
+    return this.http.patch<LogicResult<Member>>(
+      `${this.ADMIN_API_URL}/membership-requests/${id}/reject`,
+      { reason }
+    );
   }
 }

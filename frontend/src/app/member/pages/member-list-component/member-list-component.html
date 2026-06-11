@@ -7,10 +7,10 @@
       <th>ID</th>
       <th>Nom</th>
       <th>Email</th>
-      <th>Numéro membre</th>
-      <th>Date adhésion</th>
-      <th>Status</th>
+      <th>Date demande</th>
+      <th>Statut</th>
       <th>Rôle</th>
+      <th>Actions</th>
     </tr>
     </thead>
 
@@ -20,10 +20,22 @@
       <td>{{ member.userId }}</td>
       <td>{{ member.firstName }} {{ member.lastName }}</td>
       <td>{{ member.email }}</td>
-      <td>{{ member.membershipNumber }}</td>
-      <td>{{ member.membershipDate | date:'dd/MM/yyyy' }}</td>
+      <td>{{ member.createdAt | date:'dd/MM/yyyy' }}</td>
       <td>{{ member.status }}</td>
-      <td>{{ member.role.name }}</td>
+      <td>{{ member.roleName || '-' }}</td>
+      <td>
+        @if (member.status === 'INSCRIPTION_TRANSMISE') {
+        <button class="accept-btn" (click)="acceptMembership(member.userId)">
+          Accepter
+        </button>
+
+        <button class="reject-btn" (click)="rejectMembership(member.userId)">
+          Refuser
+        </button>
+        } @else {
+        <span>-</span>
+        }
+      </td>
     </tr>
     }
     </tbody>

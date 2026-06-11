@@ -23,13 +23,34 @@ export class MemberListComponent implements OnInit {
   }
 
   /**
-   * Charge les membres depuis le backend.
+   * Composant permettant à l'administrateur
+   * de consulter et traiter les demandes d'adhésion.
    */
   private loadMembers(): void {
-    this.memberService.getAllMembers().subscribe(result => {
-      if (result.code === '200' && result.data) {
-        this.members = result.data;
+      this.memberService.getAllMembers().subscribe(result => {
+        if (result.code === '200' && result.data) {
+          this.members = result.data;
+        }
+      });
+    }
+
+  acceptMembership(memberId: number): void {
+    this.memberService.acceptMembership(memberId).subscribe(result => {
+      if (result.code === '200') {
+        this.loadMembers();
       }
+    });
+  }
+
+  rejectMembership(memberId: number): void {
+    const reason = prompt('Motif du refus');
+
+    if (!reason) {
+      return;
+    }
+
+    this.memberService.rejectMembership(memberId, reason).subscribe(() => {
+      this.loadMembers();
     });
   }
 }
