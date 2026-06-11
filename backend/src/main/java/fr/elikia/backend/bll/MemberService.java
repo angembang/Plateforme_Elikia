@@ -7,6 +7,7 @@ import fr.elikia.backend.dao.idao.IDAOMember;
 import fr.elikia.backend.dao.idao.IDAORole;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -63,5 +64,76 @@ public class MemberService {
             return new LogicResult<>("404", "Member not found", null);
         }
         return new LogicResult<>("200", "Member deleted", null);
+    }
+
+    /**
+     * Récupère les demandes d'adhésion en attente de validation.
+     *
+     * @return la liste des membres dont le statut est INSCRIPTION_TRANSMISE
+     */
+    public LogicResult<List<Member>> findPendingMembershipRequests() {
+        List<Member> pendingMembers = idaoMember.findAll()
+                .stream()
+                .filter(member -> "INSCRIPTION_TRANSMISE".equals(member.getStatus()))
+                .toList();
+
+        return new LogicResult<>("200", "Demandes d'adhésion récupérées avec succès", pendingMembers);
+    }
+
+    /**
+     * Accepte une demande d'adhésion.
+     * Le statut du membre devient VALIDE, un numéro d'adhésion est généré
+     * et la date d'adhésion est renseignée.
+     *
+     * @param id identifiant du membre
+     * @return le membre mis à jour
+     */
+    public LogicResult<Member> acceptMembership(Long id) {
+        Member member = idaoMember.findById(id);
+
+        if (member == null) {
+            return new LogicResult<>("404", "Membre introuvable", null);
+        }
+
+        member.setStatus("VALIDE");
+        member.setMembershipDate(LocalDate.now());
+
+        if (member.getMembershipNumber() == null || member.getMembershipNumber().isBlank()) {
+            member.setMembershipNumber(generateMembershipNumber(member));
+        }
+
+        return new LogicResult<>("200", "Demande d'adhésion acceptée", idaoMember.updateByAdmin(member));
+    }
+
+    /**
+     * Refuse une demande d'adhésion.
+     * Le motif est reçu depuis l'interface admin mais n'est pas encore sauvegardé,
+     * car l'entité Member ne contient pas de champ dédié au motif de refus.
+     *
+     * @param id identifiant du membre
+     * @param reason motif du refus
+     * @return le membre mis à jour
+     */
+    public LogicResult<Member> rejectMembership(Long id, String reason) {
+        Member member = idaoMember.findById(id);
+
+        if (member == null) {
+            return new LogicResult<>("404", "Membre introuvable", null);
+        }
+
+        member.setStatus("REFUSEE");
+
+        return new LogicResult<>("200", "Demande d'adhésion refusée", idaoMember.updateByAdmin(member));
+    }
+
+    /**
+     * Génère un numéro d'adhésion unique basé sur l'année courante
+     * et l'identifiant du membre.
+     *
+     * @param member membre validé
+     * @return numéro d'adhésion généré
+     */
+    private String generateMembershipNumber(Member member) {
+        return "ELK-" + LocalDate.now().getYear() + "-" + String.format("%05d", member.getUserId());
     }
 }
