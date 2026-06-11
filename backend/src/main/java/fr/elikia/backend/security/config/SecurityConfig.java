@@ -70,7 +70,7 @@ public class SecurityConfig implements WebMvcConfigurer {
 
         config.setAllowedOrigins(List.of("https://www.association-elikia.fr", "http://localhost:4200", "http://localhost:3000"));
         config.setAllowedMethods(List.of(
-                "GET", "POST", "PUT", "DELETE", "OPTIONS"
+                "GET", "POST", "PUT","PATCH", "DELETE", "OPTIONS"
         ));
         config.setAllowedHeaders(List.of(
                 "Authorization",
