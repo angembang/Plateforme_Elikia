@@ -1,6 +1,10 @@
-import { Role } from './Role';
+/**
+ * Nom du rôle du membre.
+ * Utilisé à la place de l'entité Role complète afin de réduire
+ * les données exposées par l'API et d'améliorer la sécurité.
+ */
 
-export interface Member {
+ export interface Member {
   userId: number;
   firstName: string;
   lastName: string;
@@ -10,5 +14,5 @@ export interface Member {
   membershipDate: string;
   status: string;
   image?: string;
-  role: Role;
+  roleName: string;
 }
