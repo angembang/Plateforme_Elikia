@@ -42,15 +42,28 @@ export class MemberListComponent implements OnInit {
     });
   }
 
+  /**
+   * Refuse une demande d'adhésion.
+   * Un motif est demandé à l'administrateur avant l'envoi
+   * de la requête au backend.
+   */
   rejectMembership(memberId: number): void {
-    const reason = prompt('Motif du refus');
+    const reason = prompt('Veuillez saisir le motif du refus');
 
-    if (!reason) {
-      return;
-    }
+    // Vérifie qu'un motif a bien été saisi.
+    // Les chaînes vides ou contenant uniquement des espaces sont refusées.
+    // trim() supprime les espaces inutiles au début et à la fin du texte.
+    if (!reason || reason.trim().length === 0) {
+        alert('Le motif du refus est obligatoire.');
+        return;
+      }
 
-    this.memberService.rejectMembership(memberId, reason).subscribe(() => {
-      this.loadMembers();
-    });
-  }
+    // Envoie le motif de refus au backend
+    // puis recharge la liste des membres.
+    this.memberService.rejectMembership(memberId, reason.trim()).subscribe(result => {
+        if (result.code === '200') {
+          this.loadMembers();
+        }
+      });
+}
 }
