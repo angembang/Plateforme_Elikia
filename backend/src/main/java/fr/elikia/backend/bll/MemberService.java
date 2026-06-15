@@ -20,10 +20,12 @@ import java.util.List;
 public class MemberService {
     private final IDAOMember idaoMember;
     private final IDAORole idaoRole;
+    private final EmailService emailService;
 
-    public MemberService(IDAOMember idaoMember, IDAORole idaoRole) {
+    public MemberService(IDAOMember idaoMember, IDAORole idaoRole, EmailService emailService) {
         this.idaoMember = idaoMember;
         this.idaoRole = idaoRole;
+        this.emailService = emailService;
     }
 
     /**
@@ -92,9 +94,9 @@ public class MemberService {
      * et la date d'adhésion est renseignée.
      *
      * @param id identifiant du membre
-     * @return le membre mis à jour
+     * @return les informations du membre mises à jour
      */
-    public LogicResult<Member> acceptMembership(Long id) {
+    public LogicResult<MemberAdminDTO> acceptMembership(Long id) {
         Member member = idaoMember.findById(id);
 
         if (member == null) {
@@ -108,19 +110,29 @@ public class MemberService {
             member.setMembershipNumber(generateMembershipNumber(member));
         }
 
-        return new LogicResult<>("200", "Demande d'adhésion acceptée", idaoMember.updateByAdmin(member));
+        Member updatedMember = idaoMember.updateByAdmin(member);
+
+        emailService.sendMembershipAcceptedEmail(
+                updatedMember.getEmail(),
+                updatedMember.getFirstName(),
+                updatedMember.getMembershipNumber()
+        );
+
+        return new LogicResult<>("200", "Demande d'adhésion acceptée", new MemberAdminDTO(updatedMember));
     }
 
     /**
      * Refuse une demande d'adhésion.
-     * Le motif est reçu depuis l'interface admin mais n'est pas encore sauvegardé,
-     * car l'entité Member ne contient pas de champ dédié au motif de refus.
+     * Le motif est reçu depuis l'interface administrateur afin d'être utilisé
+     * lors de l'envoi de l'email de refus.
+     * Conformément au modèle de données actuel, ce motif n'est pas conservé
+     * en base de données.
      *
      * @param id identifiant du membre
      * @param reason motif du refus
-     * @return le membre mis à jour
+     * @return les informations du membre mises à jour
      */
-    public LogicResult<Member> rejectMembership(Long id, String reason) {
+    public LogicResult<MemberAdminDTO> rejectMembership(Long id, String reason) {
         Member member = idaoMember.findById(id);
 
         if (member == null) {
@@ -129,7 +141,15 @@ public class MemberService {
 
         member.setStatus("REFUSEE");
 
-        return new LogicResult<>("200", "Demande d'adhésion refusée", idaoMember.updateByAdmin(member));
+        Member updatedMember = idaoMember.updateByAdmin(member);
+
+        emailService.sendMembershipRejectedEmail(
+                updatedMember.getEmail(),
+                updatedMember.getFirstName(),
+                reason
+        );
+
+        return new LogicResult<>("200", "Demande d'adhésion refusée", new MemberAdminDTO(updatedMember));
     }
 
     /**
