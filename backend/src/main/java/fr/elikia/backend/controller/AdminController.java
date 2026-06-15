@@ -12,6 +12,7 @@ import fr.elikia.backend.security.jwt.RequiredRole;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -92,7 +93,7 @@ public class AdminController {
             description = "Membre introuvable"
     )
     @PatchMapping("/membership-requests/{id}/accept")
-    public ResponseEntity<LogicResult<Member>> acceptMembership(@PathVariable Long id) {
+    public ResponseEntity<LogicResult<MemberAdminDTO>> acceptMembership(@PathVariable Long id) {
         return ResponseEntity.ok(memberService.acceptMembership(id));
     }
 
@@ -112,9 +113,9 @@ public class AdminController {
             description = "Membre introuvable"
     )
     @PatchMapping("/membership-requests/{id}/reject")
-    public ResponseEntity<LogicResult<Member>> rejectMembership(
+    public ResponseEntity<LogicResult<MemberAdminDTO>> rejectMembership(
             @PathVariable Long id,
-            @RequestBody RejectMembershipDTO dto
+            @Valid @RequestBody RejectMembershipDTO dto
     ) {
         return ResponseEntity.ok(memberService.rejectMembership(id, dto.getReason()));
     }
