@@ -5,6 +5,7 @@ import fr.elikia.backend.bo.Member;
 import fr.elikia.backend.bo.Role;
 import fr.elikia.backend.dao.idao.IDAOMember;
 import fr.elikia.backend.dao.idao.IDAORole;
+import fr.elikia.backend.dto.AdminUpdateMemberDTO;
 import fr.elikia.backend.dto.MemberAdminDTO;
 import org.springframework.stereotype.Service;
 
@@ -43,25 +44,42 @@ public class MemberService {
     /**
      * Update member status and role
      */
-    public LogicResult<Member> updateMember(Long id, String status, String roleName) {
-        Member member = idaoMember.findById(id);
-        if (member == null) {
+    public LogicResult<Member> updateMember(Long id, AdminUpdateMemberDTO dto) {
+        if (id == null || id <= 0) {
+            return new LogicResult<>("400", "The member identifier is required", null);
+        }
+
+        if (!idaoMember.existsById(id)) {
             return new LogicResult<>("404", "Member not found", null);
         }
 
-        if (status != null) {
-            member.setStatus(status);
+        Member member = idaoMember.findById(id);
+
+        if (dto == null) {
+            return new LogicResult<>("400", "Member update data is required", null);
         }
 
-        if (roleName != null) {
-            Role role = idaoRole.findByName(roleName);
+        if (dto.getStatus() != null && !dto.getStatus().isBlank()) {
+            member.setStatus(dto.getStatus());
+        }
+
+        if (dto.getRoleName() != null && !dto.getRoleName().isBlank()) {
+            Role role = idaoRole.findByName(dto.getRoleName());
+
             if (role == null) {
-                return new LogicResult<>("404", "Role not found",null);
+                return new LogicResult<>("404", "Role not found", null);
             }
+
             member.setRole(role);
         }
 
-        return new LogicResult<>("200", "Member updated", idaoMember.updateByAdmin(member));
+        Member updatedMember = idaoMember.updateByAdmin(member);
+
+        if (updatedMember == null) {
+            return new LogicResult<>("500", "Failed to update member", null);
+        }
+
+        return new LogicResult<>("200", "Member updated", updatedMember);
     }
 
     /**
@@ -97,11 +115,15 @@ public class MemberService {
      * @return les informations du membre mises à jour
      */
     public LogicResult<MemberAdminDTO> acceptMembership(Long id) {
-        Member member = idaoMember.findById(id);
+        if (id == null || id <= 0) {
+            return new LogicResult<>("400", "Identifiant du membre invalide", null);
+        }
 
-        if (member == null) {
+        if (!idaoMember.existsById(id)) {
             return new LogicResult<>("404", "Membre introuvable", null);
         }
+
+        Member member = idaoMember.findById(id);
 
         member.setStatus("VALIDE");
         member.setMembershipDate(LocalDate.now());
@@ -111,6 +133,10 @@ public class MemberService {
         }
 
         Member updatedMember = idaoMember.updateByAdmin(member);
+
+        if (updatedMember == null) {
+            return new LogicResult<>("500", "Erreur lors de l'acceptation de la demande d'adhésion", null);
+        }
 
         emailService.sendMembershipAcceptedEmail(
                 updatedMember.getEmail(),
@@ -133,15 +159,27 @@ public class MemberService {
      * @return les informations du membre mises à jour
      */
     public LogicResult<MemberAdminDTO> rejectMembership(Long id, String reason) {
-        Member member = idaoMember.findById(id);
+        if (id == null || id <= 0) {
+            return new LogicResult<>("400", "Identifiant du membre invalide", null);
+        }
 
-        if (member == null) {
+        if (!idaoMember.existsById(id)) {
             return new LogicResult<>("404", "Membre introuvable", null);
         }
+
+        if (reason == null || reason.isBlank()) {
+            return new LogicResult<>("400", "Le motif du refus est obligatoire", null);
+        }
+
+        Member member = idaoMember.findById(id);
 
         member.setStatus("REFUSEE");
 
         Member updatedMember = idaoMember.updateByAdmin(member);
+
+        if (updatedMember == null) {
+            return new LogicResult<>("500", "Erreur lors du refus de la demande d'adhésion", null);
+        }
 
         emailService.sendMembershipRejectedEmail(
                 updatedMember.getEmail(),
@@ -149,7 +187,11 @@ public class MemberService {
                 reason
         );
 
-        return new LogicResult<>("200", "Demande d'adhésion refusée", new MemberAdminDTO(updatedMember));
+        return new LogicResult<>(
+                "200",
+                "Demande d'adhésion refusée",
+                new MemberAdminDTO(updatedMember)
+        );
     }
 
     /**
