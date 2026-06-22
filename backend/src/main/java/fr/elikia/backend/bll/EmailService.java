@@ -69,4 +69,59 @@ public class EmailService {
 
         mailSender.send(message);
     }
+
+    /**
+     * Envoie un email lorsqu'une inscription à un événement est acceptée.
+     *
+     * @param to adresse email du participant
+     * @param firstName prénom du participant
+     * @param eventTitle titre de l'événement
+     */
+    public void sendEventRegistrationAcceptedEmail(
+            String to,
+            String firstName,
+            String eventTitle
+    ) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject("Votre inscription à l'événement a été acceptée");
+        message.setText(
+                "Bonjour " + firstName + ",\n\n" +
+                        "Votre inscription à l'événement \"" + eventTitle + "\" a été acceptée.\n\n" +
+                        "Nous vous remercions pour votre inscription.\n\n" +
+                        "Cordialement,\n" +
+                        "Association Elikia"
+        );
+
+        mailSender.send(message);
+    }
+
+    /**
+     * Envoie un email lorsqu'une inscription à un événement est refusée.
+     *
+     * @param to adresse email du participant
+     * @param firstName prénom du participant
+     * @param eventTitle titre de l'événement
+     * @param reason motif du refus saisi par l'administrateur
+     */
+    public void sendEventRegistrationRejectedEmail(
+            String to,
+            String firstName,
+            String eventTitle,
+            String reason
+    ) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject("Votre inscription à l'événement a été refusée");
+        message.setText(
+                "Bonjour " + firstName + ",\n\n" +
+                        "Votre inscription à l'événement \"" + eventTitle + "\" a été refusée.\n\n" +
+                        "Motif du refus : " + reason + "\n\n" +
+                        "Cordialement,\n" +
+                        "Association Elikia"
+        );
+
+        mailSender.send(message);
+    }
+
 }
