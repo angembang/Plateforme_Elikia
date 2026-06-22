@@ -36,7 +36,8 @@ public class EmailService {
                 "Bonjour " + firstName + ",\n\n" +
                         "Votre demande d'adhésion à l'association Elikia a été acceptée.\n" +
                         "Votre numéro d'adhésion est : " + membershipNumber + ".\n\n" +
-                        "Vous pouvez désormais accéder à votre espace membre.\n\n" +
+                        "Vous pouvez désormais accéder à votre espace membre avec l'adresse email utilisée lors de votre inscription : " + to + ".\n" +
+                        "Le mot de passe est celui que vous avez choisi lors de votre inscription.\n\n" +
                         "Cordialement,\n" +
                         "Association Elikia"
         );
