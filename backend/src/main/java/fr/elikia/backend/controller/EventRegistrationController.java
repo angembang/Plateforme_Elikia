@@ -1,7 +1,6 @@
 package fr.elikia.backend.controller;
 
 import fr.elikia.backend.bll.EventRegistrationService;
-import fr.elikia.backend.bo.EventRegistration;
 import fr.elikia.backend.bo.LogicResult;
 import fr.elikia.backend.dto.EventRegistrationDTO;
 import fr.elikia.backend.dto.RefusalReasonDTO;
@@ -14,6 +13,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import fr.elikia.backend.dto.EventRegistrationAdminDTO;
 
 import java.util.List;
 
@@ -158,10 +158,10 @@ public class EventRegistrationController {
     @GetMapping("/admin/event/{eventId}")
     @RequiredJWTAuth
     @RequiredRole("ADMIN")
-    public ResponseEntity<LogicResult<List<EventRegistration>>> getRegistrationsByEvent(
+    public ResponseEntity<LogicResult<List<EventRegistrationAdminDTO>>> getRegistrationsByEvent(
             @PathVariable Long eventId
     ) {
-        LogicResult<List<EventRegistration>> result =
+        LogicResult<List<EventRegistrationAdminDTO>> result =
                 eventRegistrationService.getRegistrationsByEvent(eventId);
 
         HttpStatus status = resolveHttpStatus(result.getCode());
