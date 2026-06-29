@@ -11,6 +11,7 @@ import fr.elikia.backend.dao.idao.IDAOEventRegistration;
 import fr.elikia.backend.dao.idao.IDAOMember;
 import fr.elikia.backend.dto.EventRegistrationDTO;
 import org.springframework.stereotype.Service;
+import fr.elikia.backend.dto.EventRegistrationAdminDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -169,6 +170,34 @@ public class EventRegistrationService {
     }
 
     /**
+     * Convertit une inscription à un événement en DTO pour l'administration.
+     */
+    private EventRegistrationAdminDTO mapToEventRegistrationAdminDTO(
+            EventRegistration registration
+    ) {
+        Long memberId = null;
+        String memberEmail = null;
+
+        if (registration.getMember() != null) {
+            memberId = registration.getMember().getUserId();
+            memberEmail = registration.getMember().getEmail();
+        }
+
+        return new EventRegistrationAdminDTO(
+                registration.getRegistrationId(),
+                registration.getFirstName(),
+                registration.getLastName(),
+                registration.getEmail(),
+                registration.getRegistrationDate(),
+                registration.getStatus(),
+                registration.getEvent().getEventId(),
+                registration.getEvent().getTitle(),
+                memberId,
+                memberEmail
+        );
+    }
+
+    /**
      * Récupère toutes les inscriptions liées à un événement donné.
      *
      * Règles métier :
@@ -179,7 +208,7 @@ public class EventRegistrationService {
      * @param eventId identifiant de l'événement
      * @return LogicResult contenant la liste des inscriptions
      */
-    public LogicResult<List<EventRegistration>> getRegistrationsByEvent(Long eventId) {
+    public LogicResult<List<EventRegistrationAdminDTO>> getRegistrationsByEvent(Long eventId) {
         // Valider l'identifiant de l'événement
         if (eventId == null || eventId <= 0) {
             return new LogicResult<>("400", "The event identifier is required", null);
@@ -196,10 +225,15 @@ public class EventRegistrationService {
         List<EventRegistration> registrations =
                 idaoEventRegistration.findByEvent(event);
 
+        List<EventRegistrationAdminDTO> registrationDTOs =
+                registrations.stream()
+                        .map(this::mapToEventRegistrationAdminDTO)
+                        .toList();
+
         return new LogicResult<>(
                 "200",
                 "Event registrations retrieved successfully",
-                registrations
+                registrationDTOs
         );
     }
 
