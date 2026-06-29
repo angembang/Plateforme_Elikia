@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import fr.elikia.backend.dto.EventResponseDTO;
 
 import java.util.List;
 
@@ -125,7 +126,7 @@ public class EventService extends AbstractActivityService {
      * @param size number of items per page
      * @return LogicResult containing a page of Event
      */
-    public LogicResult<Page<Event>> findEventPage(
+    public LogicResult<Page<EventResponseDTO>> findEventPage(
             int page,
             int size
     ) {
@@ -152,11 +153,14 @@ public class EventService extends AbstractActivityService {
             );
         }
 
+        Page<EventResponseDTO> dtoPage =
+                pageResult.map(this::mapToEventResponseDTO);
+
         // Successful response
         return new LogicResult<>(
                 "200",
                 EVENT_PAGE_RETRIEVED,
-                pageResult
+                dtoPage
         );
     }
 
@@ -168,7 +172,7 @@ public class EventService extends AbstractActivityService {
      * @param size number of items per page
      * @return LogicResult containing a page of Event
      */
-    public LogicResult<Page<Event>> findAllByVisibilityOrderByStartDateDesc(
+    public LogicResult<Page<EventResponseDTO>> findAllByVisibilityOrderByStartDateDesc(
             int page,
             int size
     ) {
@@ -196,11 +200,14 @@ public class EventService extends AbstractActivityService {
             );
         }
 
+        Page<EventResponseDTO> dtoPage =
+                pageResult.map(this::mapToEventResponseDTO);
+
         // Successful response
         return new LogicResult<>(
                 "200",
                 EVENT_PAGE_RETRIEVED,
-                pageResult
+                dtoPage
         );
     }
 
@@ -212,7 +219,7 @@ public class EventService extends AbstractActivityService {
      * @param size number of items per page
      * @return LogicResult containing a page of Event
      */
-    public LogicResult<Page<Event>> findAllByMemberOnlyVisibilityOrderByStartDateDesc(
+    public LogicResult<Page<EventResponseDTO>> findAllByMemberOnlyVisibilityOrderByStartDateDesc(
             int page,
             int size
     ) {
@@ -240,11 +247,14 @@ public class EventService extends AbstractActivityService {
             );
         }
 
+        Page<EventResponseDTO> dtoPage =
+                pageResult.map(this::mapToEventResponseDTO);
+
         // Successful response
         return new LogicResult<>(
                 "200",
                 EVENT_PAGE_RETRIEVED,
-                pageResult
+                dtoPage
         );
     }
 
@@ -252,7 +262,7 @@ public class EventService extends AbstractActivityService {
     /**
      * Retrieve 4 last event (for home page)
      */
-    public LogicResult<List<Event>> findLastEvent() {
+    public LogicResult<List<EventResponseDTO>> findLastEvent() {
 
         List<Event> event = idaoEvent.findAllByOrderByStartDateDesc();
 
@@ -264,10 +274,14 @@ public class EventService extends AbstractActivityService {
             );
         }
 
+        List<EventResponseDTO> dtoList = event.stream()
+                .map(this::mapToEventResponseDTO)
+                .toList();
+
         return new LogicResult<>(
                 "200",
                 "Last 4 event retrieved",
-                event
+                dtoList
         );
     }
 
@@ -275,7 +289,7 @@ public class EventService extends AbstractActivityService {
     /**
      * Retrieve event by its unique identifier
      */
-    public LogicResult<Event> findEventById(Long eventId) {
+    public LogicResult<EventResponseDTO> findEventById(Long eventId) {
         if(eventId == null || eventId <= 0) {
             return new LogicResult<>("400", "The event id is required", null);
         }
@@ -283,7 +297,9 @@ public class EventService extends AbstractActivityService {
         if(event == null) {
             return new LogicResult<>("404", "Event not found", null);
         }
-        return new LogicResult<>("200", "Event retrieved", event);
+        EventResponseDTO dto = mapToEventResponseDTO(event);
+
+        return new LogicResult<>("200", "Event retrieved", dto);
 
     }
 
@@ -381,4 +397,21 @@ public class EventService extends AbstractActivityService {
         return new LogicResult<>("200", "Event deleted successfully", null);
     }
 
+    /**
+     * Convert Event entity to EventResponseDTO
+     */
+    private EventResponseDTO mapToEventResponseDTO(Event event) {
+        return new EventResponseDTO(
+                event.getEventId(),
+                event.getTitle(),
+                event.getDescription(),
+                event.getStartDate(),
+                event.getEndDate(),
+                event.getLocation(),
+                event.getAddress(),
+                event.getCapacity(),
+                event.getVisibility(),
+                event.getMediaList()
+        );
+    }
 }
