@@ -6,12 +6,15 @@ import {AuthService} from '../../../services/auth/auth.service';
 import {EventService} from '../../../services/event/event-service';
 import {DatePipe, NgOptimizedImage} from '@angular/common';
 import {DomSanitizer} from '@angular/platform-browser';
+import {FormsModule} from '@angular/forms';
+import { EventRegistrationModel, EventRegistrationService } from '../../../services/event-registration/event-registration';
 
 @Component({
   selector: 'app-detail-event-component',
   imports: [
     DatePipe,
-    NgOptimizedImage
+    NgOptimizedImage,
+    FormsModule
   ],
   templateUrl: './detail-event-component.html',
   styleUrl: './detail-event-component.scss',
@@ -38,6 +41,31 @@ export class DetailEventComponent implements OnInit {
       err?.error?.message ?? fallbackMessage;
   }
 
+  // Registration form display
+  showRegistration = false;
+
+  // Admin registrations table display
+  showRegistrations = false;
+
+  // Reject registration modal display
+  showRejectModal = false;
+
+  // Selected registration to reject
+  selectedRegistrationId?: number;
+
+  // Refusal reason entered by the administrator
+  refusalReason = '';
+
+  // Registrations linked to the current event, displayed in the admin space
+  eventRegistrations: EventRegistrationModel[] = [];
+
+  // Visitor registration form data
+  registrationForm = {
+    firstName: '',
+    lastName: '',
+    email: ''
+  };
+
   // Current index for slider
   currentIndex = 0;
 
@@ -46,6 +74,7 @@ export class DetailEventComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly eventService: EventService,
     private readonly authService: AuthService,
+    private readonly eventRegistrationService: EventRegistrationService,
     private readonly router: Router,
     private readonly sanitizer: DomSanitizer
   ) {}
@@ -88,6 +117,149 @@ export class DetailEventComponent implements OnInit {
 
   }
 
+  /**
+   * Show or hide the registration form
+   */
+  showRegistrationForm(): void {
+    this.showRegistration = !this.showRegistration;
+  }
+
+  /**
+   * Submit event registration form
+   */
+  submitRegistration(): void {
+    if (!this.event) {
+        return;
+      }
+
+      this.eventRegistrationService
+        .registerVisitorToEvent(
+          this.event.eventId,
+          this.registrationForm
+        )
+        .subscribe({
+          next: result => {
+            if (result.code === '201') {
+              this.showRegistration = false;
+
+              this.registrationForm = {
+                firstName: '',
+                lastName: '',
+                email: ''
+              };
+            }
+          },
+          error: err => this.handleError(err, 'Error creating event registration')
+        });
+  }
+
+  /**
+   * Show or hide the admin registrations table.
+   * When the table is opened, registrations are loaded from the backend.
+   */
+  showRegistrationsTable(): void {
+    this.showRegistrations = !this.showRegistrations;
+
+      if (this.showRegistrations) {
+        this.loadRegistrations();
+      }
+  }
+
+  /**
+   * Approve an event registration
+   *
+   * @param registrationId registration identifier
+   */
+  approveRegistration(registrationId: number): void {
+
+    this.eventRegistrationService
+      .approveRegistration(registrationId)
+      .subscribe({
+        next: result => {
+
+          if (result.code === '200') {
+
+            // Reload registrations after approval
+           this.loadRegistrations();
+          }
+
+        },
+        error: err =>
+          this.handleError(err, 'Error approving registration')
+      });
+
+  }
+
+  /**
+   * Reject the selected event registration.
+   */
+  rejectRegistration(): void {
+
+    if (!this.selectedRegistrationId) {
+      return;
+    }
+
+    if (!this.refusalReason.trim()) {
+      return;
+    }
+
+    this.eventRegistrationService
+      .rejectRegistration(
+        this.selectedRegistrationId,
+        this.refusalReason
+      )
+      .subscribe({
+        next: result => {
+
+          if (result.code === '200') {
+
+            // Close the rejection modal
+            this.showRejectModal = false;
+
+            // Clear the refusal reason
+            this.refusalReason = '';
+
+            // Refresh registrations table
+            this.loadRegistrations();
+          }
+
+        },
+        error: err =>
+          this.handleError(err, 'Error rejecting registration')
+      });
+
+  }
+
+  /**
+   * Open the rejection modal for the selected registration.
+   *
+   * @param registrationId registration identifier
+   */
+  openRejectModal(registrationId: number): void {
+    this.selectedRegistrationId = registrationId;
+    this.refusalReason = '';
+    this.showRejectModal = true;
+  }
+
+  /**
+   * Load registrations linked to the current event.
+   */
+  private loadRegistrations(): void {
+    if (!this.event) {
+      return;
+    }
+
+    this.eventRegistrationService
+      .getRegistrationsByEvent(this.event.eventId)
+      .subscribe({
+        next: result => {
+          if (result.code === '200') {
+            this.eventRegistrations = result.data ?? [];
+          }
+        },
+        error: err => this.handleError(err, 'Error loading event registrations')
+      });
+  }
 
   // Navigation
   goBack(): void {
