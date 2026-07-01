@@ -34,11 +34,41 @@ export class DetailEventComponent implements OnInit {
   images: string[] = [];
   videoUrl?: string;
 
+  // Success message
+  successMessage?: string;
+  /**
+   * Display a success message temporarily.
+   *
+   * @param message success message to display
+   */
+  private showSuccessMessage(message: string): void {
+    this.successMessage = message;
+    this.errorMessage = undefined;
+
+    setTimeout(() => {
+      this.successMessage = undefined;
+    }, 4000);
+  }
+
   // Error message
   errorMessage?: string;
+
+  /**
+   * Display an error message temporarily.
+   *
+   * @param err backend error
+   * @param fallbackMessage default error message
+   */
   private handleError(err: any, fallbackMessage: string): void {
+
+    this.successMessage = undefined;
+
     this.errorMessage =
       err?.error?.message ?? fallbackMessage;
+
+    setTimeout(() => {
+      this.errorMessage = undefined;
+    }, 4000);
   }
 
   // Registration form display
@@ -147,6 +177,9 @@ export class DetailEventComponent implements OnInit {
                 lastName: '',
                 email: ''
               };
+            this.showSuccessMessage(
+                "Votre demande d'inscription a été envoyée avec succès."
+              );
             }
           },
           error: err => this.handleError(err, 'Error creating event registration')
@@ -181,6 +214,10 @@ export class DetailEventComponent implements OnInit {
 
             // Reload registrations after approval
            this.loadRegistrations();
+
+           this.showSuccessMessage(
+               "L'inscription a été approuvée avec succès."
+             );
           }
 
         },
@@ -221,6 +258,10 @@ export class DetailEventComponent implements OnInit {
 
             // Refresh registrations table
             this.loadRegistrations();
+
+            this.showSuccessMessage(
+                "L'inscription a été refusée avec succès."
+              );
           }
 
         },
