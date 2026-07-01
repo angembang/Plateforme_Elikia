@@ -81,6 +81,20 @@
     }
 
   </div>
+
+
+  @if (successMessage) {
+  <div class="success-message">
+   {{ successMessage }}
+  </div>
+    }
+
+  @if (errorMessage) {
+  <div class="error-message">
+   {{ errorMessage }}
+  </div>
+  }
+
   <section class="news-detail">
 
     <!-- Image -->
