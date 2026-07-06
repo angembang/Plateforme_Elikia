@@ -47,11 +47,8 @@ public class MemberService {
      * Update member status and role
      */
     public LogicResult<Member> updateMember(Long id, AdminUpdateMemberDTO dto) {
-        if (id == null || id <= 0) {
-            return new LogicResult<>("400", "Invalid member identifier", null);
-        }
 
-        Member existingMember = idaoMember.findById(id);
+        Member existingMember = findMember(id);
 
         if (existingMember == null) {
             return new LogicResult<>("404", "Member not found", null);
@@ -121,10 +118,7 @@ public class MemberService {
      * @return updated membership information
      */
     public LogicResult<MemberAdminDTO> acceptMembership(Long id) {
-        if (id == null || id <= 0) {
-            return new LogicResult<>("400", "Invalid membership identifier", null);
-        }
-        Member member = idaoMember.findById(id);
+        Member member = findMember(id);
 
         if (member == null) {
             return new LogicResult<>("404", "Member not found", null);
@@ -218,5 +212,13 @@ public class MemberService {
 
     private boolean isPending(Member member) {
         return member.getStatus() == RegistrationStatus.PENDING;
+    }
+
+
+    private Member findMember(Long id) {
+        if(id == null || id <= 0) {
+            return null;
+        }
+        return idaoMember.findById(id);
     }
 }
