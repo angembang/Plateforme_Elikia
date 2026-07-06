@@ -179,7 +179,7 @@ public class MediaService {
                                          String caption) {
         // Validate the identifier
         if(mediaId == null || mediaId <= 0) {
-            return new LogicResult<>("400", "The media identifier is required", null);
+            return new LogicResult<>("400", "Invalid media identifier", null);
         }
         // Find existing media
         Media existingMedia = idaoMedia.findById(mediaId);

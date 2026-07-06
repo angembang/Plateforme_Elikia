@@ -50,6 +50,7 @@ public class MemberDAO implements IDAOMember {
         return memberRepository.save(member);
     }
 
+    @Override
     public Member update(Member member){
         // Check if the member exists
         if(!memberRepository.existsById(member.getUserId())) {
@@ -58,6 +59,7 @@ public class MemberDAO implements IDAOMember {
         return memberRepository.save(member);
     }
 
+    @Override
     public Member updateByAdmin(Member member) {
         // Check if the member exists
         if(!memberRepository.existsById(member.getUserId())) {

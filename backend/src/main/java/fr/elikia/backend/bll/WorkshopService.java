@@ -314,7 +314,7 @@ public class WorkshopService extends AbstractActivityService {
                                             List<MultipartFile> files, String removedMediaIdsJson) {
         // Validate the identifier
         if(workshopId == null || workshopId <= 0) {
-            return new LogicResult<>("400", "The workshop identifier is required", null);
+            return new LogicResult<>("400", "Invalid workshop identifier", null);
         }
         // Retrieve the existing workshop
         Workshop existingWorkshop = idaoWorkshop.findById(workshopId);
