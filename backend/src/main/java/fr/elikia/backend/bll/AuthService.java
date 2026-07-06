@@ -321,9 +321,9 @@ public class AuthService {
         return new AuthService.SanitizedRegisterInput(
                 firstName,
                 lastName,
+                email,
                 password,
-                confirmPassword,
-                email
+                confirmPassword
         );
     }
 

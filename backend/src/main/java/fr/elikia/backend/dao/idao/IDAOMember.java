@@ -9,6 +9,8 @@ public interface IDAOMember {
 
     Member findById(Long memberId);
 
+    boolean existsById(Long memberId);
+
     Member findByEmail(String memberEmail);
 
     boolean deleteById(Long memberId);

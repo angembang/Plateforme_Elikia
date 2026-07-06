@@ -25,6 +25,11 @@ public class MemberDAO implements IDAOMember {
         return memberRepository.findById(memberId).orElse(null);
     }
 
+    @Override
+    public boolean existsById(Long memberId) {
+        return memberRepository.existsById(memberId);
+    }
+
     public Member findByEmail(String memberEmail) {
         return memberRepository.findByEmail(memberEmail).orElse(null);
 
