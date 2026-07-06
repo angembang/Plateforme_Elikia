@@ -1,24 +1,20 @@
 package fr.elikia.backend.dto;
 
-import jakarta.validation.constraints.Pattern;
+import fr.elikia.backend.bo.enums.RegistrationStatus;
 
 public class AdminUpdateMemberDTO {
-    @Pattern(
-            regexp = "PENDING|APPROVED|REJECTED|CANCELLED",
-            message = "Invalid member status"
-    )
-    private String status;
+    private RegistrationStatus status;
 
     private String roleName;
 
     public AdminUpdateMemberDTO() {
     }
 
-    public String getStatus() {
+    public RegistrationStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(RegistrationStatus status) {
         this.status = status;
     }
 

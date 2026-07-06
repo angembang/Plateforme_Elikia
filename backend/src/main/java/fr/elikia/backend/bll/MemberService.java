@@ -3,6 +3,7 @@ package fr.elikia.backend.bll;
 import fr.elikia.backend.bo.LogicResult;
 import fr.elikia.backend.bo.Member;
 import fr.elikia.backend.bo.Role;
+import fr.elikia.backend.bo.enums.RegistrationStatus;
 import fr.elikia.backend.dao.idao.IDAOMember;
 import fr.elikia.backend.dao.idao.IDAORole;
 import fr.elikia.backend.dto.AdminUpdateMemberDTO;
@@ -22,6 +23,7 @@ public class MemberService {
     private final IDAOMember idaoMember;
     private final IDAORole idaoRole;
     private final EmailService emailService;
+    private static final String MEMBERSHIP_PREFIX = "ELK";
 
     public MemberService(IDAOMember idaoMember, IDAORole idaoRole, EmailService emailService) {
         this.idaoMember = idaoMember;
@@ -46,34 +48,37 @@ public class MemberService {
      */
     public LogicResult<Member> updateMember(Long id, AdminUpdateMemberDTO dto) {
         if (id == null || id <= 0) {
-            return new LogicResult<>("400", "The member identifier is required", null);
+            return new LogicResult<>("400", "Invalid member identifier", null);
         }
 
-        if (!idaoMember.existsById(id)) {
+        Member existingMember = idaoMember.findById(id);
+
+        if (existingMember == null) {
             return new LogicResult<>("404", "Member not found", null);
         }
-
-        Member member = idaoMember.findById(id);
 
         if (dto == null) {
             return new LogicResult<>("400", "Member update data is required", null);
         }
+        RegistrationStatus status = dto.getStatus();
 
-        if (dto.getStatus() != null && !dto.getStatus().isBlank()) {
-            member.setStatus(dto.getStatus());
+        if (status != null) {
+            existingMember.setStatus(status);
         }
 
-        if (dto.getRoleName() != null && !dto.getRoleName().isBlank()) {
-            Role role = idaoRole.findByName(dto.getRoleName());
+        String roleName = dto.getRoleName();
+
+        if (roleName != null && !roleName.isBlank()) {
+            Role role = idaoRole.findByName(roleName);
 
             if (role == null) {
                 return new LogicResult<>("404", "Role not found", null);
             }
 
-            member.setRole(role);
+            existingMember.setRole(role);
         }
 
-        Member updatedMember = idaoMember.updateByAdmin(member);
+        Member updatedMember = idaoMember.updateByAdmin(existingMember);
 
         if (updatedMember == null) {
             return new LogicResult<>("500", "Failed to update member", null);
@@ -81,6 +86,7 @@ public class MemberService {
 
         return new LogicResult<>("200", "Member updated", updatedMember);
     }
+
 
     /**
      * Delete member
@@ -93,39 +99,42 @@ public class MemberService {
     }
 
     /**
-     * Récupère les demandes d'adhésion en attente de validation.
+     * Retrieve all membership request with PENDING status
      *
-     * @return la liste des membres dont le statut est INSCRIPTION_TRANSMISE
+     * @return the list of pending membership requests
      */
     public LogicResult<List<Member>> findPendingMembershipRequests() {
         List<Member> pendingMembers = idaoMember.findAll()
                 .stream()
-                .filter(member -> "INSCRIPTION_TRANSMISE".equals(member.getStatus()))
+                .filter(member -> RegistrationStatus.PENDING.equals(member.getStatus()))
                 .toList();
 
         return new LogicResult<>("200", "Demandes d'adhésion récupérées avec succès", pendingMembers);
     }
 
     /**
-     * Accepte une demande d'adhésion.
-     * Le statut du membre devient VALIDE, un numéro d'adhésion est généré
-     * et la date d'adhésion est renseignée.
+     * Approve a membership registration
+     * The member status is set to APPROVED, a membership number is generated,
+     * and the membership registration date is set
      *
-     * @param id identifiant du membre
-     * @return les informations du membre mises à jour
+     * @param id member identifier
+     * @return updated membership information
      */
     public LogicResult<MemberAdminDTO> acceptMembership(Long id) {
         if (id == null || id <= 0) {
-            return new LogicResult<>("400", "Identifiant du membre invalide", null);
+            return new LogicResult<>("400", "Invalid membership identifier", null);
         }
-
-        if (!idaoMember.existsById(id)) {
-            return new LogicResult<>("404", "Membre introuvable", null);
-        }
-
         Member member = idaoMember.findById(id);
 
-        member.setStatus("VALIDE");
+        if (member == null) {
+            return new LogicResult<>("404", "Member not found", null);
+        }
+
+        if(!isPending(member)) {
+            return new LogicResult<>("409", "Only members with pendingstatus can be approved", null);
+        }
+
+        member.setStatus(RegistrationStatus.APPROVED);
         member.setMembershipDate(LocalDate.now());
 
         if (member.getMembershipNumber() == null || member.getMembershipNumber().isBlank()) {
@@ -135,7 +144,7 @@ public class MemberService {
         Member updatedMember = idaoMember.updateByAdmin(member);
 
         if (updatedMember == null) {
-            return new LogicResult<>("500", "Erreur lors de l'acceptation de la demande d'adhésion", null);
+            return new LogicResult<>("500", "Failed to approve membership request", null);
         }
 
         emailService.sendMembershipAcceptedEmail(
@@ -144,41 +153,44 @@ public class MemberService {
                 updatedMember.getMembershipNumber()
         );
 
-        return new LogicResult<>("200", "Demande d'adhésion acceptée", new MemberAdminDTO(updatedMember));
+        return new LogicResult<>("200", "Membership request approved", new MemberAdminDTO(updatedMember));
     }
 
     /**
-     * Refuse une demande d'adhésion.
-     * Le motif est reçu depuis l'interface administrateur afin d'être utilisé
-     * lors de l'envoi de l'email de refus.
-     * Conformément au modèle de données actuel, ce motif n'est pas conservé
-     * en base de données.
+     * Reject a membership registration.
+     * The reason is provided by the admin and used in the rejection email.
+     * The reason is not stored in the database.
      *
-     * @param id identifiant du membre
-     * @param reason motif du refus
-     * @return les informations du membre mises à jour
+     * @param id member identifier
+     * @param reason reason rejection
+     * @return updated membership information
      */
     public LogicResult<MemberAdminDTO> rejectMembership(Long id, String reason) {
         if (id == null || id <= 0) {
-            return new LogicResult<>("400", "Identifiant du membre invalide", null);
-        }
-
-        if (!idaoMember.existsById(id)) {
-            return new LogicResult<>("404", "Membre introuvable", null);
-        }
-
-        if (reason == null || reason.isBlank()) {
-            return new LogicResult<>("400", "Le motif du refus est obligatoire", null);
+            return new LogicResult<>("400", "Invalid member identifier", null);
         }
 
         Member member = idaoMember.findById(id);
 
-        member.setStatus("REFUSEE");
+        if (member == null) {
+            return new LogicResult<>("404", "Member not found", null);
+        }
+
+        if(!isPending(member)) {
+            return new LogicResult<>("409", "ONLY members with pending status can be Rejected", null);
+        }
+
+
+        if (reason == null || reason.isBlank()) {
+            return new LogicResult<>("400", "Rejection reason is required", null);
+        }
+
+        member.setStatus(RegistrationStatus.REJECTED);
 
         Member updatedMember = idaoMember.updateByAdmin(member);
 
         if (updatedMember == null) {
-            return new LogicResult<>("500", "Erreur lors du refus de la demande d'adhésion", null);
+            return new LogicResult<>("500", "Failed to reject membership request", null);
         }
 
         emailService.sendMembershipRejectedEmail(
@@ -189,19 +201,22 @@ public class MemberService {
 
         return new LogicResult<>(
                 "200",
-                "Demande d'adhésion refusée",
+                "Membership request rejected",
                 new MemberAdminDTO(updatedMember)
         );
     }
 
     /**
-     * Génère un numéro d'adhésion unique basé sur l'année courante
-     * et l'identifiant du membre.
+     * Generate a membership number
      *
-     * @param member membre validé
-     * @return numéro d'adhésion généré
+     * @param member validate member
+     * @return generate membership number
      */
     private String generateMembershipNumber(Member member) {
-        return "ELK-" + LocalDate.now().getYear() + "-" + String.format("%05d", member.getUserId());
+        return MEMBERSHIP_PREFIX + "-" + LocalDate.now().getYear() + "-" + String.format("%05d", member.getUserId());
+    }
+
+    private boolean isPending(Member member) {
+        return member.getStatus() == RegistrationStatus.PENDING;
     }
 }
