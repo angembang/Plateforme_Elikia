@@ -9,26 +9,25 @@ import fr.elikia.backend.bo.enums.Visibility;
 import fr.elikia.backend.dao.idao.IDAOEvent;
 import fr.elikia.backend.dao.idao.IDAOEventRegistration;
 import fr.elikia.backend.dao.idao.IDAOMember;
+import fr.elikia.backend.dto.EventRegistrationAdminDTO;
 import fr.elikia.backend.dto.EventRegistrationDTO;
 import org.springframework.stereotype.Service;
-import fr.elikia.backend.dto.EventRegistrationAdminDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Service responsable de la gestion de la logique métier
- * liée aux inscriptions aux événements.
+ * Service responsible for managing event registration business logic.
  *
- * Ce service gère :
- * - la validation des données d'inscription
- * - la vérification de l'existence de l'événement
- * - la prévention des inscriptions en double
- * - le contrôle d'accès aux événements réservés aux membres
- * - la création d'une inscription avec le statut PENDING
+ * This service handles:
+ * - registration validation
+ * - event existence verification
+ * - duplicate registration prevention
+ * - member-only event access control
+ * - registration approval, rejection and cancellation
  */
 @Service
-public class EventRegistrationService {
+public class EventRegistrationService extends AbstractRegistrationService {
 
     private final IDAOEvent idaoEvent;
     private final IDAOEventRegistration idaoEventRegistration;
@@ -48,69 +47,56 @@ public class EventRegistrationService {
     }
 
     /**
-     * Crée une inscription à un événement pour un visiteur ou un membre.
+     * Create an event registration for a visitor or a member.
      *
-     * Règles métier :
-     * - Un visiteur peut s'inscrire uniquement aux événements PUBLIC
-     * - Un membre peut s'inscrire aux événements PUBLIC et MEMBER_ONLY
-     * - Toute nouvelle inscription est créée avec le statut PENDING
+     * Business rules:
+     * - a visitor can register only to PUBLIC events
+     * - a member can register to PUBLIC and MEMBER_ONLY events
+     * - every new registration is created with PENDING status
      *
-     * @param eventId identifiant de l'événement
-     * @param eventRegistrationDTO données nécessaires à l'inscription
-     * @param memberEmail email du membre connecté, null pour un visiteur
-     *
-     * @return LogicResult indiquant le succès ou l'échec de l'opération
+     * @param eventId event identifier
+     * @param eventRegistrationDTO registration data
+     * @param memberEmail connected member email, null for visitors
+     * @return LogicResult indicating success or failure
      */
     public LogicResult<Void> registerToEvent(
             Long eventId,
             EventRegistrationDTO eventRegistrationDTO,
             String memberEmail
     ) {
-        // Valider l'identifiant
-        if (eventId == null || eventId <= 0) {
-            return new LogicResult<>("400", "The event identifier is required", null);
+        LogicResult<Void> validationResult = validateActivityId(eventId);
+        if (validationResult != null) {
+            return validationResult;
         }
 
-        // Récupérer l'événement existant
+        // Retrieve the existing event
         Event event = idaoEvent.findById(eventId);
 
         if (event == null) {
             return new LogicResult<>("404", "Event not found", null);
         }
 
-        // Valider les données d'inscription
-        if (eventRegistrationDTO == null) {
-            return new LogicResult<>("400", "Registration data is required", null);
+        validationResult = validateRegistrationData(eventRegistrationDTO);
+        if (validationResult != null) {
+            return validationResult;
         }
 
         String firstName = eventRegistrationDTO.getFirstName();
         String lastName = eventRegistrationDTO.getLastName();
         String email = eventRegistrationDTO.getEmail();
 
-        if (firstName == null || firstName.isBlank()) {
-            return new LogicResult<>("400", "The first name is required", null);
-        }
-
-        if (lastName == null || lastName.isBlank()) {
-            return new LogicResult<>("400", "The last name is required", null);
-        }
-
-        if (email == null || email.isBlank()) {
-            return new LogicResult<>("400", "The email is required", null);
-        }
-
         Member member = null;
 
         if (memberEmail != null && !memberEmail.isBlank()) {
 
-            // Récupérer le membre connecté
+            // Retrieve the authenticated member
             member = idaoMember.findByEmail(memberEmail);
 
             if (member == null) {
                 return new LogicResult<>("404", "Member not found", null);
             }
 
-            // Vérifier si le membre est déjà inscrit
+            // Check whether the member is already registered
             if (idaoEventRegistration.existsByEventAndMember(event, member)) {
                 return new LogicResult<>(
                         "400",
@@ -119,7 +105,7 @@ public class EventRegistrationService {
                 );
             }
         } else {
-            // Vérifier si le visiteur est déjà inscrit
+            // Check whether the visitor is already registered
             if (idaoEventRegistration.existsByEventAndEmail(event, email)) {
                 return new LogicResult<>(
                         "400",
@@ -129,7 +115,7 @@ public class EventRegistrationService {
             }
         }
 
-        // Bloquer les visiteurs pour les événements réservés aux membres
+        // Prevent visitors from registering for member-only events
         if (event.getVisibility() == Visibility.MEMBER_ONLY && member == null) {
             return new LogicResult<>(
                     "403",
@@ -138,7 +124,7 @@ public class EventRegistrationService {
             );
         }
 
-        // Créer l'entité d'inscription
+        // Create the registration entity
         EventRegistration eventRegistration = new EventRegistration();
 
         eventRegistration.setFirstName(firstName);
@@ -149,7 +135,7 @@ public class EventRegistrationService {
         eventRegistration.setEvent(event);
         eventRegistration.setMember(member);
 
-        // Enregistrer l'inscription
+        // Save the registration
         EventRegistration savedRegistration =
                 idaoEventRegistration.create(eventRegistration);
 
@@ -161,7 +147,7 @@ public class EventRegistrationService {
             );
         }
 
-        // Retourner le succès
+        // Return a successful result
         return new LogicResult<>(
                 "201",
                 "Event registration created successfully",
@@ -170,7 +156,10 @@ public class EventRegistrationService {
     }
 
     /**
-     * Convertit une inscription à un événement en DTO pour l'administration.
+     * Convert an event registration entity to an admin DTO.
+     *
+     * @param registration event registration entity
+     * @return EventRegistrationAdminDTO
      */
     private EventRegistrationAdminDTO mapToEventRegistrationAdminDTO(
             EventRegistration registration
@@ -198,30 +187,28 @@ public class EventRegistrationService {
     }
 
     /**
-     * Récupère toutes les inscriptions liées à un événement donné.
+     * Retrieve all registrations linked to a specific event.
      *
-     * Règles métier :
-     * - vérifier que l'identifiant de l'événement est valide
-     * - vérifier que l'événement existe
-     * - retourner la liste des inscriptions associées à cet événement
-     *
-     * @param eventId identifiant de l'événement
-     * @return LogicResult contenant la liste des inscriptions
+     * @param eventId event identifier
+     * @return LogicResult containing event registrations for admin display
      */
     public LogicResult<List<EventRegistrationAdminDTO>> getRegistrationsByEvent(Long eventId) {
-        // Valider l'identifiant de l'événement
-        if (eventId == null || eventId <= 0) {
-            return new LogicResult<>("400", "The event identifier is required", null);
+        LogicResult<Void> validationResult = validateActivityId(eventId);
+        if (validationResult != null) {
+            return new LogicResult<>(
+                    validationResult.getCode(),
+                    validationResult.getMessage(),
+                    null
+            );
         }
-
-        // Récupérer l'événement existant
+        // Retrieve the existing event
         Event event = idaoEvent.findById(eventId);
 
         if (event == null) {
             return new LogicResult<>("404", "Event not found", null);
         }
 
-        // Récupérer les inscriptions liées à cet événement
+        // Retrieve registrations linked to the event
         List<EventRegistration> registrations =
                 idaoEventRegistration.findByEvent(event);
 
@@ -238,23 +225,19 @@ public class EventRegistrationService {
     }
 
     /**
-     * Accepte une inscription à un événement.
+     * Approve an event registration.
      *
-     * Règles métier :
-     * - vérifier que l'inscription existe
-     * - changer le statut de l'inscription en APPROVED
-     * - enregistrer la modification
-     *
-     * @param registrationId identifiant de l'inscription
-     * @return LogicResult indiquant le résultat de l'opération
+     * @param registrationId registration identifier
+     * @return LogicResult indicating success or failure
      */
     public LogicResult<Void> approveRegistration(Long registrationId) {
-        // Valider l'identifiant de l'inscription
-        if (registrationId == null || registrationId <= 0) {
-            return new LogicResult<>("400", "The registration identifier is required", null);
+        LogicResult<Void> validationResult = validateRegistrationId(registrationId);
+        if (validationResult != null) {
+            return validationResult;
         }
 
-        // Récupérer l'inscription existante
+
+        // Retrieve the existing registration
         EventRegistration registration =
                 idaoEventRegistration.findById(registrationId);
 
@@ -262,10 +245,10 @@ public class EventRegistrationService {
             return new LogicResult<>("404", "Event registration not found", null);
         }
 
-        // Mettre à jour le statut de l'inscription
+        // Update the registration status
         registration.setStatus(RegistrationStatus.APPROVED);
 
-        // Enregistrer la modification
+        // Save the updated registration
         EventRegistration updatedRegistration =
                 idaoEventRegistration.update(registration);
 
@@ -273,7 +256,7 @@ public class EventRegistrationService {
             return new LogicResult<>("500", "Failed to approve event registration", null);
         }
 
-        // Envoyer un email de confirmation après l'acceptation
+        // Send the acceptance confirmation email
         emailService.sendEventRegistrationAcceptedEmail(
                 registration.getEmail(),
                 registration.getFirstName(),
@@ -288,34 +271,24 @@ public class EventRegistrationService {
     }
 
     /**
-     * Refuse une inscription à un événement.
+     * Reject an event registration.
      *
-     * Règles métier :
-     * - vérifier que l'inscription existe
-     * - vérifier que le motif du refus est renseigné
-     * - changer le statut de l'inscription en REJECTED
-     * - enregistrer la modification
-     *
-     * Remarque :
-     * Le motif du refus n'est pas enregistré en base de données.
-     * Il pourra être utilisé plus tard pour l'envoi de l'email de refus.
-     *
-     * @param registrationId identifiant de l'inscription
-     * @param refusalReason motif du refus
-     * @return LogicResult indiquant le résultat de l'opération
+     * @param registrationId registration identifier
+     * @param refusalReason refusal reason
+     * @return LogicResult indicating success or failure
      */
     public LogicResult<Void> rejectRegistration(Long registrationId, String refusalReason) {
-        // Valider l'identifiant de l'inscription
-        if (registrationId == null || registrationId <= 0) {
-            return new LogicResult<>("400", "The registration identifier is required", null);
+        LogicResult<Void> validationResult = validateRegistrationId(registrationId);
+        if (validationResult != null) {
+            return validationResult;
         }
 
-        // Valider le motif du refus
-        if (refusalReason == null || refusalReason.isBlank()) {
-            return new LogicResult<>("400", "The refusal reason is required", null);
+        validationResult = validateRefusalReason(refusalReason);
+        if (validationResult != null) {
+            return validationResult;
         }
 
-        // Récupérer l'inscription existante
+        // Retrieve the existing registration
         EventRegistration registration =
                 idaoEventRegistration.findById(registrationId);
 
@@ -323,10 +296,10 @@ public class EventRegistrationService {
             return new LogicResult<>("404", "Event registration not found", null);
         }
 
-        // Mettre à jour le statut de l'inscription
+        // Update the registration status
         registration.setStatus(RegistrationStatus.REJECTED);
 
-        // Enregistrer la modification
+        // Save the updated registration
         EventRegistration updatedRegistration =
                 idaoEventRegistration.update(registration);
 
@@ -349,23 +322,18 @@ public class EventRegistrationService {
     }
 
     /**
-     * Annule une inscription à un événement.
+     * Cancel an event registration.
      *
-     * Règles métier :
-     * - vérifier que l'inscription existe
-     * - changer le statut de l'inscription en CANCELLED
-     * - enregistrer la modification
-     *
-     * @param registrationId identifiant de l'inscription
-     * @return LogicResult indiquant le résultat de l'opération
+     * @param registrationId registration identifier
+     * @return LogicResult indicating success or failure
      */
     public LogicResult<Void> cancelRegistration(Long registrationId) {
-        // Valider l'identifiant de l'inscription
-        if (registrationId == null || registrationId <= 0) {
-            return new LogicResult<>("400", "The registration identifier is required", null);
+        LogicResult<Void> validationResult = validateRegistrationId(registrationId);
+        if (validationResult != null) {
+            return validationResult;
         }
 
-        // Récupérer l'inscription existante
+        // Retrieve the existing registration
         EventRegistration registration =
                 idaoEventRegistration.findById(registrationId);
 
@@ -373,10 +341,10 @@ public class EventRegistrationService {
             return new LogicResult<>("404", "Event registration not found", null);
         }
 
-        // Mettre à jour le statut de l'inscription
+        // Update the registration status
         registration.setStatus(RegistrationStatus.CANCELLED);
 
-        // Enregistrer la modification
+        // Save the updated registration
         EventRegistration updatedRegistration =
                 idaoEventRegistration.update(registration);
 
