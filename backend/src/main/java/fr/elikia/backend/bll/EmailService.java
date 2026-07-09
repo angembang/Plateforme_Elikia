@@ -124,4 +124,57 @@ public class EmailService {
         mailSender.send(message);
     }
 
+    /**
+     * Send an email when a workshop registration is approved.
+     *
+     * @param to participant email address
+     * @param firstName participant first name
+     * @param workshopTitle workshop title
+     */
+    public void sendWorkshopRegistrationAcceptedEmail(
+            String to,
+            String firstName,
+            String workshopTitle
+    ) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject("Votre inscription à l'atelier a été acceptée");
+        message.setText(
+                "Bonjour " + firstName + ",\n\n" +
+                        "Votre inscription à l'atelier \"" + workshopTitle + "\" a été acceptée.\n\n" +
+                        "Nous vous remercions pour votre inscription.\n\n" +
+                        "Cordialement,\n" +
+                        "Association Elikia"
+        );
+
+        mailSender.send(message);
+    }
+
+    /**
+     * Send an email when a workshop registration is rejected.
+     *
+     * @param to participant email address
+     * @param firstName participant first name
+     * @param workshopTitle workshop title
+     * @param reason refusal reason
+     */
+    public void sendWorkshopRegistrationRejectedEmail(
+            String to,
+            String firstName,
+            String workshopTitle,
+            String reason
+    ) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject("Votre inscription à l'atelier a été refusée");
+        message.setText(
+                "Bonjour " + firstName + ",\n\n" +
+                        "Votre inscription à l'atelier \"" + workshopTitle + "\" a été refusée.\n\n" +
+                        "Motif du refus : " + reason + "\n\n" +
+                        "Cordialement,\n" +
+                        "Association Elikia"
+        );
+
+        mailSender.send(message);
+    }
 }
