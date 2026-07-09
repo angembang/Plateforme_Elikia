@@ -30,6 +30,7 @@ public class MemberDAO implements IDAOMember {
         return memberRepository.existsById(memberId);
     }
 
+    @Override
     public Member findByEmail(String memberEmail) {
         return memberRepository.findByEmail(memberEmail).orElse(null);
 
