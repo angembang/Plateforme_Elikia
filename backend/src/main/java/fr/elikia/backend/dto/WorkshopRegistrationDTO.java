@@ -10,7 +10,7 @@ import jakarta.validation.constraints.Size;
  * It contains the visitor or member information
  * required to register for a workshop.
  */
-public class WorkshopRegistrationDTO {
+public class WorkshopRegistrationDTO implements RegistrationRequestDTO {
 
     @NotBlank(message = "Le prénom est obligatoire.")
     @Size(max = 100, message = "Le prénom ne peut pas dépasser 100 caractères.")
