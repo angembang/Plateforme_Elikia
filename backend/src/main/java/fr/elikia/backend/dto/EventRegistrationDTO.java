@@ -3,7 +3,7 @@ package fr.elikia.backend.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-public class EventRegistrationDTO {
+public class EventRegistrationDTO implements RegistrationRequestDTO {
     @NotBlank(message = "The first name is required")
     private String firstName;
 
