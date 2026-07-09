@@ -2,6 +2,7 @@ package fr.elikia.backend.auth;
 
 import fr.elikia.backend.bo.Member;
 import fr.elikia.backend.bo.Role;
+import fr.elikia.backend.bo.enums.RegistrationStatus;
 import fr.elikia.backend.dao.idao.IDAOMember;
 import fr.elikia.backend.dao.idao.IDAORole;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,7 +59,7 @@ class AuthControllerIntegrationTest {
         member.setLastName("Doe");
         member.setEmail("member@mail.com");
         member.setPassword(passwordEncoder.encode("password123"));
-        member.setStatus("INSCRIPTION_TRANSMISE");
+        member.setStatus(RegistrationStatus.PENDING);
 
         member.setCreatedAt(LocalDate.now());
         member.setFailedLoginAttempts(0);
