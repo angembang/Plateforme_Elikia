@@ -6,6 +6,7 @@ import fr.elikia.backend.bo.enums.ActivityOwnerType;
 import fr.elikia.backend.bo.enums.Visibility;
 import fr.elikia.backend.dao.idao.IDAOWorkshop;
 import fr.elikia.backend.dto.WorkshopDTO;
+import fr.elikia.backend.dto.WorkshopResponseDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,6 +40,26 @@ public class WorkshopService extends AbstractActivityService {
         super(mediaService, objectMapper);
         this.idaoWorkshop = idaoWorkshop;
     }
+
+    /**
+     * Convert a Workshop entity to a response DTO.
+     */
+    private WorkshopResponseDTO mapToWorkshopResponseDTO(Workshop workshop) {
+        return new WorkshopResponseDTO(
+                workshop.getWorkshopId(),
+                workshop.getTitle(),
+                workshop.getDescription(),
+                workshop.getStartDate(),
+                workshop.getEndDate(),
+                workshop.getLocation(),
+                workshop.getAddress(),
+                workshop.getCapacity(),
+                workshop.getVisibility(),
+                workshop.getMediaList()
+        );
+    }
+
+
 
 
     /**
@@ -128,7 +149,7 @@ public class WorkshopService extends AbstractActivityService {
      * @param size number of items per page
      * @return LogicResult containing a page of Workshop
      */
-    public LogicResult<Page<Workshop>> findWorkshopPage(
+    public LogicResult<Page<WorkshopResponseDTO>> findWorkshopPage(
             int page,
             int size
     ) {
@@ -155,11 +176,14 @@ public class WorkshopService extends AbstractActivityService {
             );
         }
 
+        Page<WorkshopResponseDTO> dtoPage =
+                pageResult.map(this::mapToWorkshopResponseDTO);
+
         // Successful response
         return new LogicResult<>(
                 "200",
                 WORKSHOP_PAGE_RETRIEVED,
-                pageResult
+                dtoPage
         );
     }
 
@@ -171,7 +195,7 @@ public class WorkshopService extends AbstractActivityService {
      * @param size number of items per page
      * @return LogicResult containing a page of Workshop
      */
-    public LogicResult<Page<Workshop>> findAllByVisibilityOrderByStartDateDesc(
+    public LogicResult<Page<WorkshopResponseDTO>> findAllByVisibilityOrderByStartDateDesc(
             int page,
             int size
     ) {
@@ -199,11 +223,14 @@ public class WorkshopService extends AbstractActivityService {
             );
         }
 
+        Page<WorkshopResponseDTO> dtoPage =
+                pageResult.map(this::mapToWorkshopResponseDTO);
+
         // Successful response
         return new LogicResult<>(
                 "200",
                 WORKSHOP_PAGE_RETRIEVED,
-                pageResult
+                dtoPage
         );
     }
 
@@ -215,7 +242,7 @@ public class WorkshopService extends AbstractActivityService {
      * @param size number of items per page
      * @return LogicResult containing a page of Workshop
      */
-    public LogicResult<Page<Workshop>> findAllByMemberOnlyVisibilityOrderByStartDateDesc(
+    public LogicResult<Page<WorkshopResponseDTO>> findAllByMemberOnlyVisibilityOrderByStartDateDesc(
             int page,
             int size
     ) {
@@ -243,11 +270,14 @@ public class WorkshopService extends AbstractActivityService {
             );
         }
 
+        Page<WorkshopResponseDTO> dtoPage =
+                pageResult.map(this::mapToWorkshopResponseDTO);
+
         // Successful response
         return new LogicResult<>(
                 "200",
                 WORKSHOP_PAGE_RETRIEVED,
-                pageResult
+                dtoPage
         );
     }
 
@@ -255,11 +285,11 @@ public class WorkshopService extends AbstractActivityService {
     /**
      * Retrieve 4 last workshop (for home page)
      */
-    public LogicResult<List<Workshop>> findLastWorkshop() {
+    public LogicResult<List<WorkshopResponseDTO>> findLastWorkshop() {
 
-        List<Workshop> workshop = idaoWorkshop.findAllByOrderByStartDateDesc();
+        List<Workshop> workshops = idaoWorkshop.findAllByOrderByStartDateDesc();
 
-        if (workshop.isEmpty()) {
+        if (workshops.isEmpty()) {
             return new LogicResult<>(
                     "200",
                     NO_WORKSHOP_FOUND,
@@ -267,10 +297,15 @@ public class WorkshopService extends AbstractActivityService {
             );
         }
 
+        List<WorkshopResponseDTO> workshopDTOs =
+                workshops.stream()
+                        .map(this::mapToWorkshopResponseDTO)
+                        .toList();
+
         return new LogicResult<>(
                 "200",
                 "Last 4 workshop retrieved",
-                workshop
+                workshopDTOs
         );
     }
 
@@ -278,7 +313,7 @@ public class WorkshopService extends AbstractActivityService {
     /**
      * Retrieve workshop by its unique identifier
      */
-    public LogicResult<Workshop> findWorkshopById(Long workshopId) {
+    public LogicResult<WorkshopResponseDTO> findWorkshopById(Long workshopId) {
         if(workshopId == null || workshopId <= 0) {
             return new LogicResult<>("400", "The workshop id is required", null);
         }
@@ -286,7 +321,8 @@ public class WorkshopService extends AbstractActivityService {
         if(workshop == null) {
             return new LogicResult<>("404", "Workshop not found", null);
         }
-        return new LogicResult<>("200", "Workshop retrieved", workshop);
+        return new LogicResult<>("200", "Workshop retrieved", mapToWorkshopResponseDTO(workshop)
+        );
 
     }
 
@@ -325,7 +361,7 @@ public class WorkshopService extends AbstractActivityService {
         LogicResult<Void> result = validationError();
 
         // Validate and sanitize input
-        AbstractActivityService.SanitizedActivityInput input = validateAndSanitizeActivity(workshopDTO, result);
+       SanitizedActivityInput input = validateAndSanitizeActivity(workshopDTO, result);
         if (input == null) {
             // Validation failed
             return result;
@@ -334,13 +370,12 @@ public class WorkshopService extends AbstractActivityService {
         // Apply sanitized updates to the existing entity
         applySanitizedValues(existingWorkshop, input);
 
-        // Update or delete existing medias
-        List<Media> medias = existingWorkshop.getMediaList();
-
-        if (medias == null) {
-            return new LogicResult<>("500",
+        if (existingWorkshop.getMediaList() == null) {
+            return new LogicResult<>(
+                    "500",
                     "Workshop medias not initialized",
-                    null);
+                    null
+            );
         }
 
         /* ******* handle medias ****** */
@@ -384,5 +419,6 @@ public class WorkshopService extends AbstractActivityService {
         }
         return new LogicResult<>("200", "Workshop deleted successfully", null);
     }
+
 
 }
