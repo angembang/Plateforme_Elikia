@@ -2,6 +2,7 @@ package fr.elikia.backend.bll;
 
 import fr.elikia.backend.bo.LogicResult;
 import fr.elikia.backend.dto.EventRegistrationDTO;
+import fr.elikia.backend.dto.RegistrationRequestDTO;
 
 /**
  * Abstract service containing the common validation logic
@@ -61,7 +62,7 @@ public class AbstractRegistrationService {
      * @return LogicResult containing an error if the data is invalid,
      *         or null if the data is valid
      */
-    protected LogicResult<Void> validateRegistrationData(EventRegistrationDTO registrationDTO) {
+    protected LogicResult<Void> validateRegistrationData(RegistrationRequestDTO registrationDTO) {
         if (registrationDTO == null) {
             return new LogicResult<>("400", "Registration data is required", null);
         }
