@@ -46,7 +46,7 @@ public class AdminService {
         // hash the password
         String hashedPassword = passwordEncoder.encode(input.password);
 
-        // Create member entity
+        // Create admin entity
         Admin admin = new Admin();
         admin .setFirstName(input.firstName);
         admin .setLastName(input.lastName);
