@@ -110,7 +110,7 @@ public class AdminController {
     /**
      * Accepte une demande d'adhésion.
      */
-    @Operation(
+    /*@Operation(
             summary = "Acceptation d'une demande d'adhésion",
             description = "Valide une demande d'adhésion, génère le numéro d'adhésion et renseigne la date d'adhésion"
     )
@@ -136,12 +136,12 @@ public class AdminController {
         return ResponseEntity
                 .status(status)
                 .body(result);
-    }
+    }*/
 
     /**
      * Refuse une demande d'adhésion avec un motif envoyé par l'administrateur.
      */
-    @Operation(
+    /*@Operation(
             summary = "Refus d'une demande d'adhésion",
             description = "Refuse une demande d'adhésion avec un motif renseigné par l'administrateur"
     )
@@ -170,7 +170,7 @@ public class AdminController {
         return ResponseEntity
                 .status(status)
                 .body(result);
-    }
+    }*/
 
 
     /**
