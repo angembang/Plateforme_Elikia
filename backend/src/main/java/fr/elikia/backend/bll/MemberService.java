@@ -22,13 +22,13 @@ import java.util.List;
 public class MemberService {
     private final IDAOMember idaoMember;
     private final IDAORole idaoRole;
-    //private final EmailService emailService;
+    private final EmailService emailService;
     private static final String MEMBERSHIP_PREFIX = "ELK";
 
-    public MemberService(IDAOMember idaoMember, IDAORole idaoRole /*, EmailService emailService*/) {
+    public MemberService(IDAOMember idaoMember, IDAORole idaoRole , EmailService emailService) {
         this.idaoMember = idaoMember;
         this.idaoRole = idaoRole;
-        //this.emailService = emailService;
+        this.emailService = emailService;
     }
 
     /**
@@ -117,7 +117,7 @@ public class MemberService {
      * @param id member identifier
      * @return updated membership information
      */
-    /*public LogicResult<MemberAdminDTO> acceptMembership(Long id) {
+    public LogicResult<MemberAdminDTO> acceptMembership(Long id) {
         Member member = findMember(id);
 
         if (member == null) {
@@ -148,7 +148,7 @@ public class MemberService {
         );
 
         return new LogicResult<>("200", "Membership request approved", new MemberAdminDTO(updatedMember));
-    }*/
+    }
 
     /**
      * Reject a membership registration.
@@ -159,7 +159,7 @@ public class MemberService {
      * @param reason reason rejection
      * @return updated membership information
      */
-    /*public LogicResult<MemberAdminDTO> rejectMembership(Long id, String reason) {
+    public LogicResult<MemberAdminDTO> rejectMembership(Long id, String reason) {
         if (id == null || id <= 0) {
             return new LogicResult<>("400", "Invalid member identifier", null);
         }
@@ -198,7 +198,7 @@ public class MemberService {
                 "Membership request rejected",
                 new MemberAdminDTO(updatedMember)
         );
-    }*/
+    }
 
     /**
      * Generate a membership number
