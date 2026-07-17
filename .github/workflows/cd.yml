@@ -74,7 +74,12 @@ jobs:
 
           JWT_SECRET=${{ secrets.JWT_SECRET }}
           JWT_EXPIRATION=${{ secrets.JWT_EXPIRATION }}
+          
+          MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}
+          MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}
           EOF"
+          
+          
 
       # Step 7: Restart Docker containers on the VPS
       # Stops running containers
