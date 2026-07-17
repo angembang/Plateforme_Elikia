@@ -1,5 +1,6 @@
 package fr.elikia.backend.news;
 
+import fr.elikia.backend.AbstractIntegrationTest;
 import fr.elikia.backend.bll.NewsService;
 import fr.elikia.backend.bo.enums.ContentStatus;
 import fr.elikia.backend.bo.LogicResult;
@@ -21,12 +22,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
-class NewsIntegrationTest {
+class NewsIntegrationTest extends AbstractIntegrationTest {
     @Autowired
     private NewsService newsService;
 
     @Autowired
     private IDAONews idaoNews;
+
 
     @Test
     void shouldPersistNewsInDatabase() {

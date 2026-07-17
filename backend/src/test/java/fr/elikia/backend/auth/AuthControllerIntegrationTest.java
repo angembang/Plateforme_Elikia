@@ -1,5 +1,6 @@
 package fr.elikia.backend.auth;
 
+import fr.elikia.backend.AbstractIntegrationTest;
 import fr.elikia.backend.bo.Member;
 import fr.elikia.backend.bo.Role;
 import fr.elikia.backend.bo.enums.RegistrationStatus;
@@ -24,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ActiveProfiles("test")
-class AuthControllerIntegrationTest {
+class AuthControllerIntegrationTest extends AbstractIntegrationTest {
     @Autowired
     private WebApplicationContext context;
 
@@ -45,6 +46,7 @@ class AuthControllerIntegrationTest {
                 .webAppContextSetup(context)
                 .build();
     }
+
 
     @Test
     void itShouldReturn403WhenMemberNotValidated() throws Exception {

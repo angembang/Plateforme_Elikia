@@ -1,5 +1,6 @@
 package fr.elikia.backend.security;
 
+import fr.elikia.backend.AbstractIntegrationTest;
 import fr.elikia.backend.security.jwt.JwtService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ActiveProfiles("test")
-class SecurityFunctionalTest {
+class SecurityFunctionalTest extends AbstractIntegrationTest {
     @Autowired
     private WebApplicationContext context;
 

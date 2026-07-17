@@ -1,5 +1,6 @@
 package fr.elikia.backend.security;
 
+import fr.elikia.backend.AbstractIntegrationTest;
 import fr.elikia.backend.bo.LogicResult;
 import fr.elikia.backend.security.jwt.JwtService;
 import org.junit.jupiter.api.Test;
@@ -12,10 +13,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class JwtServiceTest {
+class JwtServiceTest extends AbstractIntegrationTest {
     @Autowired
     private JwtService jwtService;
-
 
     @Test
     void itShouldGenerateAndValidateToken() {

@@ -1,6 +1,7 @@
 package fr.elikia.backend.news;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.elikia.backend.AbstractIntegrationTest;
 import fr.elikia.backend.bo.enums.ContentStatus;
 import fr.elikia.backend.bo.enums.Visibility;
 import fr.elikia.backend.dto.NewsCreationRequest;
@@ -27,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Transactional
-class NewsControllerIT {
+class NewsControllerIT extends AbstractIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -36,6 +37,7 @@ class NewsControllerIT {
 
     @Autowired
     private JwtService jwtService;
+
 
     // =========================
     // Helper
