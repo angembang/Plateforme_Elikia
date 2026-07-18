@@ -24,7 +24,7 @@
       <td>{{ member.status }}</td>
       <td>{{ member.roleName || '-' }}</td>
       <td>
-        @if (member.status === 'INSCRIPTION_TRANSMISE') {
+        @if (member.status === 'PENDING') {
         <button class="accept-btn" (click)="acceptMembership(member.userId)">
           Accepter
         </button>
