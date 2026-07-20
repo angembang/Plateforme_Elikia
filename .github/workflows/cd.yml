@@ -55,6 +55,7 @@ jobs:
         run: |
           rsync -avz --delete \
             --exclude '.git' \
+            --exclude 'uploads/' \
             ./ ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:~/app/
 
       # Step 6: Create .env file on VPS
