@@ -64,7 +64,6 @@ export const routes: Routes = [
       { path: 'workshop', component: ListWorkshopComponent },
       { path: 'workshop/detail/:id', component: DetailWorkshopComponent },
       { path: 'workshop/edit/:id', component: EditWorkshopComponent },
-      // Affichage de la liste des membres enregistrés
       { path: 'members', component: MemberListComponent },
     ]
   }
