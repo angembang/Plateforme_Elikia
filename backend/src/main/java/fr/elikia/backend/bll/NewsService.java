@@ -320,7 +320,7 @@ public class NewsService {
     public LogicResult<Void> updateNews(Long newsId, NewsDTO newsDTO,  List<MultipartFile> files) {
         // Validate the identifier
         if(newsId == null || newsId <= 0) {
-            return new LogicResult<>("400", "The news identifier is required", null);
+            return new LogicResult<>("400", "Invalid news identifier", null);
         }
         // Retrieve the existing news
         News existingNews = idaoNews.findById(newsId);

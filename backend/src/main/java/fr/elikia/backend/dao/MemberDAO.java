@@ -25,6 +25,12 @@ public class MemberDAO implements IDAOMember {
         return memberRepository.findById(memberId).orElse(null);
     }
 
+    @Override
+    public boolean existsById(Long memberId) {
+        return memberRepository.existsById(memberId);
+    }
+
+    @Override
     public Member findByEmail(String memberEmail) {
         return memberRepository.findByEmail(memberEmail).orElse(null);
 
@@ -50,6 +56,7 @@ public class MemberDAO implements IDAOMember {
         return memberRepository.save(member);
     }
 
+    @Override
     public Member update(Member member){
         // Check if the member exists
         if(!memberRepository.existsById(member.getUserId())) {
@@ -58,6 +65,7 @@ public class MemberDAO implements IDAOMember {
         return memberRepository.save(member);
     }
 
+    @Override
     public Member updateByAdmin(Member member) {
         // Check if the member exists
         if(!memberRepository.existsById(member.getUserId())) {

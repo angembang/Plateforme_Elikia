@@ -1,6 +1,7 @@
 package fr.elikia.backend.dto;
 
 import fr.elikia.backend.bo.Member;
+import fr.elikia.backend.bo.enums.RegistrationStatus;
 
 import java.time.LocalDate;
 
@@ -12,7 +13,7 @@ public class MemberAdminDTO {
     private LocalDate createdAt;
     private String membershipNumber;
     private LocalDate membershipDate;
-    private String status;
+    private RegistrationStatus status;
     private String image;
     private String roleName;
 
@@ -58,7 +59,7 @@ public class MemberAdminDTO {
         return membershipDate;
     }
 
-    public String getStatus() {
+    public RegistrationStatus getStatus() {
         return status;
     }
 

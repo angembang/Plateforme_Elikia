@@ -1,7 +1,9 @@
 package fr.elikia.backend.auth;
 
+import fr.elikia.backend.AbstractIntegrationTest;
 import fr.elikia.backend.bo.Member;
 import fr.elikia.backend.bo.Role;
+import fr.elikia.backend.bo.enums.RegistrationStatus;
 import fr.elikia.backend.dao.idao.IDAOMember;
 import fr.elikia.backend.dao.idao.IDAORole;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ActiveProfiles("test")
-class AuthControllerIntegrationTest {
+class AuthControllerIntegrationTest extends AbstractIntegrationTest {
     @Autowired
     private WebApplicationContext context;
 
@@ -45,6 +47,7 @@ class AuthControllerIntegrationTest {
                 .build();
     }
 
+
     @Test
     void itShouldReturn403WhenMemberNotValidated() throws Exception {
 
@@ -58,7 +61,7 @@ class AuthControllerIntegrationTest {
         member.setLastName("Doe");
         member.setEmail("member@mail.com");
         member.setPassword(passwordEncoder.encode("password123"));
-        member.setStatus("INSCRIPTION_TRANSMISE");
+        member.setStatus(RegistrationStatus.PENDING);
 
         member.setCreatedAt(LocalDate.now());
         member.setFailedLoginAttempts(0);

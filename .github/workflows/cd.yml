@@ -5,15 +5,15 @@ name: CD - Deploy to VPS
 on:
   workflow_run:
     workflows:
-      - "CI - Frontend"
-      - "CI - Backend"
+      - "CI - Elikia"
     types:
       - completed
 
 # Define the jobs executed by this workflow
 jobs:
   deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.head_branch == 'main' &&
+        github.event.workflow_run.conclusion == 'success' }}
     # Use the latest Ubuntu GitHub-hosted runner
     runs-on: ubuntu-latest
 
@@ -22,6 +22,9 @@ jobs:
       # This downloads the project source code into the runner
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          # The workflow that triggered the commit
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       # Step 2: Start SSH agent and load private key
       # This allows GitHub Actions to authenticate securely with the VPS via SSH
@@ -71,7 +74,12 @@ jobs:
 
           JWT_SECRET=${{ secrets.JWT_SECRET }}
           JWT_EXPIRATION=${{ secrets.JWT_EXPIRATION }}
+          
+          MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}
+          MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}
           EOF"
+          
+          
 
       # Step 7: Restart Docker containers on the VPS
       # Stops running containers

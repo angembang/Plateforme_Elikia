@@ -4,6 +4,7 @@ import fr.elikia.backend.bll.AdminService;
 import fr.elikia.backend.bll.MemberService;
 import fr.elikia.backend.bo.LogicResult;
 import fr.elikia.backend.bo.Member;
+import fr.elikia.backend.dto.AdminUpdateMemberDTO;
 import fr.elikia.backend.dto.MemberAdminDTO;
 import fr.elikia.backend.dto.RegisterDTO;
 import fr.elikia.backend.dto.RejectMembershipDTO;
@@ -35,7 +36,25 @@ public class AdminController {
     }
 
     /**
+     * Convertit le code métier retourné par LogicResult
+     * en statut HTTP exploitable par la réponse REST.
+     *
+     * @param code code métier sous forme de chaîne
+     * @return statut HTTP correspondant ou INTERNAL_SERVER_ERROR par défaut
+     */
+    private HttpStatus resolveHttpStatus(String code) {
+        HttpStatus status = HttpStatus.resolve(Integer.parseInt(code));
+
+        if (status == null) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return status;
+    }
+
+    /**
      * Post mapping for register
+     *
      * @return the register method of the admin service
      */
     @Operation(
@@ -55,9 +74,15 @@ public class AdminController {
             description = "Email already in use"
     )
     @PostMapping("/register")
-    public ResponseEntity<LogicResult<Void>> register(@RequestBody RegisterDTO registerDTO){
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(adminService.createAdmin(registerDTO));
+    public ResponseEntity<LogicResult<Void>> register(
+            @RequestBody @Valid RegisterDTO registerDTO
+    ) {
+        LogicResult<Void> result = adminService.createAdmin(registerDTO);
+        HttpStatus status = resolveHttpStatus(result.getCode());
+
+        return ResponseEntity
+                .status(status)
+                .body(result);
     }
 
     /**
@@ -74,7 +99,12 @@ public class AdminController {
     )
     @GetMapping("/members")
     public ResponseEntity<LogicResult<List<MemberAdminDTO>>> getAllMembers() {
-        return ResponseEntity.ok(memberService.findAll());
+        LogicResult<List<MemberAdminDTO>> result = memberService.findAll();
+        HttpStatus status = resolveHttpStatus(result.getCode());
+
+        return ResponseEntity
+                .status(status)
+                .body(result);
     }
 
     /**
@@ -89,12 +119,23 @@ public class AdminController {
             description = "Demande d'adhésion acceptée avec succès"
     )
     @ApiResponse(
+            responseCode = "400",
+            description = "Identifiant du membre invalide"
+    )
+    @ApiResponse(
             responseCode = "404",
             description = "Membre introuvable"
     )
     @PatchMapping("/membership-requests/{id}/accept")
-    public ResponseEntity<LogicResult<MemberAdminDTO>> acceptMembership(@PathVariable Long id) {
-        return ResponseEntity.ok(memberService.acceptMembership(id));
+    public ResponseEntity<LogicResult<MemberAdminDTO>> acceptMembership(
+            @PathVariable Long id
+    ) {
+        LogicResult<MemberAdminDTO> result = memberService.acceptMembership(id);
+        HttpStatus status = resolveHttpStatus(result.getCode());
+
+        return ResponseEntity
+                .status(status)
+                .body(result);
     }
 
     /**
@@ -109,6 +150,10 @@ public class AdminController {
             description = "Demande d'adhésion refusée avec succès"
     )
     @ApiResponse(
+            responseCode = "400",
+            description = "Identifiant invalide ou motif du refus manquant"
+    )
+    @ApiResponse(
             responseCode = "404",
             description = "Membre introuvable"
     )
@@ -117,7 +162,46 @@ public class AdminController {
             @PathVariable Long id,
             @Valid @RequestBody RejectMembershipDTO dto
     ) {
-        return ResponseEntity.ok(memberService.rejectMembership(id, dto.getReason()));
+        LogicResult<MemberAdminDTO> result =
+                memberService.rejectMembership(id, dto.getReason());
+
+        HttpStatus status = resolveHttpStatus(result.getCode());
+
+        return ResponseEntity
+                .status(status)
+                .body(result);
     }
 
+
+    /**
+     * Met à jour les informations administratives d'un membre.
+     */
+    @Operation(
+            summary = "Mise à jour d'un membre",
+            description = "Permet à l'administrateur de modifier le statut ou le rôle d'un membre"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "Membre mis à jour avec succès"
+    )
+    @ApiResponse(
+            responseCode = "400",
+            description = "Identifiant invalide ou données de mise à jour invalides"
+    )
+    @ApiResponse(
+            responseCode = "404",
+            description = "Membre ou rôle introuvable"
+    )
+    @PatchMapping("/members/{id}")
+    public ResponseEntity<LogicResult<Member>> updateMember(
+            @PathVariable Long id,
+            @Valid @RequestBody AdminUpdateMemberDTO dto
+    ) {
+        LogicResult<Member> result = memberService.updateMember(id, dto);
+        HttpStatus status = resolveHttpStatus(result.getCode());
+
+        return ResponseEntity
+                .status(status)
+                .body(result);
+    }
 }

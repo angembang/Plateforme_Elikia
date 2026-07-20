@@ -1,6 +1,7 @@
 package fr.elikia.backend.bll;
 
 import fr.elikia.backend.bo.*;
+import fr.elikia.backend.bo.enums.RegistrationStatus;
 import fr.elikia.backend.dao.idao.IDAOAdmin;
 import fr.elikia.backend.dao.idao.IDAOMember;
 import fr.elikia.backend.dao.idao.IDAORole;
@@ -94,11 +95,12 @@ public class AuthService {
 
         // ---- Member-specific status check
         if (user instanceof Member member) {
-            String status = member.getStatus();
-            if (!"VALIDE".equals(status)) {
+            RegistrationStatus status = member.getStatus();
+            if (status != RegistrationStatus.APPROVED) {
                 String message = switch (status) {
-                    case "INSCRIPTION_TRANSMISE" -> "Your membership is currently being processed.";
-                    case "ANNULEE" -> "Your membership has been cancelled. Please contact support.";
+                    case PENDING -> "Your membership is currently being processed.";
+                    case REJECTED -> "Your membership has been rejected. Please contact support.";
+                    case CANCELLED -> "Your membership has been cancelled. Please contact support.";
                     default -> "Your membership is not active.";
                 };
                 return new LogicResult<>("403", message, null);
@@ -158,7 +160,7 @@ public class AuthService {
         member.setCreatedAt(LocalDate.now());
 
         // Membership rules
-        member.setStatus("INSCRIPTION_TRANSMISE");
+        member.setStatus(RegistrationStatus.PENDING);
         member.setMembershipNumber(null);
         member.setMembershipDate(null);
 

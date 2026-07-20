@@ -20,8 +20,8 @@ public class EmailService {
     /**
      * Envoie un email lorsqu'une demande d'adhésion est acceptée.
      *
-     * @param to adresse email du membre
-     * @param firstName prénom du membre
+     * @param to               adresse email du membre
+     * @param firstName        prénom du membre
      * @param membershipNumber numéro d'adhésion généré
      */
     public void sendMembershipAcceptedEmail(
@@ -47,9 +47,9 @@ public class EmailService {
     /**
      * Envoie un email lorsqu'une demande d'adhésion est refusée.
      *
-     * @param to adresse email du membre
+     * @param to        adresse email du membre
      * @param firstName prénom du membre
-     * @param reason motif du refus saisi par l'administrateur
+     * @param reason    motif du refus saisi par l'administrateur
      */
     public void sendMembershipRejectedEmail(
             String to,
@@ -73,8 +73,8 @@ public class EmailService {
     /**
      * Envoie un email lorsqu'une inscription à un événement est acceptée.
      *
-     * @param to adresse email du participant
-     * @param firstName prénom du participant
+     * @param to         adresse email du participant
+     * @param firstName  prénom du participant
      * @param eventTitle titre de l'événement
      */
     public void sendEventRegistrationAcceptedEmail(
@@ -99,10 +99,10 @@ public class EmailService {
     /**
      * Envoie un email lorsqu'une inscription à un événement est refusée.
      *
-     * @param to adresse email du participant
-     * @param firstName prénom du participant
+     * @param to         adresse email du participant
+     * @param firstName  prénom du participant
      * @param eventTitle titre de l'événement
-     * @param reason motif du refus saisi par l'administrateur
+     * @param reason     motif du refus saisi par l'administrateur
      */
     public void sendEventRegistrationRejectedEmail(
             String to,
@@ -127,8 +127,8 @@ public class EmailService {
     /**
      * Send an email when a workshop registration is approved.
      *
-     * @param to participant email address
-     * @param firstName participant first name
+     * @param to            participant email address
+     * @param firstName     participant first name
      * @param workshopTitle workshop title
      */
     public void sendWorkshopRegistrationAcceptedEmail(
@@ -153,10 +153,10 @@ public class EmailService {
     /**
      * Send an email when a workshop registration is rejected.
      *
-     * @param to participant email address
-     * @param firstName participant first name
+     * @param to            participant email address
+     * @param firstName     participant first name
      * @param workshopTitle workshop title
-     * @param reason refusal reason
+     * @param reason        refusal reason
      */
     public void sendWorkshopRegistrationRejectedEmail(
             String to,

@@ -1,5 +1,6 @@
 package fr.elikia.backend.bo;
 
+import fr.elikia.backend.bo.enums.RegistrationStatus;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -13,8 +14,9 @@ public class Member extends User {
 
     private LocalDate membershipDate;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String status;
+    private RegistrationStatus status;
 
     private String image;
 
@@ -30,7 +32,7 @@ public class Member extends User {
     }
 
     public Member(String firstName, String lastName, String email, String password, LocalDate createdAt, int failedLoginAttempts, LocalDateTime lockUntil,
-                  String membershipNumber, LocalDate membershipDate, String status, String image, Role role) {
+                  String membershipNumber, LocalDate membershipDate, RegistrationStatus status, String image, Role role) {
         super(firstName, lastName, email, password, createdAt, failedLoginAttempts, lockUntil);
         this.membershipNumber = membershipNumber;
         this.membershipDate = membershipDate;
@@ -58,10 +60,10 @@ public class Member extends User {
         this.membershipDate = membershipDate;
     }
 
-    public String getStatus() {
+    public RegistrationStatus getStatus() {
         return status;
     }
-    public void setStatus(String status) {
+    public void setStatus(RegistrationStatus status) {
         this.status = status;
     }
 

@@ -4,6 +4,7 @@ import fr.elikia.backend.bll.AuthService;
 import fr.elikia.backend.bo.Admin;
 import fr.elikia.backend.bo.LogicResult;
 import fr.elikia.backend.bo.Member;
+import fr.elikia.backend.bo.enums.RegistrationStatus;
 import fr.elikia.backend.dao.idao.IDAOAdmin;
 import fr.elikia.backend.dao.idao.IDAOMember;
 import fr.elikia.backend.dao.idao.IDAORole;
@@ -88,7 +89,7 @@ class AuthServiceTest {
         Member member = new Member();
         member.setEmail("member@mail.com");
         member.setPassword("hashed");
-        member.setStatus("INSCRIPTION_TRANSMISE");
+        member.setStatus(RegistrationStatus.PENDING);
 
         when(idaoAdmin.findByEmail("member@mail.com")).thenReturn(null);
         when(idaoMember.findByEmail("member@mail.com")).thenReturn(member);
@@ -108,7 +109,7 @@ class AuthServiceTest {
         Member member = new Member();
         member.setEmail("member@mail.com");
         member.setPassword("hashed");
-        member.setStatus("ANNULEE");
+        member.setStatus(RegistrationStatus.CANCELLED);
 
         when(idaoAdmin.findByEmail("member@mail.com")).thenReturn(null);
         when(idaoMember.findByEmail("member@mail.com")).thenReturn(member);
@@ -119,6 +120,26 @@ class AuthServiceTest {
         assertEquals("403", result.getCode());
         assertEquals("Your membership has been cancelled. Please contact support.", result.getMessage());
     }
+
+    @Test
+    void itShouldReturn403WhenMemberIsRejected() {
+        LoginDTO dto = new LoginDTO("member@mail.com", "password123");
+
+        Member member = new Member();
+        member.setEmail("member@mail.com");
+        member.setPassword("hashed");
+        member.setStatus(RegistrationStatus.REJECTED);
+
+        when(idaoAdmin.findByEmail("member@mail.com")).thenReturn(null);
+        when(idaoMember.findByEmail("member@mail.com")).thenReturn(member);
+        when(passwordEncoder.matches("password123", "hashed")).thenReturn(true);
+
+        LogicResult<String> result = authService.login(dto);
+
+        assertEquals("403", result.getCode());
+        assertEquals("Your membership has been rejected. Please contact support.", result.getMessage());
+    }
+
 
     @Test
     void itShouldReturn401WhenEmailDoesNotExist() {

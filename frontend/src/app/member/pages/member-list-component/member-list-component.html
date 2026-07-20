@@ -24,12 +24,12 @@
       <td>{{ member.status }}</td>
       <td>{{ member.roleName || '-' }}</td>
       <td>
-        @if (member.status === 'INSCRIPTION_TRANSMISE') {
+        @if (member.status === 'PENDING') {
         <button class="accept-btn" (click)="acceptMembership(member.userId)">
           Accepter
         </button>
 
-        <button class="reject-btn" (click)="rejectMembership(member.userId)">
+        <button class="reject-btn" (click)="openRejectModal(member.userId)">
           Refuser
         </button>
         } @else {
@@ -41,3 +41,31 @@
     </tbody>
   </table>
 </section>
+
+@if (showRejectModal) {
+<div class="modal-overlay">
+  <div class="reject-modal">
+    <h2>Motif du refus</h2>
+
+    <p>
+      Rédiger le message qui sera envoyé au demandeur.
+    </p>
+
+    <textarea
+      [(ngModel)]="rejectReason"
+      rows="6"
+      placeholder="Motif du refus">
+      </textarea>
+
+    <div class="modal-actions">
+      <button class="cancel-btn" (click)="closeRejectModal()">
+        Annuler
+      </button>
+
+      <button class="send-btn" (click)="confirmReject()">
+        Envoyer le refus
+      </button>
+    </div>
+  </div>
+</div>
+}

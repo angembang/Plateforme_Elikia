@@ -327,7 +327,7 @@ public class EventService extends AbstractActivityService {
                                          List<MultipartFile> files, String removedMediaIdsJson) {
         // Validate the identifier
         if(eventId == null || eventId <= 0) {
-            return new LogicResult<>("400", "The event identifier is required", null);
+            return new LogicResult<>("400", "Invalid event identifier", null);
         }
         // Retrieve the existing event
         Event existingEvent = idaoEvent.findById(eventId);
