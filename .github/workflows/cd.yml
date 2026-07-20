@@ -91,5 +91,6 @@ jobs:
             cd ~/app && \
             docker compose down --remove-orphans || true && \
             docker rm -f elikia-mysql elikia-backend elikia-frontend || true && \
+            docker compose build --no-cache && \
             docker compose up -d
           "
