@@ -4,7 +4,6 @@ name: CI - Elikia
 on:
   push:
     branches:
-      - dev
       - main
 
   # Trigger on pull requests to main and develop
