@@ -2,7 +2,7 @@ package fr.elikia.backend.controller;
 
 import fr.elikia.backend.bll.WorkshopService;
 import fr.elikia.backend.bo.LogicResult;
-import fr.elikia.backend.bo.Workshop;
+import fr.elikia.backend.dto.WorkshopResponseDTO;
 import fr.elikia.backend.dto.WorkshopDTO;
 import fr.elikia.backend.security.jwt.RequiredJWTAuth;
 import fr.elikia.backend.security.jwt.RequiredRole;
@@ -114,12 +114,12 @@ public class WorkshopController {
     @GetMapping("/page")
     @RequiredJWTAuth
     @RequiredRole("ADMIN")
-    public ResponseEntity<LogicResult<Page<Workshop>>> findWorkshopPage(
+    public ResponseEntity<LogicResult<Page<WorkshopResponseDTO>>> findWorkshopPage(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size
     ) {
 
-        LogicResult<Page<Workshop>> result =
+        LogicResult<Page<WorkshopResponseDTO>> result =
                 workshopService.findWorkshopPage(page, size);
 
         HttpStatus status = HttpStatus.resolve(
@@ -149,12 +149,12 @@ public class WorkshopController {
     )
     @ApiResponse(responseCode = "200", description = "Workshop page retrieved")
     @GetMapping("/public/page")
-    public ResponseEntity<LogicResult<Page<Workshop>>> findAllByVisibilityOrderByStartDateDesc(
+    public ResponseEntity<LogicResult<Page<WorkshopResponseDTO>>> findAllByVisibilityOrderByStartDateDesc(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "9") int size
     ) {
 
-        LogicResult<Page<Workshop>> result =
+        LogicResult<Page<WorkshopResponseDTO>> result =
                 workshopService.findAllByVisibilityOrderByStartDateDesc(page, size);
 
         HttpStatus status = HttpStatus.resolve(
@@ -186,12 +186,12 @@ public class WorkshopController {
     @GetMapping("/member/page")
     @RequiredJWTAuth
     @RequiredRole("MEMBER")
-    public ResponseEntity<LogicResult<Page<Workshop>>> findAllByMemberOnlyVisibilityOrderByStartDateDesc(
+    public ResponseEntity<LogicResult<Page<WorkshopResponseDTO>>> findAllByMemberOnlyVisibilityOrderByStartDateDesc(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "9") int size
     ) {
 
-        LogicResult<Page<Workshop>> result =
+        LogicResult<Page<WorkshopResponseDTO>> result =
                 workshopService.findAllByMemberOnlyVisibilityOrderByStartDateDesc(page, size);
 
         HttpStatus status = HttpStatus.resolve(
@@ -217,9 +217,9 @@ public class WorkshopController {
     )
     @ApiResponse(responseCode = "200", description = "Workshop retrieved")
     @GetMapping("/latest")
-    public ResponseEntity<LogicResult<List<Workshop>>> findLastWorkshop() {
+    public ResponseEntity<LogicResult<List<WorkshopResponseDTO>>> findLastWorkshop() {
 
-        LogicResult<List<Workshop>> result =
+        LogicResult<List<WorkshopResponseDTO>> result =
                 workshopService.findLastWorkshop();
 
         HttpStatus status = HttpStatus.resolve(
@@ -250,11 +250,11 @@ public class WorkshopController {
     @ApiResponse(responseCode = "200", description = "Workshop retrieved")
     @ApiResponse(responseCode = "404", description = "Workshop not found")
     @GetMapping("/{workshopId}")
-    public ResponseEntity<LogicResult<Workshop>> findWorkshopById(
+    public ResponseEntity<LogicResult<WorkshopResponseDTO>> findWorkshopById(
             @PathVariable Long workshopId
     ) {
 
-        LogicResult<Workshop> result = workshopService.findWorkshopById(workshopId);
+        LogicResult<WorkshopResponseDTO> result = workshopService.findWorkshopById(workshopId);
 
         HttpStatus status = HttpStatus.resolve(
                 Integer.parseInt(result.getCode())

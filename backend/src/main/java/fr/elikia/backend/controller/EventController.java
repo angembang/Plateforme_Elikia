@@ -1,7 +1,6 @@
 package fr.elikia.backend.controller;
 
 import fr.elikia.backend.bll.EventService;
-import fr.elikia.backend.bo.Event;
 import fr.elikia.backend.bo.LogicResult;
 import fr.elikia.backend.dto.EventDTO;
 import fr.elikia.backend.security.jwt.RequiredJWTAuth;
@@ -17,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import fr.elikia.backend.dto.EventResponseDTO;
 
 import java.util.List;
 
@@ -113,12 +113,12 @@ public class EventController {
     @GetMapping("/page")
     @RequiredJWTAuth
     @RequiredRole("ADMIN")
-    public ResponseEntity<LogicResult<Page<Event>>> findEventPage(
+    public ResponseEntity<LogicResult<Page<EventResponseDTO>>> findEventPage(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size
     ) {
 
-        LogicResult<Page<Event>> result =
+        LogicResult<Page<EventResponseDTO>> result =
                 eventService.findEventPage(page, size);
 
         HttpStatus status = HttpStatus.resolve(
@@ -148,12 +148,12 @@ public class EventController {
     )
     @ApiResponse(responseCode = "200", description = "Event page retrieved")
     @GetMapping("/public/page")
-    public ResponseEntity<LogicResult<Page<Event>>> findAllByVisibilityOrderByStartDateDesc(
+    public ResponseEntity<LogicResult<Page<EventResponseDTO>>> findAllByVisibilityOrderByStartDateDesc(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "9") int size
     ) {
 
-        LogicResult<Page<Event>> result =
+        LogicResult<Page<EventResponseDTO>> result =
                 eventService.findAllByVisibilityOrderByStartDateDesc(page, size);
 
         HttpStatus status = HttpStatus.resolve(
@@ -185,12 +185,12 @@ public class EventController {
     @GetMapping("/member/page")
     @RequiredJWTAuth
     @RequiredRole("MEMBER")
-    public ResponseEntity<LogicResult<Page<Event>>> findAllByMemberOnlyVisibilityOrderByStartDateDesc(
+    public ResponseEntity<LogicResult<Page<EventResponseDTO>>> findAllByMemberOnlyVisibilityOrderByStartDateDesc(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "9") int size
     ) {
 
-        LogicResult<Page<Event>> result =
+        LogicResult<Page<EventResponseDTO>> result =
                 eventService.findAllByMemberOnlyVisibilityOrderByStartDateDesc(page, size);
 
         HttpStatus status = HttpStatus.resolve(
@@ -216,9 +216,9 @@ public class EventController {
     )
     @ApiResponse(responseCode = "200", description = "Event retrieved")
     @GetMapping("/latest")
-    public ResponseEntity<LogicResult<List<Event>>> findLastEvent() {
+    public ResponseEntity<LogicResult<List<EventResponseDTO>>> findLastEvent() {
 
-        LogicResult<List<Event>> result =
+        LogicResult<List<EventResponseDTO>> result =
                 eventService.findLastEvent();
 
         HttpStatus status = HttpStatus.resolve(
@@ -249,11 +249,11 @@ public class EventController {
     @ApiResponse(responseCode = "200", description = "Event retrieved")
     @ApiResponse(responseCode = "404", description = "Event not found")
     @GetMapping("/{eventId}")
-    public ResponseEntity<LogicResult<Event>> findEventById(
+    public ResponseEntity<LogicResult<EventResponseDTO>> findEventById(
             @PathVariable Long eventId
     ) {
 
-        LogicResult<Event> result = eventService.findEventById(eventId);
+        LogicResult<EventResponseDTO> result = eventService.findEventById(eventId);
 
         HttpStatus status = HttpStatus.resolve(
                 Integer.parseInt(result.getCode())
