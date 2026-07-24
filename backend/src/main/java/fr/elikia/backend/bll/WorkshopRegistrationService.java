@@ -11,6 +11,7 @@ import fr.elikia.backend.dao.idao.IDAOWorkshopRegistration;
 import fr.elikia.backend.dto.WorkshopRegistrationAdminDTO;
 import fr.elikia.backend.dto.WorkshopRegistrationDTO;
 import org.springframework.stereotype.Service;
+import fr.elikia.backend.bo.enums.Visibility;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -57,6 +58,7 @@ public class WorkshopRegistrationService extends AbstractRegistrationService {
             String memberEmail
     ) {
         LogicResult<Void> validationResult = validateActivityId(workshopId);
+
         if (validationResult != null) {
             return validationResult;
         }
@@ -64,10 +66,25 @@ public class WorkshopRegistrationService extends AbstractRegistrationService {
         Workshop workshop = idaoWorkshop.findById(workshopId);
 
         if (workshop == null) {
-            return new LogicResult<>("404", "Workshop not found", null);
+            return new LogicResult<>(
+                    "404",
+                    "Workshop not found",
+                    null
+            );
+        }
+
+        boolean isVisitor = memberEmail == null || memberEmail.isBlank();
+
+        if (isVisitor && workshop.getVisibility() == Visibility.MEMBER_ONLY) {
+            return new LogicResult<>(
+                    "403",
+                    "This workshop is reserved for members only",
+                    null
+            );
         }
 
         validationResult = validateRegistrationData(workshopRegistrationDTO);
+
         if (validationResult != null) {
             return validationResult;
         }
@@ -78,14 +95,21 @@ public class WorkshopRegistrationService extends AbstractRegistrationService {
 
         Member member = null;
 
-        if (memberEmail != null && !memberEmail.isBlank()) {
+        if (!isVisitor) {
             member = idaoMember.findByEmail(memberEmail);
 
             if (member == null) {
-                return new LogicResult<>("404", "Member not found", null);
+                return new LogicResult<>(
+                        "404",
+                        "Member not found",
+                        null
+                );
             }
 
-            if (idaoWorkshopRegistration.existsByWorkshopAndMember(workshop, member)) {
+            if (idaoWorkshopRegistration.existsByWorkshopAndMember(
+                    workshop,
+                    member
+            )) {
                 return new LogicResult<>(
                         "400",
                         "This member is already registered for this workshop",
@@ -93,7 +117,10 @@ public class WorkshopRegistrationService extends AbstractRegistrationService {
                 );
             }
         } else {
-            if (idaoWorkshopRegistration.existsByWorkshopAndEmail(workshop, email)) {
+            if (idaoWorkshopRegistration.existsByWorkshopAndEmail(
+                    workshop,
+                    email
+            )) {
                 return new LogicResult<>(
                         "400",
                         "This email is already registered for this workshop",
@@ -102,7 +129,8 @@ public class WorkshopRegistrationService extends AbstractRegistrationService {
             }
         }
 
-        WorkshopRegistration workshopRegistration = new WorkshopRegistration();
+        WorkshopRegistration workshopRegistration =
+                new WorkshopRegistration();
 
         workshopRegistration.setFirstName(firstName);
         workshopRegistration.setLastName(lastName);
