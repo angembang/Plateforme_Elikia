@@ -17,7 +17,6 @@ import java.util.List;
 
 /**
  * Service responsible for managing workshop registration business logic.
- *
  * This service handles:
  * - registration validation
  * - workshop existence verification
@@ -327,4 +326,6 @@ public class WorkshopRegistrationService extends AbstractRegistrationService {
                 null
         );
     }
+
+
 }
