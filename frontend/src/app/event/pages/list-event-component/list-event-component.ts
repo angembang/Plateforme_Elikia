@@ -90,9 +90,8 @@ export class ListEventComponent extends BaseListComponent implements OnInit {
     this.eventService
       .getPublicEventPage(this.currentPage, this.pageSize)
       .subscribe(result => {
-        this.processEventEventResult(result);
-      })
-
+            this.processEventEventResult(result);
+          });
   }
 
 
