@@ -18,7 +18,6 @@ import java.util.List;
 
 /**
  * Service responsible for managing event registration business logic.
- *
  * This service handles:
  * - registration validation
  * - event existence verification
@@ -48,7 +47,6 @@ public class EventRegistrationService extends AbstractRegistrationService {
 
     /**
      * Create an event registration for a visitor or a member.
-     *
      * Business rules:
      * - a visitor can register only to PUBLIC events
      * - a member can register to PUBLIC and MEMBER_ONLY events
