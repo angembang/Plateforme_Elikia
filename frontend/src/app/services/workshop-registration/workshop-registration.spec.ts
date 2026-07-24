@@ -1,13 +1,17 @@
 import { TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-import { WorkshopRegistration } from './workshop-registration';
+import { WorkshopRegistrationService } from './workshop-registration';
 
-describe('WorkshopRegistration', () => {
-  let service: WorkshopRegistration;
+describe('WorkshopRegistrationService', () => {
+  let service: WorkshopRegistrationService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(WorkshopRegistration);
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
+    });
+
+    service = TestBed.inject(WorkshopRegistrationService);
   });
 
   it('should be created', () => {
